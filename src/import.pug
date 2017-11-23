@@ -1,0 +1,23 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		title(data-i18n='extensionName')
+		link(rel='stylesheet' href='import.css')
+		link(rel="icon" href="icons/icon.svg")
+	body
+		form#main-form
+			.row
+				label
+					input#show-completed(type='checkbox')
+					span(data-i18n='showCompleted')
+			select#item-list(multiple required)
+			.row
+				label
+					input#remove-after-import(type='checkbox')
+					span(data-i18n='removeAfterImport')
+			#actions
+				button#cancel(data-i18n='cancel' type='button')
+				button#download(data-i18n='download' type='submit')
+		script(src='common.js')
+		script(src='import.js')

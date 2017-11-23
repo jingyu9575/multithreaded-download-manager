@@ -1,0 +1,33 @@
+manifest_version: 2
+applications:
+	gecko:
+		id: 'multithreaded-download-manager@qw.linux-2g64.local'
+		strict_min_version: '57.0'
+name: '__MSG_extensionName__'
+version: '0.1'
+description: '__MSG_extensionDescription__'
+icons:
+	'48': 'icons/icon.svg'
+permissions: [
+	'storage'
+	'unlimitedStorage'
+	'<all_urls>'
+	'downloads'
+	'downloads.open'
+	'webRequest'
+	'webRequestBlocking'
+	'clipboardRead'
+	'contextMenus'
+	'notifications'
+	'tabs'
+]
+browser_action:
+	default_icon: 'icons/icon.svg'
+	default_title: '__MSG_extensionName__'
+	default_popup: 'popup.html'
+	browser_style: false
+background:
+	page: 'background.html'
+options_ui:
+	page: 'options.html'
+default_locale: 'en'

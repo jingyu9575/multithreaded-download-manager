@@ -1,0 +1,112 @@
+extensionName:
+	message: '多线程下载管理器'
+extensionDescription:
+	message: '支持多线程的下载管理器。'
+pause:
+	message: '暂停'
+stop:
+	message: '停止'
+start:
+	message: '开始'
+openFileButton:
+	message: '打开文件 \nShift：打开所在文件夹'
+edit:
+	message: '编辑'
+copyLinkButton:
+	message: '复制下载链接 \nShift：打开引用页'
+deleted:
+	message: '已删除'
+removeButton:
+	message: '移除 \nShift：删除文件'
+emptyTasks:
+	message: '没有下载任务。'
+noStorageAccess:
+	message: '无法访问内部存储。'
+createDownload:
+	message: '新建下载任务'
+importDownload:
+	message: '从内置下载列表中导入任务'
+options:
+	message: '选项'
+openInNewTab:
+	message: '在新标签页中打开'
+openInNewWindow:
+	message: '在新窗口中打开'
+editURL:
+	message: '下载地址：'
+editURLWarning:
+	message: '注意：将下载地址改为不同文件会导致下载损坏。'
+editFilename:
+	message: '文件名：'
+editReferrer:
+	message: '引用页：'
+maxThreads:
+	message: '线程数：'
+minChunkSize:
+	message: '最小块长：'
+maxRetries:
+	message: '最多重试：'
+OK:
+	message: '确定'
+cancel:
+	message: '取消'
+download:
+	message: '下载'
+continueInBrowser:
+	message: '在浏览器中继续'
+browserDownloadError:
+	message: '保存文件失败 ($1)'
+browserDownloadErased:
+	message: '保存文件被取消'
+threadStopped:
+	message: '下载线程意外终止'
+unsuccessfulResponse:
+	message: '服务器错误 ($1 $2)'
+rangesNotSupported:
+	message: '服务器不支持多线程下载 ($1)'
+networkError:
+	message: '网络错误'
+unknownError:
+	message: '未知错误 ($1)'
+showCompleted:
+	message: '显示已完成的下载项'
+removeAfterImport:
+	message: '导入后移除原项目'
+downloadWith:
+	message: '用 $1 下载'
+unsupportedURL:
+	message: '不支持此下载地址：$1'
+confirmPauseIsStop:
+	message: '此下载无法续传。停止下载？'
+confirmDeleteFile:
+	message: '删除下载的文件？'
+confirmRemove:
+	message: '移除此项未完成的下载？'
+interface:
+	message: '界面'
+showOnBadge:
+	message: '在扩展图标上显示：'
+badgeTypeNone:
+	message: '无'
+badgeTypeNumber:
+	message: '正在下载的任务数'
+addContextMenuToLink:
+	message: '添加到链接右键菜单'
+monitorDownload:
+	message: '监视下载'
+monitorDownloadDesc:
+	message: '自动提示下载'
+monitorDownloadMinSize:
+	message: '小于此大小时禁用：'
+defaultNetworkOptions:
+	message: '默认网络选项'
+legacyFilenameDetection:
+	message: '旧网站的文件名检测'
+legacyFilenameEncoding:
+	message: '编码：'
+legacyFilenameDetectUTF8:
+	message: '检测 UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: '检测百分号编码（如 %20）'
+license3rdParty:
+	message: '第三方版权声明'

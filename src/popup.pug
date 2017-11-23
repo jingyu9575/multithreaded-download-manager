@@ -1,0 +1,58 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		title(data-i18n='extensionName')
+		link(rel='stylesheet' href='popup.css')
+		link(rel="icon" href="icons/icon.svg")
+	body
+		#panel-size-request
+		#tasks-wrapper
+			#tasks
+			#empty-tasks(data-i18n='emptyTasks')
+		#toolbar
+			button#create(data-i18n-title='createDownload')
+				svg.svgi: use(href='icons/bytesize-symbols.svg#i-plus')
+			button#import(data-i18n-title='importDownload')
+				img(src='icons/corner-right-down.svg')
+			button#options(data-i18n-title='options')
+				svg.svgi: use(href='icons/bytesize-symbols.svg#i-options')
+		template#task-template
+			.task-row.summary-row
+				svg.state-icon.svgi
+					use
+					title
+				span.filename
+				button.pause.primary(data-i18n-title='pause')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-pause')
+					img.stop-icon(src='icons/square.svg')
+				button.start.primary(data-i18n-title='start')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-play')
+				button.open-file.primary(data-i18n-title='openFileButton')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-file')
+				button.copy-link(data-i18n-title='copyLinkButton')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-link')
+				button.edit(data-i18n-title='edit')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-edit')
+				button.remove(data-i18n-title='removeButton')
+					svg.svgi: use(href='icons/bytesize-symbols.svg#i-trash')
+			.task-row.progress-row
+				.progress-canvas-wrapper
+					canvas.progress-canvas(width=1024 height=1)
+			.task-row.detail-row
+				span.estimated-time
+				span
+					span.current-size
+					span.total-size
+					span.percentage
+				span.average-speed
+				span.comment
+		#confirm-overlay(hidden)
+			#confirm
+				span#confirm-text
+				#confirm-actions
+					button#confirm-cancel(type='button' data-i18n='cancel' accesskey='n')
+					button#confirm-ok(type='button' data-i18n='OK' accesskey='y')
+		#clipboard-writer(contentEditable aria-hidden="true" tabIndex='-1')
+		script(src='common.js')
+		script(src='popup.js')

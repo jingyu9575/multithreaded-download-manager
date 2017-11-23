@@ -1,0 +1,35 @@
+[hidden]
+	display: none !important
+
+.svgi
+	stroke: currentColor
+	stroke-width: 3px
+	stroke-linecap: round
+	stroke-linejoin: round
+	fill: none
+
+.input-label
+	& > *
+		vertical-align: middle
+	& > :not(:last-child)
+		padding-right: 8px
+	& input[type='number']
+		width: 10ch
+
+.input-grid
+	display: grid
+	grid-template-columns: auto 1fr
+	grid-row-gap: 2px
+	align-items: center
+	& > label
+		display: contents
+		@extend .input-label
+
+#clipboard-reader, #clipboard-writer
+	position: fixed
+	width: 0
+	height: 0
+	overflow: hidden
+
+.input-unit
+	margin-left: 1ch

@@ -1,0 +1,112 @@
+extensionName:
+	message: 'Multithreaded Download Manager'
+extensionDescription:
+	message: 'Download manager with multithreading support.'
+pause:
+	message: 'Pause'
+stop:
+	message: 'Stop'
+start:
+	message: 'Start'
+openFileButton:
+	message: 'Open file \nShift: Open containing folder'
+edit:
+	message: 'Edit'
+copyLinkButton:
+	message: 'Copy download link \nShift: Open referrer page'
+deleted:
+	message: 'Deleted'
+removeButton:
+	message: 'Remove \nShift: Delete file'
+emptyTasks:
+	message: 'There is no download task.'
+noStorageAccess:
+	message: 'Cannot access internal storage.'
+createDownload:
+	message: 'Create a download task'
+importDownload:
+	message: 'Import tasks from the built-in download list'
+options:
+	message: 'Options'
+openInNewTab:
+	message: 'Open in new tab'
+openInNewWindow:
+	message: 'Open in new window'
+editURL:
+	message: 'Download:'
+editURLWarning:
+	message: 'Caution: changing download location to different files will corrupt the download.'
+editFilename:
+	message: 'Filename:'
+editReferrer:
+	message: 'Referring page:'
+maxThreads:
+	message: 'Threads:'
+minChunkSize:
+	message: 'Minimal chunk:'
+maxRetries:
+	message: 'Maximum retries:'
+OK:
+	message: 'OK'
+cancel:
+	message: 'Cancel'
+download:
+	message: 'Download'
+continueInBrowser:
+	message: 'Continue in browser'
+browserDownloadError:
+	message: 'Failed to save downloaded file ($1)'
+browserDownloadErased:
+	message: 'Saving canceled'
+threadStopped:
+	message: 'A download thread stopped unexpectedly'
+unsuccessfulResponse:
+	message: 'Server error ($1 $2)'
+rangesNotSupported:
+	message: 'Server does not support multithreaded download ($1)'
+networkError:
+	message: 'Network error'
+unknownError:
+	message: 'Unknown error ($1)'
+showCompleted:
+	message: 'Show completed download items'
+removeAfterImport:
+	message: 'Remove the original items after import'
+downloadWith:
+	message: 'Download with $1'
+unsupportedURL:
+	message: 'Unsupported download address: $1'
+confirmPauseIsStop:
+	message: 'This download cannot be resumed. Stop it?'
+confirmDeleteFile:
+	message: 'Delete downloaded file?'
+confirmRemove:
+	message: 'Remove this unfinished download?'
+interface:
+	message: 'Interface'
+showOnBadge:
+	message: 'Show on the extension icon:'
+badgeTypeNone:
+	message: 'None'
+badgeTypeNumber:
+	message: 'Number of running tasks'
+addContextMenuToLink:
+	message: 'Add a context menu to links'
+monitorDownload:
+	message: 'Monitor download'
+monitorDownloadDesc:
+	message: 'Automatically prompt for download'
+monitorDownloadMinSize:
+	message: 'Disable for files smaller than:'
+defaultNetworkOptions:
+	message: 'Default network options'
+legacyFilenameDetection:
+	message: 'Filename detection for legacy websites'
+legacyFilenameEncoding:
+	message: 'Encoding:'
+legacyFilenameDetectUTF8:
+	message: 'Detect UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: 'Detect percent encoding (e.g. %20)'
+license3rdParty:
+	message: 'Third-Party Copyright Notices'

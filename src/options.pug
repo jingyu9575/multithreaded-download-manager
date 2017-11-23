@@ -1,0 +1,56 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		title(data-i18n='extensionName')
+		link(rel='stylesheet' href='options.css')
+		link(rel="icon" href="icons/icon.svg")
+	body
+		section
+			h2(data-i18n='interface')
+			label.input-label
+				span(data-i18n='showOnBadge')
+				select(data-key='badgeType')
+					option(value='none' data-i18n='badgeTypeNone')
+					option(value='number' data-i18n='badgeTypeNumber')
+			label.input-label
+				input(type='checkbox' data-key='addContextMenuToLink')
+				span(data-i18n='addContextMenuToLink')
+		section
+			h2(data-i18n='monitorDownload')
+			label.input-label
+				input(type='checkbox' data-key='monitorDownload')
+				span(data-i18n='monitorDownloadDesc')
+			label.input-label
+				span(data-i18n='monitorDownloadMinSize')
+				input(data-key='monitorDownloadMinSize' type='number' required min='0')
+				span.input-unit KB
+		section
+			h2(data-i18n='defaultNetworkOptions')
+			.input-grid
+				label
+					span(data-i18n='maxThreads')
+					input(data-key='maxThreads' type='number' required min='1')
+				label
+					span(data-i18n='minChunkSize')
+					span
+						input(data-key='minChunkSize' type='number' required min='0')
+						span.input-unit KB
+				label
+					span(data-i18n='maxRetries')
+					input(data-key='maxRetries' type='number' required min='0')
+		section
+			h2(data-i18n='legacyFilenameDetection')
+			label.input-label
+				span(data-i18n='legacyFilenameEncoding')
+				input(data-key='legacyFilenameEncoding')
+			label.input-label
+				input(type='checkbox' data-key='legacyFilenameDetectUTF8')
+				span(data-i18n='legacyFilenameDetectUTF8')
+			label.input-label
+				input(type='checkbox' data-key='legacyFilenameDetectURLEncoded')
+				span(data-i18n='legacyFilenameDetectURLEncoded')
+		p
+			a(target="_blank" href="LICENSE-3RD-PARTY.txt" data-i18n="license3rdParty")
+		script(src='common.js')
+		script(src='options.js')
