@@ -92,6 +92,12 @@ badgeTypeNumber:
 	message: 'Number of running tasks'
 addContextMenuToLink:
 	message: 'Add a context menu to links'
+windowPosition:
+	message: 'Show extension window at:'
+windowPositionDefault:
+	message: 'default position'
+windowPositionParentCenter:
+	message: 'center of the current window'
 monitorDownload:
 	message: 'Monitor download'
 monitorDownloadDesc:

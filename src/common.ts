@@ -97,6 +97,7 @@ class Settings {
 
 	badgeType = 'number' as 'none' | 'number'
 	addContextMenuToLink = true
+	windowPosition = 'default' as 'default' | 'parentCenter'
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB
@@ -181,6 +182,18 @@ function toHyphenCase(s: string) {
 	return s.replace(/[a-z][A-Z]/g, g => g[0] + '-' + g[1].toLowerCase())
 }
 
-function openPopupWindow(url: string) {
-	void browser.windows.create({ url, type: 'popup', width: 500, height: 300 })
+async function openPopupWindow(url: string) {
+	const position = await Settings.get('windowPosition')
+	const centerAt = position === 'parentCenter' ?
+		await browser.windows.getLastFocused() : undefined
+	const width = 500, height = 300
+	const { id } = await browser.windows.create({ url, type: 'popup', width, height })
+	if (centerAt) {
+		await browser.windows.update(id!, {
+			left: Math.max(0, centerAt.left! +
+				Math.floor((centerAt.width! - width) / 2)),
+			top: Math.max(0, centerAt.top! +
+				Math.floor((centerAt.height! - height) / 2)),
+		})
+	}
 }

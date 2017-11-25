@@ -92,6 +92,12 @@ badgeTypeNumber:
 	message: '正在下载的任务数'
 addContextMenuToLink:
 	message: '添加到链接右键菜单'
+windowPosition:
+	message: '弹出扩展窗口的位置：'
+windowPositionDefault:
+	message: '默认位置'
+windowPositionParentCenter:
+	message: '居中于当前窗口'
 monitorDownload:
 	message: '监视下载'
 monitorDownloadDesc:
