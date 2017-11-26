@@ -104,6 +104,8 @@ monitorDownloadDesc:
 	message: '自动提示下载'
 monitorDownloadMinSize:
 	message: '小于此大小时禁用：'
+autoCloseBlankTab:
+	message: '自动关闭弹出的空白页'
 defaultNetworkOptions:
 	message: '默认网络选项'
 legacyFilenameDetection:

@@ -104,6 +104,8 @@ monitorDownloadDesc:
 	message: 'Automatically prompt for download'
 monitorDownloadMinSize:
 	message: 'Disable for files smaller than:'
+autoCloseBlankTab:
+	message: 'Automatically close blank tabs when downloading'
 defaultNetworkOptions:
 	message: 'Default network options'
 legacyFilenameDetection:

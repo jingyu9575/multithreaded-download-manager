@@ -1018,12 +1018,14 @@ const monitorDownloadParams = {
 }
 
 function monitorDownloadListener(
-	{ requestId, url, originUrl, responseHeaders, statusCode }: {
+	{ requestId, url, originUrl, responseHeaders, statusCode, tabId, type }: {
 		requestId: string,
 		url: string,
 		originUrl: string,
 		responseHeaders?: { name: string, value?: string }[],
 		statusCode: number,
+		tabId: number,
+		type: browser.webRequest.ResourceType,
 	}) {
 	let contentDisposition = '', lengthPresent = false,
 		contentTypeIncluded = false, acceptRanges = false
@@ -1071,6 +1073,15 @@ function monitorDownloadListener(
 		setTimeout(() => {
 			if (portListeners.delete(portName)) resolve({})
 		}, 15000)
+	})
+	resultPromise.then(async ({ cancel }) => {
+		if (!cancel || type !== 'main_frame' || tabId === -1) return
+		if (!await Settings.get('autoCloseBlankTab')) return
+		const { url, windowId } = await browser.tabs.get(tabId)
+		if (url !== 'about:blank') return
+		if ((await browser.windows.get(windowId, { populate: true }))
+			.tabs!.length <= 1) return
+		await browser.tabs.remove(tabId)
 	})
 	openPopupWindow(browser.runtime.getURL(`edit.html#/${portName}`))
 	return resultPromise
