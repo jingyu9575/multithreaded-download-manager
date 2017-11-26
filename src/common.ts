@@ -97,7 +97,7 @@ class Settings {
 
 	badgeType = 'number' as 'none' | 'number'
 	addContextMenuToLink = true
-	windowPosition = 'default' as 'default' | 'parentCenter'
+	windowPosition = 'parentCenter' as 'default' | 'parentCenter'
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB

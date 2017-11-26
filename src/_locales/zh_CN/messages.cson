@@ -95,7 +95,7 @@ addContextMenuToLink:
 windowPosition:
 	message: '弹出扩展窗口的位置：'
 windowPositionDefault:
-	message: '默认位置'
+	message: '系统默认位置'
 windowPositionParentCenter:
 	message: '居中于当前窗口'
 monitorDownload:

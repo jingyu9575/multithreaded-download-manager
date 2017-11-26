@@ -95,7 +95,7 @@ addContextMenuToLink:
 windowPosition:
 	message: 'Show extension window at:'
 windowPositionDefault:
-	message: 'default position'
+	message: 'system default position'
 windowPositionParentCenter:
 	message: 'center of the current window'
 monitorDownload:
