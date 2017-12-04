@@ -104,6 +104,7 @@ function waitForBrowserDownload(id: number) {
 class SimpleStorageOptions {
 	readonly databaseName: string = 'simpleStorage'
 	readonly storeName: string = 'simpleStorage'
+	readonly persistent: boolean = true
 
 	constructor(source: Partial<SimpleStorageOptions>) { Object.assign(this, source) }
 }
@@ -122,7 +123,7 @@ class SimpleStorage extends SimpleStorageOptions {
 	constructor(options: Partial<SimpleStorageOptions> = {}) {
 		super(options)
 		const request = indexedDB.open(this.databaseName,
-			{ version: 1, storage: "persistent" } as any)
+			this.persistent ? { version: 1, storage: "persistent" } : 1 as any)
 		request.onupgradeneeded = event => {
 			const db = request.result as IDBDatabase
 			db.createObjectStore(this.storeName)
@@ -160,7 +161,7 @@ class SimpleStorage extends SimpleStorageOptions {
 	}
 }
 
-const taskStorage = new SimpleStorage({ databaseName: 'tasks' })
+let taskStorage: SimpleStorage
 let fileStorage: IDBFileStorage
 
 class TaskPersistentData extends TaskOptions {
@@ -863,10 +864,15 @@ function getSuggestedFilename(url: string, contentDisposition: string,
 	return filename || getSuggestedFilenameFromURL(url)
 }
 
+if (!browser.contextMenus)
+	browser.contextMenus = { create() { }, remove() { } } as any
+
 const initialization = async function () {
 	await Settings.set({ version: 0 })
+	const persistent = (await browser.runtime.getPlatformInfo()).os !== 'android'
+	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
 	fileStorage = await IDBFiles.getFileStorage(
-		{ name: 'taskFiles', persistent: true })
+		{ name: 'taskFiles', persistent })
 	const taskIds = (await taskStorage.keys()).sort() as number[]
 	for (const id of taskIds)
 		new Task(await taskStorage.get(id) as TaskPersistentData, id)
@@ -909,6 +915,7 @@ class BackgroundRemote {
 	}
 	async getFallbackEncoding() { return document.characterSet }
 	async checkStorageAccess() {
+		await initialization
 		try { await taskStorage.get(-1) } catch { return false }
 		return true
 	}

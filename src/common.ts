@@ -157,6 +157,22 @@ function applyI18n() {
 		v.innerText = browser.i18n.getMessage(v.dataset['i18n']!)
 }
 
+if (!browser.windows) browser.windows = {
+	WINDOW_ID_CURRENT: -2,
+	async get() { return { tabs: await browser.tabs.query({}) } },
+	async remove(id: number) {
+		if (id === browser.windows.WINDOW_ID_CURRENT) {
+			const tab = await browser.tabs.getCurrent()
+			if (tab) await browser.tabs.remove(tab.id!)
+		}
+	},
+	getLastFocused() { return undefined },
+	update() { },
+	async create({ url }: { url: string }) {
+		await browser.tabs.create({ url, active: true })
+	}
+} as any
+
 async function closeWindow() {
 	await browser.windows.remove(browser.windows.WINDOW_ID_CURRENT)
 }
