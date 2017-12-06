@@ -98,6 +98,8 @@ windowPositionDefault:
 	message: 'system default position'
 windowPositionParentCenter:
 	message: 'center of the current window'
+newTaskAtTop:
+	message: 'Show new tasks at the top'
 monitorDownload:
 	message: 'Monitor download'
 monitorDownloadDesc:

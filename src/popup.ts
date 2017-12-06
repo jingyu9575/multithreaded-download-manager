@@ -205,6 +205,14 @@ class BroadcastRemote {
 		for (const [id, data] of dataArray)
 			updateTask(id, data)
 	}
+	setTaskOrder(ids: number[]) {
+		let i = -ids.length - 1
+		for (const id of ids) {
+			const data = taskDisplayDataMap.get(id)
+			if (data) data.node.style.order = i + ''
+			i++
+		}
+	}
 	notifyRemove(id: number) {
 		const data = taskDisplayDataMap.get(id)
 		if (data) data.node.remove()

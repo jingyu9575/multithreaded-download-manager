@@ -98,6 +98,8 @@ windowPositionDefault:
 	message: '系统默认位置'
 windowPositionParentCenter:
 	message: '居中于当前窗口'
+newTaskAtTop:
+	message: '新任务显示在最上方'
 monitorDownload:
 	message: '监视下载'
 monitorDownloadDesc:

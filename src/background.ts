@@ -195,21 +195,29 @@ class Task extends TaskPersistentData {
 	get totalSize() { return this.lastChunk ? this.lastChunk.initPosition : undefined }
 	set totalSize(v) { } // used in base class
 
-	private static readonly map = new Map<number, Task>()
 	private static nextId = 1
+	static readonly list: Task[] = []
+	static get(id: number) { return this.list.find(v => v.id === id) }
+	static newTaskAtTop = false
 
 	constructor(options: Partial<TaskPersistentData>, loadId?: number) {
 		super(options)
 		this.state = 'paused'
 		this.id = loadId !== undefined ? loadId : Task.nextId++
-		assert(!Task.map.has(this.id))
-		Task.map.set(this.id, this)
+		assert(!Task.get(this.id))
+		if (Task.newTaskAtTop)
+			Task.list.unshift(this)
+		else
+			Task.list.push(this)
 		if (Task.nextId <= this.id) Task.nextId = this.id + 1
 
 		broadcastRemote.update([[this.id, {
 			url: this.url, filename: this.filename, referrer: this.referrer,
 			state: this.state
 		}]])
+		const taskOrder = Task.list.map(v => v.id)
+		void Settings.set({ taskOrder })
+		broadcastRemote.setTaskOrder(taskOrder)
 		void updateBadge()
 		void this.criticalSection.sync(async () => {
 			const keys = { maxThreads: 1, minChunkSize: 1, maxRetries: 1 }
@@ -289,9 +297,6 @@ class Task extends TaskPersistentData {
 			this.currentSize = currentSize
 		} catch (error) { Log.warn('Task.readChunks failed', this.id, error) }
 	}
-
-	static get(id: number) { return this.map.get(id) }
-	static values() { return this.map.values() }
 
 	private setState(state: DownloadState, disableBadgeColor = false) {
 		let canceled = false
@@ -522,7 +527,7 @@ class Task extends TaskPersistentData {
 	remove() {
 		this.criticalSection.sync(() => {
 			for (const thread of [...this.threads.values()]) thread.remove()
-			Task.map.delete(this.id)
+			Task.list.splice(Task.list.indexOf(this), 1)
 			void this.cleanupFileStorage()
 			void taskStorage.delete(this.id)
 			if (this.fileAccessId !== undefined)
@@ -628,7 +633,7 @@ class Task extends TaskPersistentData {
 }
 
 const writeChunksTimer = new Timer(async () => {
-	const tasks = [...Task.values()].filter(t => t.state === 'downloading')
+	const tasks = Task.list.filter(t => t.state === 'downloading')
 	if (!tasks.length) {
 		Log.log('writeChunksTimer.stop')
 		writeChunksTimer.stop()
@@ -873,7 +878,12 @@ const initialization = async function () {
 	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
 	fileStorage = await IDBFiles.getFileStorage(
 		{ name: 'taskFiles', persistent })
-	const taskIds = (await taskStorage.keys()).sort() as number[]
+	const taskOrder = new Map((await Settings.get('taskOrder')).map(
+		(v, i) => [v, i] as [number, number]))
+	const getTaskOrder = (v: IDBValidKey) =>
+		taskOrder.has(v as number) ? taskOrder.get(v as number)! : Infinity
+	const taskIds = (await taskStorage.keys()).sort(
+		(v0, v1) => getTaskOrder(v0) - getTaskOrder(v1)) as number[]
 	for (const id of taskIds)
 		new Task(await taskStorage.get(id) as TaskPersistentData, id)
 
@@ -926,7 +936,7 @@ const broadcastRemote = messageRemoteProxy('remote-broadcast') as BroadcastRemot
 
 const updateTimer = new Timer(async () => {
 	await initialization
-	broadcastRemote.update([...Task.values()].map(task => [task.id, {
+	broadcastRemote.update(Task.list.map(task => [task.id, {
 		chunks: [...task.threads.values()].reduce((v0, v1) =>
 			Object.assign(v0, v1.chunk.updateData), {}),
 		currentSize: task.currentSize,
@@ -945,7 +955,7 @@ browser.runtime.onConnect.addListener(async port => {
 		subscriberPorts.add(port)
 		if (!updateTimer.isStarted) updateTimer.start()
 		await initialization
-		broadcastRemote.update([...Task.values()].map(task =>
+		broadcastRemote.update(Task.list.map(task =>
 			[task.id, task.getAllUpdateData()] as [number, TaskUpdateData]))
 		void updateBadge()
 	} else {
@@ -959,7 +969,7 @@ browser.runtime.onConnect.addListener(async port => {
 async function updateBadge(state?: DownloadState) {
 	const displayState = !subscriberPorts.size &&
 		(state === 'completed' || state === 'failed') ? state : undefined
-	const n = [...Task.values()].filter(
+	const n = Task.list.filter(
 		v => DownloadState.isProgressing(v.state)).length
 	const type = await Settings.get('badgeType')
 	if (type === 'none' || !(displayState || n)) {
@@ -1116,3 +1126,10 @@ async function updateMonitorDownload() {
 updateMonitorDownload()
 for (const key of monitorDownloadParams.settingsKeys)
 	Settings.setListener(key, updateMonitorDownload)
+
+async function updateNewTaskAtTop() {
+	await initialization
+	Task.newTaskAtTop = !!await Settings.get('newTaskAtTop')
+}
+updateNewTaskAtTop()
+Settings.setListener('newTaskAtTop', updateNewTaskAtTop)

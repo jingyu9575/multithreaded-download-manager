@@ -98,6 +98,7 @@ class Settings {
 	badgeType = 'number' as 'none' | 'number'
 	addContextMenuToLink = true
 	windowPosition = 'parentCenter' as 'default' | 'parentCenter'
+	newTaskAtTop = true
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB
@@ -114,6 +115,8 @@ class Settings {
 	legacyFilenameDetectURLEncoded = true
 
 	removeAfterImport = true
+
+	taskOrder: number[] = []
 
 	static async load(keys: (keyof Settings)[] | null = null) {
 		const result = await browser.storage.local.get(keys) as Readonly<Settings>
