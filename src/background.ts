@@ -1133,3 +1133,5 @@ async function updateNewTaskAtTop() {
 }
 updateNewTaskAtTop()
 Settings.setListener('newTaskAtTop', updateNewTaskAtTop)
+
+browser.runtime.onUpdateAvailable.addListener(() => { })
