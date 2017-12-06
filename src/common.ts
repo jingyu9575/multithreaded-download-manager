@@ -96,6 +96,7 @@ class Settings {
 	version = 0
 
 	badgeType = 'number' as 'none' | 'number'
+	hideBadgeZero = false
 	addContextMenuToLink = true
 	windowPosition = 'parentCenter' as 'default' | 'parentCenter'
 	newTaskAtTop = true

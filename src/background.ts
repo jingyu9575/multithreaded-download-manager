@@ -972,7 +972,8 @@ async function updateBadge(state?: DownloadState) {
 	const n = Task.list.filter(
 		v => DownloadState.isProgressing(v.state)).length
 	const type = await Settings.get('badgeType')
-	if (type === 'none' || !(displayState || n)) {
+	if (type === 'none' || !(displayState || n) ||
+		(displayState === 'completed' && !n && await Settings.get('hideBadgeZero'))) {
 		await browser.browserAction.setBadgeText({ text: '' })
 		return
 	}
@@ -981,6 +982,7 @@ async function updateBadge(state?: DownloadState) {
 		{ color: DownloadState.colors[displayState || 'downloading'] })
 }
 Settings.setListener('badgeType', () => void updateBadge())
+Settings.setListener('hideBadgeZero', () => void updateBadge())
 
 let linkContextMenuShown = false
 async function updateLinkContextMenu() {

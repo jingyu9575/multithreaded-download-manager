@@ -90,6 +90,8 @@ badgeTypeNone:
 	message: '无'
 badgeTypeNumber:
 	message: '正在下载的任务数'
+hideBadgeZero:
+	message: '全部下载完成后隐藏图标上的数字'
 addContextMenuToLink:
 	message: '添加到链接右键菜单'
 windowPosition:

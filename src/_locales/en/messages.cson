@@ -90,6 +90,8 @@ badgeTypeNone:
 	message: 'None'
 badgeTypeNumber:
 	message: 'Number of running tasks'
+hideBadgeZero:
+	message: 'Hide the number on the icon after all tasks are completed'
 addContextMenuToLink:
 	message: 'Add a context menu to links'
 windowPosition:
