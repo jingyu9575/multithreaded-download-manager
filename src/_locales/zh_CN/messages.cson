@@ -102,6 +102,8 @@ windowPositionParentCenter:
 	message: '居中于当前窗口'
 newTaskAtTop:
 	message: '新任务显示在最上方'
+removeCompletedTasksOnStart:
+	message: '浏览器启动时清除已完成的任务'
 monitorDownload:
 	message: '监视下载'
 monitorDownloadDesc:

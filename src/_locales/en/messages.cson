@@ -102,6 +102,8 @@ windowPositionParentCenter:
 	message: 'center of the current window'
 newTaskAtTop:
 	message: 'Show new tasks at the top'
+removeCompletedTasksOnStart:
+	message: 'Remove completed tasks on browser start'
 monitorDownload:
 	message: 'Monitor download'
 monitorDownloadDesc:

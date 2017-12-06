@@ -884,8 +884,15 @@ const initialization = async function () {
 		taskOrder.has(v as number) ? taskOrder.get(v as number)! : Infinity
 	const taskIds = (await taskStorage.keys()).sort(
 		(v0, v1) => getTaskOrder(v0) - getTaskOrder(v1)) as number[]
-	for (const id of taskIds)
-		new Task(await taskStorage.get(id) as TaskPersistentData, id)
+	const completedTasks: Task[] = []
+	for (const id of taskIds) {
+		const data = await taskStorage.get(id) as TaskPersistentData
+		const task = new Task(data, id)
+		if (data.state === 'completed') completedTasks.push(task)
+	}
+	if (await Settings.get('removeCompletedTasksOnStart'))
+		for (const task of completedTasks)
+			task.remove()
 
 	void updateLinkContextMenu()
 

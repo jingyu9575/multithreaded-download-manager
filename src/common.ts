@@ -100,6 +100,7 @@ class Settings {
 	addContextMenuToLink = true
 	windowPosition = 'parentCenter' as 'default' | 'parentCenter'
 	newTaskAtTop = true
+	removeCompletedTasksOnStart = false
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB
