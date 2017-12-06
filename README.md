@@ -8,7 +8,7 @@ Experimental Firefox 57 extension: download manager with multithreading support.
 
 * **This extension is experimental. Use at your own risk.**
 * The requested file is first downloaded to Firefox's internal storage and then moved to the default download folder. Make sure there is enough disk space.
-* It is suggested that the extension's automatic update be disabled in the options. Also, remove or pause all the tasks before exiting Firefox or performing updates.
+* It is suggested to remove or pause all the tasks before exiting Firefox or performing updates. The extension can resume downloads after the update or the next start of Firefox (losing only about 1 second's progress), though this feature is less tested.
 * If the feature "out of process extensions" (enabled by default in Windows, disabled by default in Linux) is disabled, the browser will have problem saving the downloaded file. The extension can workaround it but an additional copy is required. It may also cause the popup window to be blank (resizing can fix it).
 * Firefox limits the number of simultaneous connections to a single server. If more than 6 threads are needed, increase network.http.max-persistent-connections-per-server and network.http.max-persistent-connections-per-proxy in about:config .
 * The extension requires access to the internal storage (indexedDB) and does not work with the "always private browsing" mode without granting exceptions
@@ -29,7 +29,7 @@ Monitoring download can be enabled in the options. When it is enabled, files lar
 
 * **这个扩展仍在测试阶段。请自担风险。**
 * 下载的文件会先保存到火狐的内部存储，然后移动到默认的下载目录。确认磁盘有足够的空间。
-* 建议在扩展选项中禁用自动更新。建议在退出浏览器或更新之前删除或暂停所有下载任务。
+* 建议在退出浏览器或更新之前删除或暂停所有下载任务。扩展可以在更新或重新启动后恢复下载（会失去约1秒进度），但这个功能测试较少。
 * 如果禁用了火狐的“主进程外扩展”功能（Windows下默认启用，Linux下默认禁用），浏览器保存下载文件时会出错。扩展可以自动纠正这个错误，但需要一次额外的文件复制。这也可能导致弹出窗口为空白（调整大小来修复）。
 * 火狐对同一服务器的同时连接数有限制。如果需要多于6个线程，在 about:config 中增加 network.http.max-persistent-connections-per-server 和 network.http.max-persistent-connections-per-proxy 的值。
 * 这个扩展需要使用火狐的内部存储（indexedDB），因此在“始终使用隐私浏览”模式下（不设置例外）无法工作。
