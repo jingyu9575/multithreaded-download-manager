@@ -2,8 +2,6 @@ applyI18n()
 
 document.querySelector('#cancel')!.addEventListener('click', closeWindow)
 
-var backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
-
 function setInputValues(options: Partial<TaskOptions>) {
 	for (const key of Object.keys(options) as (keyof typeof options)[])
 		if (options[key] !== undefined)

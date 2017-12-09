@@ -222,3 +222,5 @@ async function openPopupWindow(url: string) {
 		})
 	}
 }
+
+const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote

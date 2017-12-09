@@ -1,7 +1,5 @@
 applyI18n()
 
-var backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
-
 backgroundRemote.getFallbackEncoding().then(value => {
 	(document.querySelector('input[data-key="legacyFilenameEncoding"]'
 	) as HTMLInputElement).placeholder = value

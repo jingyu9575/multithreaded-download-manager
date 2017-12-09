@@ -221,8 +221,6 @@ class BroadcastRemote {
 }
 registerMessageRemoteHandler('remote-broadcast', new BroadcastRemote())
 
-var backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
-
 function findTargetTask(event: Event) {
 	const nullResult = { id: undefined, node: undefined, data: undefined }
 	let node = event.target as HTMLElement

@@ -2,8 +2,6 @@ applyI18n()
 
 document.querySelector('#cancel')!.addEventListener('click', closeWindow)
 
-var backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
-
 const itemList = document.querySelector('#item-list') as HTMLSelectElement
 const showCompleted = (document.querySelector('#show-completed') as HTMLInputElement)
 const removeAfterImport = (document.querySelector('#remove-after-import') as
