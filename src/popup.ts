@@ -101,7 +101,7 @@ function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 		})
 
 		node.querySelector('.edit')!.addEventListener('click',
-			() => { openPopupWindow(`edit.html#/${id}`) })
+			() => { backgroundRemote.openPopupWindow(`edit.html#/${id}`) })
 		node.querySelector('.remove')!.addEventListener('click', async event => {
 			if (data!.state === 'completed') {
 				if ((event as MouseEvent).shiftKey) {
@@ -246,9 +246,9 @@ tasksDiv.addEventListener('dblclick', event => {
 })
 
 document.querySelector('#create')!.addEventListener('click',
-	() => { openPopupWindow('edit.html') })
+	() => { backgroundRemote.openPopupWindow('edit.html') })
 document.querySelector('#import')!.addEventListener('click',
-	() => { openPopupWindow('import.html') })
+	() => { backgroundRemote.openPopupWindow('import.html') })
 document.querySelector('#options')!.addEventListener('click',
 	() => { browser.runtime.openOptionsPage() })
 

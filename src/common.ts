@@ -209,7 +209,10 @@ async function openPopupWindow(url: string) {
 	const centerAt = position === 'parentCenter' ?
 		await browser.windows.getLastFocused() : undefined
 	const width = 500, height = 300
-	const { id } = await browser.windows.create({ url, type: 'popup', width, height })
+	const { id, width: newWidth, height: newHeight } =
+		await browser.windows.create({ url, type: 'popup', width, height })
+	if (newWidth !== width || newHeight !== height)
+		await browser.windows.update(id!, { width, height })
 	if (centerAt) {
 		await browser.windows.update(id!, {
 			left: Math.max(0, centerAt.left! +

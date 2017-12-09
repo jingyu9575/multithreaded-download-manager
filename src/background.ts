@@ -936,6 +936,7 @@ class BackgroundRemote {
 		try { await taskStorage.get(-1) } catch { return false }
 		return true
 	}
+	openPopupWindow(url: string) { return openPopupWindow(url) }
 }
 registerMessageRemoteHandler('remote-background', new BackgroundRemote())
 
