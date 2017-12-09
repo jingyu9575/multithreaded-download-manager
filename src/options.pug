@@ -23,8 +23,14 @@ html
 			label.input-label
 				span(data-i18n='windowPosition')
 				select(data-key='windowPosition')
-					option(value='default' data-i18n='windowPositionDefault')
-					option(value='parentCenter' data-i18n='windowPositionParentCenter')
+					option(value='default' data-i18n='systemDefault')
+					option(value='parentCenter' data-i18n='parentCenter')
+					option(value='remember' data-i18n='rememberLast')
+			label.input-label
+				span(data-i18n='windowSize')
+				select(data-key='windowSize')
+					option(value='500x300') 500&times;300
+					option(value='remember' data-i18n='rememberLast')
 			label.input-label
 				input(type='checkbox' data-key='newTaskAtTop')
 				span(data-i18n='newTaskAtTop')

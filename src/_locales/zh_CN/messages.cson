@@ -96,10 +96,14 @@ addContextMenuToLink:
 	message: '添加到链接右键菜单'
 windowPosition:
 	message: '弹出扩展窗口的位置：'
-windowPositionDefault:
-	message: '系统默认位置'
-windowPositionParentCenter:
+systemDefault:
+	message: '系统默认'
+parentCenter:
 	message: '居中于当前窗口'
+rememberLast:
+	message: '记住上次的值'
+windowSize:
+	message: '弹出扩展窗口的大小：'
 newTaskAtTop:
 	message: '新任务显示在最上方'
 removeCompletedTasksOnStart:

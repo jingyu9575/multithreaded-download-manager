@@ -95,11 +95,15 @@ hideBadgeZero:
 addContextMenuToLink:
 	message: 'Add a context menu to links'
 windowPosition:
-	message: 'Show extension window at:'
-windowPositionDefault:
-	message: 'system default position'
-windowPositionParentCenter:
+	message: 'Position of extension window:'
+systemDefault:
+	message: 'system default'
+parentCenter:
 	message: 'center of the current window'
+rememberLast:
+	message: 'remember the last value'
+windowSize:
+	message: 'Size of extension window:'
 newTaskAtTop:
 	message: 'Show new tasks at the top'
 removeCompletedTasksOnStart:

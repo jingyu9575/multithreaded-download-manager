@@ -98,7 +98,8 @@ class Settings {
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
 	addContextMenuToLink = true
-	windowPosition = 'parentCenter' as 'default' | 'parentCenter'
+	windowPosition = 'parentCenter' as 'default' | 'parentCenter' | 'remember'
+	windowSize = '500x300' as '500x300' | 'remember'
 	newTaskAtTop = true
 	removeCompletedTasksOnStart = false
 
@@ -171,8 +172,9 @@ if (!browser.windows) browser.windows = {
 			if (tab) await browser.tabs.remove(tab.id!)
 		}
 	},
-	getLastFocused() { return undefined },
-	update() { },
+	async getLastFocused() { return {} },
+	async getCurrent() { return {} },
+	async update() { },
 	async create({ url }: { url: string }) {
 		await browser.tabs.create({ url, active: true })
 	}
@@ -205,22 +207,58 @@ function toHyphenCase(s: string) {
 }
 
 async function openPopupWindow(url: string) {
-	const position = await Settings.get('windowPosition')
-	const centerAt = position === 'parentCenter' ?
-		await browser.windows.getLastFocused() : undefined
-	const width = 500, height = 300
+	const { pathname } = new URL(url, location.href)
+	const settings = await Settings.load(['windowPosition', 'windowSize'])
+	let width = 500, height = 300,
+		left: number | undefined = undefined, top: number | undefined = undefined
+	if (settings.windowSize === 'remember') {
+		const value = localStorage.getItem(`windowSize.${pathname}`)
+		if (value) {
+			const obj = JSON.parse(value)
+			width = obj.width; height = obj.height
+		}
+	} else {
+		const match = /^(\d+)x(\d+)$/.exec(settings.windowSize)
+		if (match) { width = Number(match[1]); height = Number(match[2]) }
+	}
+	if (settings.windowPosition === 'remember') {
+		const value = localStorage.getItem(`windowPosition.${pathname}`)
+		if (value) {
+			const obj = JSON.parse(value)
+			left = obj.left; top = obj.top
+		}
+	} else if (settings.windowPosition === 'parentCenter') {
+		const centerAt = await browser.windows.getLastFocused()
+		if (centerAt && centerAt.id !== undefined /*Android*/) {
+			left = Math.max(0, centerAt.left! +
+				Math.floor((centerAt.width! - width) / 2))
+			top = Math.max(0, centerAt.top! +
+				Math.floor((centerAt.height! - height) / 2))
+		}
+	}
 	const { id, width: newWidth, height: newHeight } =
 		await browser.windows.create({ url, type: 'popup', width, height })
 	if (newWidth !== width || newHeight !== height)
 		await browser.windows.update(id!, { width, height })
-	if (centerAt) {
-		await browser.windows.update(id!, {
-			left: Math.max(0, centerAt.left! +
-				Math.floor((centerAt.width! - width) / 2)),
-			top: Math.max(0, centerAt.top! +
-				Math.floor((centerAt.height! - height) / 2)),
-		})
-	}
+	if (left !== undefined || top !== undefined)
+		await browser.windows.update(id!, { left, top })
 }
 
 const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
+
+const isBackground = new URL((browser.runtime.getManifest() as any).background.page,
+	location.href).pathname === location.pathname
+
+if (!isBackground) browser.windows.getCurrent().then(({ id, type }) => {
+	if (type !== 'popup') return
+	window.addEventListener('beforeunload', () => {
+		const { pathname } = location
+		browser.windows.getCurrent().then(({ id: id1, left, top, width, height }) => {
+			if (id !== id1) return
+			localStorage.setItem(`windowPosition.${pathname}`,
+				JSON.stringify({ left, top }))
+			localStorage.setItem(`windowSize.${pathname}`,
+				JSON.stringify({ width, height }))
+		})
+	})
+})
