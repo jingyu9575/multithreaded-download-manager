@@ -57,7 +57,7 @@ continueInBrowser:
 browserDownloadError:
 	message: 'Failed to save downloaded file ($1)'
 browserDownloadErased:
-	message: 'Saving canceled'
+	message: 'File saving is canceled'
 threadStopped:
 	message: 'A download thread stopped unexpectedly'
 unsuccessfulResponse:
@@ -82,6 +82,14 @@ confirmDeleteFile:
 	message: 'Delete downloaded file?'
 confirmRemove:
 	message: 'Remove this unfinished download?'
+general:
+	message: 'General'
+saveFileTo:
+	message: 'Save files to: '
+downloadFolder:
+	message: 'downloads folder'
+alwaysAsk:
+	message: 'always ask'
 interface:
 	message: 'Interface'
 showOnBadge:

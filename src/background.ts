@@ -486,8 +486,14 @@ class Task extends TaskPersistentData {
 						h.onerror = () => reject(h.error)
 					})
 				}
-				const saveId = await browser.downloads.download(
-					{ url: blobUrl.value!, filename })
+				const saveId = await browser.downloads.download({
+					url: blobUrl.value!, filename,
+					saveAs: {
+						systemDefault: undefined,
+						downloadFolder: false,
+						alwaysAsk: true,
+					}[await Settings.get('saveFileTo')],
+				})
 				try {
 					await waitForBrowserDownload(saveId)
 				} catch (error) {
@@ -502,8 +508,11 @@ class Task extends TaskPersistentData {
 				this.complete()
 				break
 			}
-		} catch (err) {
-			this.fail(err)
+		} catch (error) {
+			this.fileHandle = this.file.open('readwrite')
+			this.fail(error && !(error instanceof LocalizedError) &&
+				error.message.includes('Download canceled') ?
+				new LocalizedError('browserDownloadErased') : error)
 		} finally {
 			blobUrl.close()
 			this.isSavingDownload = false

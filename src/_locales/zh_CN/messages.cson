@@ -57,7 +57,7 @@ continueInBrowser:
 browserDownloadError:
 	message: '保存文件失败 ($1)'
 browserDownloadErased:
-	message: '保存文件被取消'
+	message: '文件保存被取消'
 threadStopped:
 	message: '下载线程意外终止'
 unsuccessfulResponse:
@@ -82,6 +82,14 @@ confirmDeleteFile:
 	message: '删除下载的文件？'
 confirmRemove:
 	message: '移除此项未完成的下载？'
+general:
+	message: '常规'
+saveFileTo:
+	message: '保存文件至：'
+downloadFolder:
+	message: '下载文件夹'
+alwaysAsk:
+	message: '总是询问'
 interface:
 	message: '界面'
 showOnBadge:

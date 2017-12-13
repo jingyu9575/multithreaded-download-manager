@@ -8,6 +8,14 @@ html
 		link(rel="icon" href="icons/icon.svg")
 	body
 		section
+			h2(data-i18n='general')
+			label.input-label
+				span(data-i18n='saveFileTo')
+				select(data-key='saveFileTo')
+					option(value='systemDefault' data-i18n='systemDefault')
+					option(value='downloadFolder' data-i18n='downloadFolder')
+					option(value='alwaysAsk' data-i18n='alwaysAsk')
+		section
 			h2(data-i18n='interface')
 			label.input-label
 				span(data-i18n='showOnBadge')

@@ -95,6 +95,8 @@ interface TaskUpdateData {
 class Settings {
 	version = 0
 
+	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
+
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
 	addContextMenuToLink = true
