@@ -90,6 +90,10 @@ downloadFolder:
 	message: 'downloads folder'
 alwaysAsk:
 	message: 'always ask'
+skipFirstSavingAttempt:
+	message: 'The first saving attempt is problematic and I want to skip it.'
+readMore:
+	message: 'Read more'
 interface:
 	message: 'Interface'
 showOnBadge:

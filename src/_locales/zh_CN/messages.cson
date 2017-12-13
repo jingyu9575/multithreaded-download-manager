@@ -90,6 +90,10 @@ downloadFolder:
 	message: '下载文件夹'
 alwaysAsk:
 	message: '总是询问'
+skipFirstSavingAttempt:
+	message: '第一次保存尝试有问题，我希望跳过它。'
+readMore:
+	message: '了解更多'
 interface:
 	message: '界面'
 showOnBadge:

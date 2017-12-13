@@ -486,21 +486,28 @@ class Task extends TaskPersistentData {
 						h.onerror = () => reject(h.error)
 					})
 				}
-				const saveId = await browser.downloads.download({
-					url: blobUrl.value!, filename,
-					saveAs: {
-						systemDefault: undefined,
-						downloadFolder: false,
-						alwaysAsk: true,
-					}[await Settings.get('saveFileTo')],
-				})
+				const saveId = (snapshot || !await Settings.get(
+					'skipFirstSavingAttempt')) ? await browser.downloads.download({
+						url: blobUrl.value!, filename,
+						saveAs: {
+							systemDefault: undefined,
+							downloadFolder: false,
+							alwaysAsk: true,
+						}[await Settings.get('saveFileTo')],
+					}) : NaN
 				try {
+					if (!Number.isFinite(saveId)) {
+						const error = new Error('Saving attempt is skipped')
+						browserDownloadCrashErrors.add(error)
+						throw error
+					}
 					await waitForBrowserDownload(saveId)
 				} catch (error) {
 					if (snapshot || lastTrial ||
 						!browserDownloadCrashErrors.has(error)) throw error
 					blobUrl.close()
-					await removeBrowserDownload(saveId)
+					if (Number.isFinite(saveId))
+						await removeBrowserDownload(saveId)
 					await this.file!.persistAsFileSnapshot(this.snapshotName)
 					continue
 				}
