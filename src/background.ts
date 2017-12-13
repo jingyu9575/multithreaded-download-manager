@@ -1161,3 +1161,14 @@ updateNewTaskAtTop()
 Settings.setListener('newTaskAtTop', updateNewTaskAtTop)
 
 browser.runtime.onUpdateAvailable.addListener(() => { })
+
+async function updateIconColor() {
+	const path = {
+		default: undefined,
+		dark: 'icons/icon.svg',
+		light: 'icons/icon-light.svg'
+	}[await Settings.get('iconColor')]
+	if (path) await browser.browserAction.setIcon({ path })
+}
+updateIconColor()
+Settings.setListener('iconColor', updateIconColor)

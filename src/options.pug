@@ -22,6 +22,12 @@ html
 		section
 			h2(data-i18n='interface')
 			label.input-label
+				span(data-i18n='iconColor')
+				select(data-key='iconColor')
+					option(value='default' data-i18n='systemDefaultAfterRestart')
+					option(value='dark' data-i18n='dark')
+					option(value='light' data-i18n='light')
+			label.input-label
 				span(data-i18n='showOnBadge')
 				select(data-key='badgeType')
 					option(value='none' data-i18n='badgeTypeNone')

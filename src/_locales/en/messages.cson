@@ -85,7 +85,7 @@ confirmRemove:
 general:
 	message: 'General'
 saveFileTo:
-	message: 'Save files to: '
+	message: 'Save files to:'
 downloadFolder:
 	message: 'downloads folder'
 alwaysAsk:
@@ -96,6 +96,14 @@ readMore:
 	message: 'Read more'
 interface:
 	message: 'Interface'
+iconColor:
+	message: 'Icon color:'
+systemDefaultAfterRestart:
+	message: 'system default (restart to take effect)'
+dark:
+	message: 'dark'
+light:
+	message: 'light'
 showOnBadge:
 	message: 'Show on the extension icon:'
 badgeTypeNone:

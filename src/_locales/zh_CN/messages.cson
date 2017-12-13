@@ -96,6 +96,14 @@ readMore:
 	message: '了解更多'
 interface:
 	message: '界面'
+iconColor:
+	message: '图标颜色：'
+systemDefaultAfterRestart:
+	message: '系统默认（重启生效）'
+dark:
+	message: '暗'
+light:
+	message: '亮'
 showOnBadge:
 	message: '在扩展图标上显示：'
 badgeTypeNone:
