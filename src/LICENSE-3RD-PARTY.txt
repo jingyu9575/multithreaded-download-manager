@@ -57,7 +57,7 @@ third-party/idb-file-storage.js
 [IDB File Storage](https://github.com/rpl/idb-file-storage)
 Licensed under the Mozilla Public License, v. 2.0
 
-icons/icon.svg (extension icon), icons/icon-light.svg
+icons/icon.svg (extension icon), icon/icon-color.svg
 Based on Firefox Photon Icon ["Download 16"](http://design.firefox.com/icons/viewer/#download)
 Licensed under the Mozilla Public License, v. 2.0
 

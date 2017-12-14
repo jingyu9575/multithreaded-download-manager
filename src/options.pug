@@ -5,7 +5,7 @@ html
 		meta(name="viewport" content="width=device-width, initial-scale=1.0")
 		title(data-i18n='extensionName')
 		link(rel='stylesheet' href='options.css')
-		link(rel="icon" href="icons/icon.svg")
+		link(rel="icon" href="icons/icon.svg#dark")
 	body
 		section
 			h2(data-i18n='general')
@@ -26,7 +26,11 @@ html
 				select(data-key='iconColor')
 					option(value='default' data-i18n='systemDefaultAfterRestart')
 					option(value='dark' data-i18n='dark')
+					option(value='darker' data-i18n='darker')
+					option(value='black' data-i18n='black')
 					option(value='light' data-i18n='light')
+					option(value='lighter' data-i18n='lighter')
+					option(value='white' data-i18n='white')
 			label.input-label
 				span(data-i18n='showOnBadge')
 				select(data-key='badgeType')

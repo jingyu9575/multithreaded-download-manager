@@ -102,8 +102,16 @@ systemDefaultAfterRestart:
 	message: '系统默认（重启生效）'
 dark:
 	message: '暗'
+darker:
+	message: '更暗'
+black:
+	message: '黑'
 light:
 	message: '亮'
+lighter:
+	message: '更亮'
+white:
+	message: '白'
 showOnBadge:
 	message: '在扩展图标上显示：'
 badgeTypeNone:

@@ -1,0 +1,16 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<svg 
+    xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 16 16">
+    <style>use:not(:target) { display: none; }</style>
+    <defs>
+        <path id="i" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M 6,1 v 9 M 10,1 v 9 M 3,7 l 5,5 l 5,-5 M 3,15 H 13"></path>
+    </defs>
+    <use id="light" href="#i" stroke="rgba(249, 249, 250, 0.7)"/>
+    <use id="lighter" href="#i" stroke="rgba(249, 249, 250, 0.8)"/>
+    <use id="black" href="#i" stroke="black"/>
+    <use id="dark" href="#i" stroke="rgba(24, 25, 26, 0.7)"/>
+    <use id="darker" href="#i" stroke="rgba(24, 25, 26, 0.8)"/>
+    <use id="white" href="#i" stroke="white"/>
+</svg>

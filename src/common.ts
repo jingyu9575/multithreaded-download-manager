@@ -98,7 +98,7 @@ class Settings {
 	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
 	skipFirstSavingAttempt = false
 	
-	iconColor = 'default' as 'default' | 'dark' | 'light'
+	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
 	addContextMenuToLink = true

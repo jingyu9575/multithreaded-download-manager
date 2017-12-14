@@ -102,8 +102,16 @@ systemDefaultAfterRestart:
 	message: 'system default (restart to take effect)'
 dark:
 	message: 'dark'
+darker:
+	message: 'darker'
+black:
+	message: 'black'
 light:
 	message: 'light'
+lighter:
+	message: 'lighter'
+white:
+	message: 'white'
 showOnBadge:
 	message: 'Show on the extension icon:'
 badgeTypeNone:
