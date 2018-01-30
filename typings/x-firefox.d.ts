@@ -12,19 +12,6 @@ interface RequestInit {
 	signal?: AbortSignal
 }
 
-interface IDBObjectStore {
-	getAll(query?: IDBKeyRange | IDBValidKey, count?: number): IDBRequest
-	getAllKeys(query?: IDBKeyRange | IDBValidKey, count?: number): IDBRequest
-}
-
-interface IDBIndex {
-	getAll(query?: IDBKeyRange | IDBValidKey, count?: number): IDBRequest
-}
-
-interface IDBDatabase {
-	createMutableFile(name: string, type: string): IDBRequest
-}
-
 declare namespace browser.webRequest {
 	function filterResponseData(requestId: string): StreamFilter
 
