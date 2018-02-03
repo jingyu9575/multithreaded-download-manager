@@ -110,7 +110,7 @@ class SimpleStorageOptions {
 }
 
 class SimpleStorage extends SimpleStorageOptions {
-	private database: IDBDatabase
+	private database?: IDBDatabase
 	readonly initialization: Promise<void>
 
 	static request(r: IDBRequest) {
@@ -138,9 +138,9 @@ class SimpleStorage extends SimpleStorageOptions {
 		if (!this.database) await this.initialization
 		return new Promise<any>((resolve, reject) => {
 			const store = mode === 'nolock' ? undefined :
-				this.database.transaction(this.storeName, mode)
+				this.database!.transaction(this.storeName, mode)
 					.objectStore(this.storeName)
-			const iterator = generator(store!, this.database)
+			const iterator = generator(store!, this.database!)
 			function callNext(result: any) {
 				const { value: request, done } = iterator.next(result)
 				if (done) return resolve(request as any)
@@ -183,7 +183,7 @@ class SimpleStorage extends SimpleStorageOptions {
 }
 
 class WritableFile {
-	private mutableFile: IDBMutableFile
+	private mutableFile?: IDBMutableFile
 	private readonly initialization: Promise<void>
 	private size = 0
 	private readonly mainThread = new CriticalSection()
@@ -226,7 +226,7 @@ class WritableFile {
 		await this.storage.delete(this.mergeKeyRange)
 	}
 
-	private get handle() { return this.mutableFile.open('readwrite') }
+	private get handle() { return this.mutableFile!.open('readwrite') }
 
 	private relaxedWrite(data: string | ArrayBuffer, location: number): Promise<void> {
 		const that = this
@@ -318,9 +318,9 @@ class TaskPersistentData extends TaskOptions {
 class Task extends TaskPersistentData {
 	readonly id: number
 	private readonly criticalSection = new CriticalSection()
-	private file: WritableFile
-	private currentMaxThreads: number
-	private currentMaxRetries: number
+	private file?: WritableFile
+	private currentMaxThreads = 1
+	private currentMaxRetries = 0
 	private startTime?: Date
 	private startSize = 0
 	currentSize = 0
@@ -404,7 +404,7 @@ class Task extends TaskPersistentData {
 				if (chunk.currentSize)
 					data.push(chunk.initPosition, chunk.currentSize)
 			data[0] = data.length - 1
-			await this.file.write(
+			await this.file!.write(
 				Float64Array.from(data).buffer as ArrayBuffer, this.totalSize)
 		})
 	}
@@ -412,10 +412,10 @@ class Task extends TaskPersistentData {
 	async readChunks(totalSize: number) {
 		try {
 			const nBytes = Float64Array.BYTES_PER_ELEMENT
-			const size = new Float64Array(await this.file
+			const size = new Float64Array(await this.file!
 				.relaxedRead(nBytes, totalSize))[0]
 			if (!size /* 0 | undefined */) return
-			const data = Array.from(new Float64Array(await this.file
+			const data = Array.from(new Float64Array(await this.file!
 				.relaxedRead(nBytes * size, totalSize + nBytes)))
 			if (data.length !== size) return
 			let chunk: Chunk | undefined = undefined
@@ -612,7 +612,7 @@ class Task extends TaskPersistentData {
 				if (snapshot) {
 					blobUrl.open(snapshot)
 				} else {
-					await this.file.getBlob(v => blobUrl.open(v), this.totalSize)
+					await this.file!.getBlob(v => blobUrl.open(v), this.totalSize)
 				}
 				const saveId = (snapshot || !await Settings.get(
 					'skipFirstSavingAttempt')) ? await browser.downloads.download({
@@ -637,7 +637,7 @@ class Task extends TaskPersistentData {
 					if (Number.isFinite(saveId))
 						await removeBrowserDownload(saveId)
 					await fileStorage.initialization /* prevent async */
-					await this.file.getBlob(blob =>
+					await this.file!.getBlob(blob =>
 						fileStorage.set(this.snapshotName, blob))
 					continue
 				}
@@ -663,7 +663,7 @@ class Task extends TaskPersistentData {
 	}
 
 	async cleanupFileStorage() {
-		void this.file.destroy()
+		if (this.file) void this.file.destroy()
 		delete this.file
 		void fileStorage.delete(this.snapshotName)
 	}
@@ -697,7 +697,7 @@ class Task extends TaskPersistentData {
 			if (addedSize === chunk.remainingSize) { remove = adjust = true }
 			if (chunk.remainingSize > 0) {
 				try {
-					await this.file.write(data, chunk.currentPosition)
+					await this.file!.write(data, chunk.currentPosition)
 				} catch (error) { return this.setFailure(error) }
 				chunk.currentSize += addedSize
 				this.currentSize += addedSize
@@ -820,7 +820,7 @@ class Thread {
 	static nextId = 0
 	readonly id = Thread.nextId++
 
-	private response: Response
+	private response?: Response
 	readonly initPosition: number
 	private readonly controller = new AbortController()
 	preventAbort = false

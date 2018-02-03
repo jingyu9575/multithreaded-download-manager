@@ -1,17 +1,3 @@
-interface AbortSignal extends EventTarget {
-	readonly aborted: boolean
-	onabort: () => void
-}
-
-declare class AbortController {
-	signal: AbortSignal
-	abort(): void
-}
-
-interface RequestInit {
-	signal?: AbortSignal
-}
-
 declare namespace browser.webRequest {
 	function filterResponseData(requestId: string): StreamFilter
 
@@ -53,5 +39,3 @@ declare class TextDecoder {
 	decode(input?: ArrayBuffer | ArrayBufferView,
 		options?: { stream?: boolean }): string
 }
-
-declare function escape(str: string): string
