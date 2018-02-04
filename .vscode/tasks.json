@@ -26,7 +26,7 @@
 					"owner": "typescript",
 					"fileLocation": "relative",
 					"pattern": {
-						"regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
+						"regexp": "^([^\\s][^:]*):(\\d+|\\d+:\\d+|\\d+:\\d+:\\d+:\\d+)\\s+-\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
 						"file": 1,
 						"location": 2,
 						"severity": 3,
@@ -35,8 +35,8 @@
 					},
 					"background": {
 						"activeOnStart": true,
-						"beginsPattern": "^\\s*(?:上午|下午)\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? - (File change detected\\. Starting incremental compilation\\.\\.\\.|检测到文件更改。正在启动增量编译\\.\\.\\.)",
-						"endsPattern": "^\\s*(?:上午|下午)?\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? - (Compilation complete\\. Watching for file changes\\.|编译完成。查看文件更改。)"
+						"beginsPattern": "(File change detected\\. Starting incremental compilation\\.\\.\\.|检测到文件更改。正在启动增量编译\\.\\.\\.)",
+						"endsPattern": "(Compilation complete\\. Watching for file changes\\.|编译完成。查看文件更改。)"
 					}
 				}
 			]
