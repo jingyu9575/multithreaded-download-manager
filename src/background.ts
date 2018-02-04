@@ -202,13 +202,10 @@ class WritableFile {
 			if (mode === 'open')
 				this.mutableFile = await storage.get(filename)
 			if (this.mutableFile) {
-				const { promise, resolve } = new Deferred()
-				this.mergeThread.sync(() => promise) // delay merge
 				const specs: WritableFile.MergeSpec[] =
 					await storage.getAll(this.mergeKeyRange)
 				for (const spec of specs) this.scheduleMerge(spec)
 				if (specs.length) this.nextId = specs[specs.length - 1].id + 1
-				resolve()
 			} else {
 				this.mutableFile = await storage.transaction(function* (_, db) {
 					return yield db.createMutableFile(filename,
