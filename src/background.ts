@@ -935,13 +935,27 @@ browser.webRequest.onHeadersReceived.addListener(({ requestId, statusCode }) => 
 		downloadRequestMap.delete(requestId)
 		thread.preventAbort = true
 		const filter = browser.webRequest.filterResponseData(requestId)
+		const buffers: ArrayBuffer[] = []
+		let lastCommitTime = performance.now()
+
+		const commit = () => {
+			const data = new Uint8Array(buffers.reduce((s, v) => s + v.byteLength, 0))
+			buffers.reduce((s, v) =>
+				(data.set(new Uint8Array(v), s), s + v.byteLength), 0)
+			void thread.task.write(thread, data.buffer as ArrayBuffer)
+			buffers.length = 0
+			lastCommitTime = performance.now()
+		}
+
+		const stop = () => { commit(); filter.close() }
+
 		filter.onstart = () => { if (!thread.exists) filter.close() }
 		filter.ondata = ({ data }) => {
-			if (!thread.exists) filter.close()
-			else thread.task.write(thread, data)
+			if (!thread.exists) { stop(); return; }
+			buffers.push(data)
+			if (performance.now() - lastCommitTime > 300) commit()
 		}
-		filter.onstop = () => { filter.close() }
-		filter.onerror = () => { filter.close() }
+		filter.onstop = stop; filter.onerror = stop
 	}
 	return {}
 }, downloadRequestFilter, ['blocking'])
