@@ -184,29 +184,15 @@ class SimpleStorage extends SimpleStorageOptions {
 
 class WritableFile {
 	private mutableFile?: IDBMutableFile
+	private handle?: IDBFileHandle
 	private readonly initialization: Promise<void>
-	private size = 0
-	private readonly mainThread = new CriticalSection()
-	private readonly mergeThread = new CriticalSection()
-	private pendingBlobCount = 0
-	private nextId = 0
-
-	private mergeKey(id: number) { return ['merge', this.filename, id] }
-	private get mergeKeyRange() {
-		return IDBKeyRange.bound(this.mergeKey(-Infinity), this.mergeKey(Infinity))
-	}
 
 	constructor(private readonly storage: SimpleStorage,
 		private readonly filename: string, mode: 'create' | 'open') {
 		this.initialization = (async () => {
 			if (mode === 'open')
 				this.mutableFile = await storage.get(filename)
-			if (this.mutableFile) {
-				const specs: WritableFile.MergeSpec[] =
-					await storage.getAll(this.mergeKeyRange)
-				for (const spec of specs) this.scheduleMerge(spec)
-				if (specs.length) this.nextId = specs[specs.length - 1].id + 1
-			} else {
+			if (!this.mutableFile) {
 				this.mutableFile = await storage.transaction(function* (_, db) {
 					return yield db.createMutableFile(filename,
 						'application/octet-stream')
@@ -216,82 +202,39 @@ class WritableFile {
 		})()
 	}
 
-	private destroyed = false
-	async destroy() {
-		this.destroyed = true
-		await this.storage.delete(this.filename)
-		await this.storage.delete(this.mergeKeyRange)
+	async destroy() { await this.storage.delete(this.filename) }
+
+	private async lock<T>(fn: () => T | Promise<T>, location?: number) {
+		if (!this.mutableFile) await this.initialization
+		if (!this.handle || !this.handle.active)
+			this.handle = this.mutableFile!.open('readwrite')
+		return fn()
 	}
 
-	private get handle() { return this.mutableFile!.open('readwrite') }
+	write(data: string | ArrayBuffer, location: number): Promise<void> {
+		return this.lock(() => {
+			this.handle!.location = location
+			return SimpleStorage.request(this.handle!.write(data))
+		})
+	}
 
-	private relaxedWrite(data: string | ArrayBuffer, location: number): Promise<void> {
+	read(size: number, location: number): Promise<ArrayBuffer> {
+		return this.lock(() => {
+			this.handle!.location = location
+			return SimpleStorage.request(this.handle!.readAsArrayBuffer(size))
+		})
+	}
+
+	truncate(start?: number): Promise<void> {
+		return this.lock(() => SimpleStorage.request(this.handle!.truncate(start)))
+	}
+
+	async getBlob<T>(callback: (blob: Blob) => T): Promise<T> {
+		if (!this.mutableFile) await this.initialization
 		const that = this
-		return this.storage.transaction(function* () {
-			if (that.destroyed) return
-			const { handle } = that
-			handle.location = location
-			yield handle.write(data)
-			if (handle.location > that.size)
-				that.size = handle.location
+		return this.storage.transaction(function* (): any {
+			return callback(yield that.mutableFile!.getFile())
 		}, 'nolock')
-	}
-
-	private static blobToArrayBuffer(blob: Blob) {
-		return new Promise<ArrayBuffer>((resolve, reject) => {
-			const fileReader = new FileReader()
-			fileReader.onload = () => resolve(fileReader.result)
-			fileReader.onerror = () => reject(fileReader.error)
-			fileReader.readAsArrayBuffer(blob)
-		})
-	}
-
-	private scheduleMerge({ id, blob, location }: WritableFile.MergeSpec) {
-		this.pendingBlobCount++
-		void this.mergeThread.sync(async () => {
-			await this.relaxedWrite(
-				await WritableFile.blobToArrayBuffer(blob), location)
-			await this.storage.delete(this.mergeKey(id))
-			this.pendingBlobCount--
-		})
-	}
-
-	async write(data: string | ArrayBuffer, location: number) {
-		if (!this.mutableFile) await this.initialization
-		return this.mainThread.sync(async () => {
-			if (location <= this.size && !this.pendingBlobCount)
-				return await this.relaxedWrite(data, location)
-			const id = this.nextId++
-			const key = this.mergeKey(id)
-			await this.storage.set(key,
-				{ id, location, blob: new Blob([data]) } as WritableFile.MergeSpec)
-			this.scheduleMerge(await this.storage.get(key))
-		})
-	}
-
-	async relaxedRead(size: number, location: number): Promise<ArrayBuffer> {
-		if (!this.mutableFile) await this.initialization
-		return this.mainThread.sync(async () => {
-			const that = this
-			return this.storage.transaction(function* () {
-				const { handle } = that
-				handle.location = location
-				return yield handle.readAsArrayBuffer(size)
-			}, 'nolock')
-		})
-	}
-
-	async getBlob<T>(callback: (blob: Blob) => T, truncateAt?: number): Promise<T> {
-		if (!this.mutableFile) await this.initialization
-		return this.mainThread.sync(() => this.mergeThread.sync(async () => {
-			const that = this
-			return this.storage.transaction(function* (): any {
-				const { handle } = that
-				if (truncateAt !== undefined)
-					yield handle.truncate(truncateAt)
-				return callback(yield handle.mutableFile.getFile())
-			})
-		}))
 	}
 }
 namespace WritableFile {
@@ -410,10 +353,10 @@ class Task extends TaskPersistentData {
 		try {
 			const nBytes = Float64Array.BYTES_PER_ELEMENT
 			const size = new Float64Array(await this.file!
-				.relaxedRead(nBytes, totalSize))[0]
+				.read(nBytes, totalSize))[0]
 			if (!size /* 0 | undefined */) return
 			const data = Array.from(new Float64Array(await this.file!
-				.relaxedRead(nBytes * size, totalSize + nBytes)))
+				.read(nBytes * size, totalSize + nBytes)))
 			if (data.length !== size) return
 			let chunk: Chunk | undefined = undefined
 			let firstChunk: Chunk | undefined = undefined
@@ -609,7 +552,8 @@ class Task extends TaskPersistentData {
 				if (snapshot) {
 					blobUrl.open(snapshot)
 				} else {
-					await this.file!.getBlob(v => blobUrl.open(v), this.totalSize)
+					await this.file!.truncate(this.totalSize)
+					await this.file!.getBlob(v => blobUrl.open(v))
 				}
 				const saveId = (snapshot || !await Settings.get(
 					'skipFirstSavingAttempt')) ? await browser.downloads.download({

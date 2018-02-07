@@ -22,6 +22,7 @@ interface IDBMutableFile {
 interface IDBFileHandle {
 	mutableFile: IDBMutableFile
 	location: number
+	active: boolean
 
 	write(data: string | ArrayBuffer): IDBRequest
 	truncate(start?: number): IDBRequest
