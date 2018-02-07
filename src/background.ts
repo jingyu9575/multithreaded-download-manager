@@ -261,7 +261,7 @@ class Task extends TaskPersistentData {
 	private file?: WritableFile
 	private currentMaxThreads = 1
 	private currentMaxRetries = 0
-	private startTime?: Date
+	private startTime?: number
 	private startSize = 0
 	currentSize = 0
 	private firstChunk?: Chunk
@@ -378,7 +378,7 @@ class Task extends TaskPersistentData {
 		const isProgressing = DownloadState.isProgressing(state)
 		if (DownloadState.isProgressing(this.state) !== isProgressing) {
 			this.startTime =
-				DownloadState.isProgressing(state) ? new Date() : undefined
+				DownloadState.isProgressing(state) ? performance.now() : undefined
 			this.startSize = this.currentSize
 
 			if (!isProgressing) {
@@ -711,9 +711,9 @@ class Task extends TaskPersistentData {
 	}
 
 	get averageSpeed() {
-		return this.startTime && (
+		return this.startTime === undefined ? undefined : (
 			(this.currentSize - this.startSize) /
-			((Date.now() - this.startTime.getTime()) / 1000))
+			((performance.now() - this.startTime) / 1000))
 	}
 }
 
