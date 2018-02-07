@@ -761,10 +761,9 @@ class Thread {
 	static nextId = 0
 	readonly id = Thread.nextId++
 
-	private response?: Response
 	readonly initPosition: number
 	private readonly controller = new AbortController()
-	preventAbort = false
+	private preventAbort = false
 
 	constructor(readonly chunk: Chunk) {
 		this.initPosition = this.chunk.currentPosition
@@ -791,38 +790,19 @@ class Thread {
 			threadId: this.id,
 		} as ThreadInfo))
 
-		this.response = await fetch(this.task.url, {
+		const response = await fetch(this.task.url, {
 			credentials: "include",
 			signal: this.controller.signal,
 			headers,
 		})
 		if (this.controller.signal.aborted) throw abortError()
 
-		if (!this.response.ok) {
+		if (!response.ok) {
 			throw new LocalizedError('unsuccessfulResponse',
-				this.response.status, this.response.statusText)
+				response.status, response.statusText)
 		}
 
-		if (!this.chunk.next) {
-			let totalSize: number | undefined = Number(
-				this.response.headers.get('content-length') || NaN)
-			if (!Number.isInteger(totalSize)) {
-				totalSize = undefined
-				Log.warn(browser.i18n.getMessage(
-					'rangesNotSupported', ['Content-Length']))
-			}
-			const acceptRanges = (this.response.headers.get('accept-ranges')
-				|| '').toLowerCase() === 'bytes'
-			if (!acceptRanges)
-				Log.warn(browser.i18n.getMessage(
-					'rangesNotSupported', ['Accept-Ranges']))
-
-			await this.task.setDetail(this,
-				await getSuggestedFilename(this.response.url,
-					this.response.headers.get('content-disposition') || ''),
-				totalSize, acceptRanges)
-		}
-		await this.response.arrayBuffer() // empty, only for catching error
+		await response.arrayBuffer() // empty, only for catching error
 		this.task.finishThread(this, undefined)
 	}
 
@@ -838,6 +818,56 @@ class Thread {
 			chunks: this.chunk.updateData,
 			currentSize: this.task.currentSize,
 		}]])
+	}
+
+	async setupFilter({ requestId, url, statusCode, responseHeaders }: {
+		requestId: string,
+		url: string,
+		responseHeaders?: browser.webRequest.HttpHeaders,
+		statusCode: number,
+	}) {
+		this.preventAbort = true
+		if (!this.chunk.next) {
+			const headers = new Map(responseHeaders!.map(({ name, value })
+				: [string, string] => [name.toLowerCase(), value || '']))
+			let totalSize: number | undefined = Number(
+				headers.get('content-length') || NaN)
+			if (!Number.isInteger(totalSize)) {
+				totalSize = undefined
+				Log.warn(browser.i18n.getMessage(
+					'rangesNotSupported', ['Content-Length']))
+			}
+			const acceptRanges = (headers.get('accept-ranges') || '')
+				.toLowerCase() === 'bytes'
+			if (!acceptRanges)
+				Log.warn(browser.i18n.getMessage(
+					'rangesNotSupported', ['Accept-Ranges']))
+
+			this.task.setDetail(this, await getSuggestedFilename(
+				url, headers.get('content-disposition') || ''),
+				totalSize, acceptRanges)
+		}
+
+		const filter = browser.webRequest.filterResponseData(requestId)
+		const buffers: ArrayBuffer[] = []
+		let lastCommitTime = performance.now()
+
+		const commit = () => {
+			const data = new Uint8Array(buffers.reduce((s, v) => s + v.byteLength, 0))
+			buffers.reduce((s, v) =>
+				(data.set(new Uint8Array(v), s), s + v.byteLength), 0)
+			void this.task.write(this, data.buffer as ArrayBuffer)
+			buffers.length = 0
+			lastCommitTime = performance.now()
+		}
+		const stop = () => { commit(); filter.close() }
+		filter.onstart = () => { if (!this.exists) filter.close() }
+		filter.ondata = ({ data }) => {
+			if (!this.exists) { stop(); return }
+			buffers.push(data)
+			if (performance.now() - lastCommitTime > 300) commit()
+		}
+		filter.onstop = stop; filter.onerror = stop
 	}
 }
 
@@ -869,37 +899,14 @@ browser.webRequest.onBeforeSendHeaders.addListener(({ requestId, requestHeaders 
 	return { requestHeaders: newHeaders }
 }, downloadRequestFilter, ['requestHeaders', 'blocking'])
 
-browser.webRequest.onHeadersReceived.addListener(({ requestId, statusCode }) => {
+browser.webRequest.onHeadersReceived.addListener(details => {
+	const { requestId, statusCode } = details
 	const thread = downloadRequestMap.get(requestId)
 	if (!thread) return {}
-	if (statusCode >= 200 && statusCode < 300) {
-		downloadRequestMap.delete(requestId)
-		thread.preventAbort = true
-		const filter = browser.webRequest.filterResponseData(requestId)
-		const buffers: ArrayBuffer[] = []
-		let lastCommitTime = performance.now()
-
-		const commit = () => {
-			const data = new Uint8Array(buffers.reduce((s, v) => s + v.byteLength, 0))
-			buffers.reduce((s, v) =>
-				(data.set(new Uint8Array(v), s), s + v.byteLength), 0)
-			void thread.task.write(thread, data.buffer as ArrayBuffer)
-			buffers.length = 0
-			lastCommitTime = performance.now()
-		}
-
-		const stop = () => { commit(); filter.close() }
-
-		filter.onstart = () => { if (!thread.exists) filter.close() }
-		filter.ondata = ({ data }) => {
-			if (!thread.exists) { stop(); return; }
-			buffers.push(data)
-			if (performance.now() - lastCommitTime > 300) commit()
-		}
-		filter.onstop = stop; filter.onerror = stop
-	}
-	return {}
-}, downloadRequestFilter, ['blocking'])
+	if (!(statusCode >= 200 && statusCode < 300)) return {}
+	downloadRequestMap.delete(requestId)
+	return thread.setupFilter(details).then(() => ({}))
+}, downloadRequestFilter, ['blocking', 'responseHeaders'])
 
 browser.webRequest.onErrorOccurred.addListener(({ requestId }) => {
 	downloadRequestMap.delete(requestId)
