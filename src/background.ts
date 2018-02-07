@@ -433,8 +433,11 @@ class Task extends TaskPersistentData {
 				pauseIsStop: !this.isRangeSupported,
 			}]])
 			void this.persist()
-			this.adjustThreads()
 		})
+	}
+
+	spawnOtherThreads() {
+		void this.criticalSection.sync(() => this.adjustThreads())
 	}
 
 	private adjustThreads() {
@@ -846,6 +849,8 @@ class Thread {
 			this.task.setDetail(this, await getSuggestedFilename(
 				url, headers.get('content-disposition') || ''),
 				totalSize, acceptRanges)
+
+			this.task.spawnOtherThreads()
 		}
 
 		const filter = browser.webRequest.filterResponseData(requestId)
