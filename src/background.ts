@@ -204,8 +204,11 @@ class WritableFile {
 
 	async destroy() { await this.storage.delete(this.filename) }
 
+	disabled = 0
+
 	private async lock<T>(fn: () => T | Promise<T>, location?: number) {
 		if (!this.mutableFile) await this.initialization
+		if (this.disabled > 0) throw abortError()
 		if (!this.handle || !this.handle.active)
 			this.handle = this.mutableFile!.open('readwrite')
 		return fn()
@@ -447,12 +450,18 @@ class Task extends TaskPersistentData {
 			}]])
 			void this.persist()
 
-			if (this.isRangeSupported) {
-				console.warn('start preallocating at', totalSize)
-				await this.file!.write(
-					new Float64Array([1]).buffer as ArrayBuffer, totalSize!)
-				await this.file!.flush()
-				console.warn('stop preallocating')
+			if (this.isRangeSupported && totalSize && totalSize > 16) {
+				try {
+					const byte = new Uint8Array([1]).buffer as ArrayBuffer
+					const interval = 64 * 1024 ** 2
+					for (let i = 0; i < totalSize; i += interval)
+						await this.file!.write(byte, i)
+					await this.file!.write(byte, totalSize - 1)
+					await this.file!.flush()
+				} catch (error) {
+					this.lastChunk = undefined
+					throw error
+				}
 				this.isPreallocating = false
 				broadcastRemote.update([[this.id, { isPreallocating: false }]])
 			}
@@ -532,7 +541,10 @@ class Task extends TaskPersistentData {
 	}
 
 	pause() {
+		if (!DownloadState.canPause(this.state)) return
+		if (this.file) this.file.disabled++
 		void this.criticalSection.sync(() => {
+			if (this.file) this.file.disabled--
 			if (!DownloadState.canPause(this.state)) return
 			this.setState('paused')
 		})
@@ -634,7 +646,9 @@ class Task extends TaskPersistentData {
 	}
 
 	remove() {
+		if (this.file) this.file.disabled++
 		this.criticalSection.sync(() => {
+			if (this.file) this.file.disabled--
 			for (const thread of [...this.threads.values()]) thread.remove()
 			Task.list.splice(Task.list.indexOf(this), 1)
 			void this.cleanupFileStorage()

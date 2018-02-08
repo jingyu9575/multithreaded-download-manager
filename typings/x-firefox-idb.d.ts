@@ -27,5 +27,6 @@ interface IDBFileHandle {
 	write(data: string | ArrayBuffer): IDBRequest
 	truncate(start?: number): IDBRequest
 	flush(): IDBRequest
+	abort(): IDBRequest
 	readAsArrayBuffer(size: number): IDBRequest
 }
