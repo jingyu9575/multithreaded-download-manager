@@ -18,6 +18,8 @@ deleted:
 	message: '已删除'
 removeButton:
 	message: '移除 \nShift：删除文件'
+preallocating:
+	message: '预分配中'
 emptyTasks:
 	message: '没有下载任务。'
 noStorageAccess:

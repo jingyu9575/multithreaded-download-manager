@@ -182,8 +182,8 @@ function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 		data.currentSize / (data.totalSize || NaN) * 1000) / 10
 	const texts = {
 		filename: data.filename || getSuggestedFilenameFromURL(data.url || ''),
-		averageSpeed: (data.averageSpeed ?
-			formatSize(data.averageSpeed) : '-- ') + 'B/s',
+		averageSpeed: data.isPreallocating ? browser.i18n.getMessage('preallocating') :
+			(data.averageSpeed ? formatSize(data.averageSpeed) : '-- ') + 'B/s',
 		currentSize: formatSize(data.currentSize) + 'B',
 		totalSize: data.totalSize != undefined ?
 			formatSize(data.totalSize) + 'B' : '?',

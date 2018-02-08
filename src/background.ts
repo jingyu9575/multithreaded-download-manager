@@ -229,6 +229,10 @@ class WritableFile {
 		return this.lock(() => SimpleStorage.request(this.handle!.truncate(start)))
 	}
 
+	flush(): Promise<void> {
+		return this.lock(() => SimpleStorage.request(this.handle!.flush()))
+	}
+
 	async getBlob<T>(callback: (blob: Blob) => T): Promise<T> {
 		if (!this.mutableFile) await this.initialization
 		const that = this
@@ -270,6 +274,7 @@ class Task extends TaskPersistentData {
 	fileAccessId?: number
 	private isRangeSupported = true
 	private isSavingDownload = false
+	private isPreallocating = false
 
 	get totalSize() { return this.lastChunk ? this.lastChunk.initPosition : undefined }
 	set totalSize(v) { } // used in base class
@@ -335,17 +340,22 @@ class Task extends TaskPersistentData {
 		await taskStorage.set(this.id, data)
 	}
 
+	private get isWriteChunksDisabled() {
+		return this.totalSize === undefined || this.isPreallocating ||
+			!DownloadState.canWriteChunks(this.state)
+	}
+
 	async writeChunks() {
+		if (this.isWriteChunksDisabled) return
 		await this.criticalSection.sync(async () => {
-			if (!DownloadState.canWriteChunks(this.state)) return
-			if (this.totalSize === undefined) return
+			if (this.isWriteChunksDisabled) return
 			const data: number[] = [0]
 			for (const chunk of this.getChunks())
 				if (chunk.currentSize)
 					data.push(chunk.initPosition, chunk.currentSize)
 			data[0] = data.length - 1
 			await this.file!.write(
-				Float64Array.from(data).buffer as ArrayBuffer, this.totalSize)
+				Float64Array.from(data).buffer as ArrayBuffer, this.totalSize!)
 		})
 	}
 
@@ -380,6 +390,7 @@ class Task extends TaskPersistentData {
 			this.startTime =
 				DownloadState.isProgressing(state) ? performance.now() : undefined
 			this.startSize = this.currentSize
+			this.isPreallocating = false
 
 			if (!isProgressing) {
 				for (const thread of [...this.threads.values()]) thread.remove()
@@ -419,7 +430,7 @@ class Task extends TaskPersistentData {
 
 	setDetail(thread: Thread, filename: string, totalSize: number | undefined,
 		acceptRanges: boolean) {
-		void this.criticalSection.sync(() => {
+		return this.criticalSection.sync(async () => {
 			if (!this.firstChunk || this.firstChunk.thread !== thread) return
 			assert(!this.firstChunk.next)
 			if (!this.filename) this.filename = filename
@@ -428,11 +439,24 @@ class Task extends TaskPersistentData {
 				if (this.firstChunk.remainingSize <= 0) thread.remove()
 			}
 			this.isRangeSupported = acceptRanges && totalSize !== undefined
+			if (this.isRangeSupported) this.isPreallocating = true
 			broadcastRemote.update([[this.id, {
 				filename: this.filename, totalSize: this.totalSize,
 				pauseIsStop: !this.isRangeSupported,
+				isPreallocating: this.isPreallocating,
 			}]])
 			void this.persist()
+
+			if (this.isRangeSupported) {
+				console.warn('start preallocating at', totalSize)
+				await this.file!.write(
+					new Float64Array([1]).buffer as ArrayBuffer, totalSize!)
+				await this.file!.flush()
+				console.warn('stop preallocating')
+				this.isPreallocating = false
+				broadcastRemote.update([[this.id, { isPreallocating: false }]])
+			}
+
 			this.adjustThreads()
 		})
 	}
@@ -707,6 +731,7 @@ class Task extends TaskPersistentData {
 				Object.assign(v0, v1.updateData), {} as { [id: number]: number }),
 			fileAccessId: this.fileAccessId,
 			pauseIsStop: !this.isRangeSupported,
+			isPreallocating: this.isPreallocating,
 		}
 	}
 
@@ -843,7 +868,7 @@ class Thread {
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Accept-Ranges']))
 
-			this.task.setDetail(this, await getSuggestedFilename(
+			await this.task.setDetail(this, await getSuggestedFilename(
 				url, headers.get('content-disposition') || ''),
 				totalSize, acceptRanges)
 		}

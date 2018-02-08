@@ -90,6 +90,7 @@ interface TaskUpdateData {
 	fileAccessId?: number
 	pauseIsStop?: boolean
 	canceled?: boolean
+	isPreallocating?: boolean
 }
 
 class Settings {

@@ -18,6 +18,8 @@ deleted:
 	message: 'Deleted'
 removeButton:
 	message: 'Remove \nShift: Delete file'
+preallocating:
+	message: 'Preallocating'
 emptyTasks:
 	message: 'There is no download task.'
 noStorageAccess:
