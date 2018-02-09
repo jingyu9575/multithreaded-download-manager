@@ -463,6 +463,10 @@ class Task extends TaskPersistentData {
 					this.lastChunk = undefined
 					throw error
 				} finally {
+					if (this.startTime !== undefined) {
+						this.startTime = performance.now()
+						this.startSize = this.currentSize
+					}
 					broadcastRemote.update(
 						[[this.id, { isPreallocating: this.isPreallocating = false }]])
 				}
