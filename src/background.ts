@@ -572,7 +572,7 @@ class Task extends TaskPersistentData {
 
 		const blobUrl = new class {
 			value?: string
-			open(blob: Blob | File | IDBPromisedMutableFile) {
+			open(blob: Blob | File) {
 				this.close()
 				this.value = URL.createObjectURL(blob)
 			}
