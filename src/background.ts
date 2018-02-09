@@ -442,7 +442,6 @@ class Task extends TaskPersistentData {
 				if (this.firstChunk.remainingSize <= 0) thread.remove()
 			}
 			this.isRangeSupported = acceptRanges && totalSize !== undefined
-			if (this.isRangeSupported) this.isPreallocating = true
 			broadcastRemote.update([[this.id, {
 				filename: this.filename, totalSize: this.totalSize,
 				pauseIsStop: !this.isRangeSupported,
@@ -452,6 +451,8 @@ class Task extends TaskPersistentData {
 
 			if (this.isRangeSupported && totalSize && totalSize > 16) {
 				try {
+					broadcastRemote.update(
+						[[this.id, { isPreallocating: this.isPreallocating = true }]])
 					const byte = new Uint8Array([1]).buffer as ArrayBuffer
 					const interval = 64 * 1024 ** 2
 					for (let i = 0; i < totalSize; i += interval)
@@ -461,9 +462,10 @@ class Task extends TaskPersistentData {
 				} catch (error) {
 					this.lastChunk = undefined
 					throw error
+				} finally {
+					broadcastRemote.update(
+						[[this.id, { isPreallocating: this.isPreallocating = false }]])
 				}
-				this.isPreallocating = false
-				broadcastRemote.update([[this.id, { isPreallocating: false }]])
 			}
 
 			this.adjustThreads()
