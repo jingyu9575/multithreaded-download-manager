@@ -679,7 +679,10 @@ class Task extends TaskPersistentData {
 			if (chunk.remainingSize > 0) {
 				try {
 					await this.file!.write(data, chunk.currentPosition)
-				} catch (error) { return this.setFailure(error) }
+				} catch (error) {
+					if (error && error.name === 'AbortError') return
+					return this.setFailure(error)
+				}
 				chunk.currentSize += addedSize
 				this.currentSize += addedSize
 			}
