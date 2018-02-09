@@ -891,9 +891,13 @@ class Thread {
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Accept-Ranges']))
 
-			await this.task.setDetail(this, await getSuggestedFilename(
-				url, headers.get('content-disposition') || ''),
-				totalSize, acceptRanges)
+			try {
+				await this.task.setDetail(this, await getSuggestedFilename(
+					url, headers.get('content-disposition') || ''),
+					totalSize, acceptRanges)
+			} catch (error) {
+				if (!(error && error.name === 'AbortError')) throw error
+			}
 		}
 
 		const filter = browser.webRequest.filterResponseData(requestId)
