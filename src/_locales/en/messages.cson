@@ -94,6 +94,8 @@ alwaysAsk:
 	message: 'always ask'
 skipFirstSavingAttempt:
 	message: 'The first saving attempt is problematic and I want to skip it.'
+workaroundBlankPopup:
+	message: 'Fix the problem of blank extension windows'
 readMore:
 	message: 'Read more'
 interface:

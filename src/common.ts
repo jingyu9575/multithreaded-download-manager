@@ -98,7 +98,8 @@ class Settings {
 
 	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
 	skipFirstSavingAttempt = false
-	
+	workaroundBlankPopup = false
+
 	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
@@ -241,12 +242,20 @@ async function openPopupWindow(url: string) {
 				Math.floor((centerAt.height! - height) / 2))
 		}
 	}
-	const { id, width: newWidth, height: newHeight } =
+	const workaroundBlankPopup = await Settings.get('workaroundBlankPopup')
+	if (workaroundBlankPopup) height++
+	const { id, width: newWidth, height: newHeight, tabs } =
 		await browser.windows.create({ url, type: 'popup', width, height })
 	if (newWidth !== width || newHeight !== height)
 		await browser.windows.update(id!, { width, height })
 	if (left !== undefined || top !== undefined)
 		await browser.windows.update(id!, { left, top })
+	if (workaroundBlankPopup && tabs && tabs.length) {
+		await browser.tabs.executeScript(tabs[0].id, {
+			code: `window.postMessage({name: 'workaroundBlankPopup',
+					height: ${Number(--height)}}, '*')`
+		}).catch(() => { })
+	}
 }
 
 const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
@@ -254,16 +263,31 @@ const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRe
 const isBackground = new URL((browser.runtime.getManifest() as any).background.page,
 	location.href).pathname === location.pathname
 
-if (!isBackground) browser.windows.getCurrent().then(({ id, type }) => {
-	if (type !== 'popup') return
-	window.addEventListener('beforeunload', () => {
-		const { pathname } = location
-		browser.windows.getCurrent().then(({ id: id1, left, top, width, height }) => {
-			if (id !== id1) return
-			localStorage.setItem(`windowPosition.${pathname}`,
-				JSON.stringify({ left, top }))
-			localStorage.setItem(`windowSize.${pathname}`,
-				JSON.stringify({ width, height }))
+if (!isBackground) {
+	browser.windows.getCurrent().then(({ id, type }) => {
+		if (type !== 'popup') return
+		window.addEventListener('beforeunload', () => {
+			const { pathname } = location
+			browser.windows.getCurrent().then(
+				({ id: id1, left, top, width, height }) => {
+					if (id !== id1) return
+					localStorage.setItem(`windowPosition.${pathname}`,
+						JSON.stringify({ left, top }))
+					localStorage.setItem(`windowSize.${pathname}`,
+						JSON.stringify({ width, height }))
+				})
 		})
 	})
-})
+
+	const domContentLoaded = new Promise(resolve =>
+		document.addEventListener("DOMContentLoaded", resolve))
+
+	window.addEventListener("message", event => {
+		if (event.source == window && event.data &&
+			event.data.name == "workaroundBlankPopup") {
+			domContentLoaded.then(() =>
+				browser.windows.update(browser.windows.WINDOW_ID_CURRENT,
+					{ height: event.data.height }))
+		}
+	})
+}

@@ -94,6 +94,8 @@ alwaysAsk:
 	message: '总是询问'
 skipFirstSavingAttempt:
 	message: '第一次保存尝试有问题，我希望跳过它。'
+workaroundBlankPopup:
+	message: '解决扩展窗口空白的问题'
 readMore:
 	message: '了解更多'
 interface:
