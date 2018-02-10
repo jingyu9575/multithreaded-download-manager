@@ -14,10 +14,10 @@ const monitorPort = function () {
 	if (!match) return undefined
 	void ((document.querySelector('#continue')! as HTMLElement).hidden = false)
 	const port = browser.runtime.connect(undefined, { name: match[1] })
+	bindPortToPopupWindow(port)
 	port.onMessage.addListener((message: any) => {
 		if (message.name === 'options') setInputValues(message.options)
 	})
-	window.addEventListener('beforeunload', () => port.disconnect())
 	return port
 }()
 

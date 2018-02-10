@@ -1,7 +1,4 @@
-window.addEventListener('beforeunload', function () {
-	const port = browser.runtime.connect(undefined, { name: 'subscribe' })
-	return () => port.disconnect()
-}())
+bindPortToPopupWindow(browser.runtime.connect(undefined, { name: 'subscribe' }))
 
 applyI18n()
 function applyTitleI18n(node: NodeSelector) {

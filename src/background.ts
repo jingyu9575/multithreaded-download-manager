@@ -1114,9 +1114,24 @@ const updateTimer = new Timer(async () => {
 
 const portListeners = new Map<string, (port: browser.runtime.Port) => void>()
 const subscriberPorts = new Set<browser.runtime.Port>()
+function onPortDisconnect(port: browser.runtime.Port, fn: () => void) {
+	let called = false
+	const callback = () => { if (!called) { called = true; fn() } }
+	port.onDisconnect.addListener(callback)
+	port.onMessage.addListener((message: any) => {
+		if (!(message && message.name === 'bindWindow')) return
+		const onWindowRemoved = (id: number) => {
+			if (id !== message.windowId) return
+			browser.windows.onRemoved.removeListener(onWindowRemoved)
+			try { port.disconnect() } catch { }
+			callback()
+		}
+		browser.windows.onRemoved.addListener(onWindowRemoved)
+	})
+}
 browser.runtime.onConnect.addListener(async port => {
 	if (port.name === 'subscribe') {
-		port.onDisconnect.addListener(() => {
+		onPortDisconnect(port, () => {
 			subscriberPorts.delete(port)
 			if (!subscriberPorts.size) updateTimer.stop()
 		})
@@ -1247,7 +1262,7 @@ function monitorDownloadListener(
 
 	const resultPromise = new Promise<{ cancel?: boolean }>(resolve => {
 		portListeners.set(portName, port => {
-			port.onDisconnect.addListener(() => resolve({ cancel: true }))
+			onPortDisconnect(port, () => resolve({ cancel: true }))
 			port.onMessage.addListener(
 				({ name }: any) => { if (name === 'continue') resolve({}) })
 			getSuggestedFilename(url, contentDisposition).then(filename =>

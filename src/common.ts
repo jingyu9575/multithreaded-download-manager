@@ -258,6 +258,13 @@ async function openPopupWindow(url: string) {
 	}
 }
 
+async function bindPortToPopupWindow(port: browser.runtime.Port) {
+	const { id, type } = await browser.windows.getCurrent()
+	if (type !== 'popup') return
+	port.postMessage({ name: 'bindWindow', windowId: id })
+	window.addEventListener('beforeunload', () => port.disconnect())
+}
+
 const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
 
 const isBackground = new URL((browser.runtime.getManifest() as any).background.page,
