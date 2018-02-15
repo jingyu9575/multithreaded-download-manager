@@ -1,0 +1,162 @@
+extensionName:
+	message: '多執行緒下載管理器'
+extensionDescription:
+	message: '支援多執行緒的下載管理器。'
+pause:
+	message: '暫停'
+stop:
+	message: '停止'
+start:
+	message: '開始'
+openFileButton:
+	message: '開啟檔案 \nShift：開啟檔案所在資料夾'
+edit:
+	message: '編輯'
+copyLinkButton:
+	message: '複製下載鏈結 \nShift：開啟引用頁'
+deleted:
+	message: '已刪除'
+removeButton:
+	message: '移除 \nShift：刪除檔案'
+preallocating:
+	message: '預分配中'
+emptyTasks:
+	message: '沒有下載任務。'
+noStorageAccess:
+	message: '無法存取內部儲存。'
+createDownload:
+	message: '新增下載任務'
+importDownload:
+	message: '從內建下載管理器列表中匯入任務'
+options:
+	message: '選項'
+openInNewTab:
+	message: '用新分頁開啟'
+openInNewWindow:
+	message: '用新視窗開啟'
+editURL:
+	message: '下載位址：'
+editURLWarning:
+	message: '注意：將下載位址改為不同檔案會導致下載損壞。'
+editFilename:
+	message: '檔案名稱：'
+editReferrer:
+	message: '引用頁：'
+maxThreads:
+	message: '執行緒數目：'
+minChunkSize:
+	message: '最小塊大小：'
+maxRetries:
+	message: '最大重試次數：'
+OK:
+	message: '確定'
+cancel:
+	message: '取消'
+download:
+	message: '下載'
+continueInBrowser:
+	message: '在瀏覽器中繼續'
+browserDownloadError:
+	message: '檔案儲存失敗 ($1)'
+browserDownloadErased:
+	message: '檔案儲存被取消'
+threadStopped:
+	message: '下載執行緒意外終止'
+unsuccessfulResponse:
+	message: '伺服器錯誤 ($1 $2)'
+rangesNotSupported:
+	message: '伺服器不支援多執行緒下載 ($1)'
+networkError:
+	message: '網路錯誤'
+unknownError:
+	message: '未知錯誤 ($1)'
+showCompleted:
+	message: '顯示已完成的下載項'
+removeAfterImport:
+	message: '匯入後移除原項目'
+downloadWith:
+	message: '用 $1 下載'
+unsupportedURL:
+	message: '不支援此下載地址：$1'
+confirmPauseIsStop:
+	message: '此下載無法續傳。停止下載？'
+confirmDeleteFile:
+	message: '刪除下載的檔案？'
+confirmRemove:
+	message: '移除此項未完成的下載？'
+general:
+	message: '常規'
+saveFileTo:
+	message: '儲存檔案至：'
+downloadFolder:
+	message: '下載資料夾'
+alwaysAsk:
+	message: '總是詢問'
+skipFirstSavingAttempt:
+	message: '第一次儲存嘗試有問題，我希望跳過它。'
+workaroundBlankPopup:
+	message: '解決擴充視窗空白的問題'
+readMore:
+	message: '瞭解更多'
+interface:
+	message: '介面'
+iconColor:
+	message: '圖示顏色：'
+systemDefaultAfterRestart:
+	message: '系統預設（重啟生效）'
+dark:
+	message: '暗'
+darker:
+	message: '更暗'
+black:
+	message: '黑'
+light:
+	message: '亮'
+lighter:
+	message: '更亮'
+white:
+	message: '白'
+showOnBadge:
+	message: '在擴充圖示上顯示：'
+badgeTypeNone:
+	message: '無'
+badgeTypeNumber:
+	message: '正在下載的任務數目'
+hideBadgeZero:
+	message: '全部下載完成後隱藏圖示上的數字提醒'
+addContextMenuToLink:
+	message: '建立鏈結右鍵選單'
+windowPosition:
+	message: '彈出擴充視窗的位置：'
+systemDefault:
+	message: '系統預設'
+parentCenter:
+	message: '居中於當前視窗'
+rememberLast:
+	message: '紀錄上次的數值'
+windowSize:
+	message: '彈出擴充視窗的大小：'
+newTaskAtTop:
+	message: '新任務顯示在最上方'
+removeCompletedTasksOnStart:
+	message: '瀏覽器啟動時清除已完成的任務'
+monitorDownload:
+	message: '監控下載'
+monitorDownloadDesc:
+	message: '自動提示下載'
+monitorDownloadMinSize:
+	message: '小於此大小時禁用：'
+autoCloseBlankTab:
+	message: '自動關閉彈出的空白分頁'
+defaultNetworkOptions:
+	message: '預設網路選項'
+legacyFilenameDetection:
+	message: '舊網站的檔案名稱檢測'
+legacyFilenameEncoding:
+	message: '編碼：'
+legacyFilenameDetectUTF8:
+	message: '檢測 UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: '檢測百分號編碼（如 %20）'
+license3rdParty:
+	message: '第三方版權聲明'
