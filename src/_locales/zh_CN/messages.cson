@@ -101,7 +101,7 @@ readMore:
 interface:
 	message: '界面'
 iconColor:
-	message: '图标颜色：'
+	message: '图标：'
 systemDefaultAfterRestart:
 	message: '系统默认（重启生效）'
 dark:

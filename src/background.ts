@@ -1324,8 +1324,10 @@ browser.runtime.onUpdateAvailable.addListener(() => { })
 async function updateIconColor() {
 	const iconColor = await Settings.get('iconColor')
 	if (iconColor !== 'default')
-		await browser.browserAction.setIcon(
-			{ path: `icons/icon-color.svg#${iconColor}` })
+		await browser.browserAction.setIcon({
+			path: iconColor.startsWith('alt-') ? `icons/icon-${iconColor}.svg` :
+				`icons/icon-color.svg#${iconColor}`
+		})
 }
 updateIconColor()
 Settings.setListener('iconColor', updateIconColor)

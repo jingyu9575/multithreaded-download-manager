@@ -101,7 +101,7 @@ readMore:
 interface:
 	message: 'Interface'
 iconColor:
-	message: 'Icon color:'
+	message: 'Icon:'
 systemDefaultAfterRestart:
 	message: 'system default (restart to take effect)'
 dark:

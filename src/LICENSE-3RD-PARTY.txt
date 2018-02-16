@@ -53,6 +53,14 @@ SOFTWARE.
 
 
 
+icons/icon-alt-1.avg (https://openclipart.org/detail/30673/tango-blue-go-down)
+icons/icon-alt-2.avg (https://openclipart.org/detail/211717/matticonsemblemdownloads)
+icons/icon-alt-3.avg (https://openclipart.org/detail/293373/up)
+icons/icon-alt-4.avg (https://openclipart.org/detail/212029/rodentiaiconsemblemdownloads)
+From openclipart.org. Public domain (CC0 License).
+
+
+
 icons/icon.svg (extension icon), icon/icon-color.svg
 Based on Firefox Photon Icon ["Download 16"](http://design.firefox.com/icons/viewer/#download)
 Licensed under the Mozilla Public License, v. 2.0

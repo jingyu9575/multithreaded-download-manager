@@ -101,7 +101,7 @@ readMore:
 interface:
 	message: '介面'
 iconColor:
-	message: '圖示顏色：'
+	message: '圖示：'
 systemDefaultAfterRestart:
 	message: '系統預設（重啟生效）'
 dark:
