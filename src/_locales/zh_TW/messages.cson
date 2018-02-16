@@ -1,7 +1,7 @@
 extensionName:
 	message: '多執行緒下載管理器'
 extensionDescription:
-	message: '支援多執行緒的下載管理器。'
+	message: '支援多執行緒的下載管理器'
 pause:
 	message: '暫停'
 stop:
@@ -21,9 +21,9 @@ removeButton:
 preallocating:
 	message: '預分配中'
 emptyTasks:
-	message: '沒有下載任務。'
+	message: '沒有下載任務'
 noStorageAccess:
-	message: '無法存取內部儲存。'
+	message: '無法存取內部儲存'
 createDownload:
 	message: '新增下載任務'
 importDownload:
@@ -37,7 +37,7 @@ openInNewWindow:
 editURL:
 	message: '下載位址：'
 editURLWarning:
-	message: '注意：將下載位址改為不同檔案會導致下載損壞。'
+	message: '注意：將下載位址改為不同檔案會導致下載損壞'
 editFilename:
 	message: '檔案名稱：'
 editReferrer:
@@ -79,7 +79,7 @@ downloadWith:
 unsupportedURL:
 	message: '不支援此下載地址：$1'
 confirmPauseIsStop:
-	message: '此下載無法續傳。停止下載？'
+	message: '此下載無法續傳 停止下載？'
 confirmDeleteFile:
 	message: '刪除下載的檔案？'
 confirmRemove:
@@ -93,9 +93,9 @@ downloadFolder:
 alwaysAsk:
 	message: '總是詢問'
 skipFirstSavingAttempt:
-	message: '第一次儲存嘗試有問題，我希望跳過它。'
+	message: '如果首次儲存嘗試有問題，我希望跳過它'
 workaroundBlankPopup:
-	message: '解決擴充視窗空白的問題'
+	message: '解決視窗空白的問題'
 readMore:
 	message: '瞭解更多'
 interface:
@@ -117,7 +117,7 @@ lighter:
 white:
 	message: '白'
 showOnBadge:
-	message: '在擴充圖示上顯示：'
+	message: '在圖示上顯示：'
 badgeTypeNone:
 	message: '無'
 badgeTypeNumber:
@@ -127,21 +127,21 @@ hideBadgeZero:
 addContextMenuToLink:
 	message: '建立鏈結右鍵選單'
 windowPosition:
-	message: '彈出擴充視窗的位置：'
+	message: '任務對話框的位置：'
 systemDefault:
 	message: '系統預設'
 parentCenter:
-	message: '居中於當前視窗'
+	message: '置中於當前視窗'
 rememberLast:
-	message: '紀錄上次的數值'
+	message: '上次位置'
 windowSize:
-	message: '彈出擴充視窗的大小：'
+	message: '任務對話框的大小：'
 newTaskAtTop:
 	message: '新任務顯示在最上方'
 removeCompletedTasksOnStart:
 	message: '瀏覽器啟動時清除已完成的任務'
 monitorDownload:
-	message: '監控下載'
+	message: '監管下載'
 monitorDownloadDesc:
 	message: '自動提示下載'
 monitorDownloadMinSize:
