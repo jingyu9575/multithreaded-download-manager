@@ -980,28 +980,50 @@ function parseRFC5987(value: string) {
 	} catch { return undefined }
 }
 
-function parseLegacyFilename(value: string, legacyFilenameSettings: Settings) {
-	if (legacyFilenameSettings.legacyFilenameDetectURLEncoded) try {
-		const decoded = decodeURIComponent(value)
-		if (decoded !== value) return decoded
-	} catch { }
-	if (legacyFilenameSettings.legacyFilenameDetectUTF8) try {
+function getLegacyFilenameEncoding(settings: Settings) {
+	return settings.legacyFilenameEncoding || document.characterSet || 'UTF-8'
+}
+
+function parseURLEncodedFilename(s: string, settings: Settings) {
+	if (settings.legacyFilenameDetectURLEncoded) {
+		try {
+			const decoded = decodeURIComponent(s)
+			if (decoded !== s) return decoded
+		} catch (err) { }
+	}
+	if (settings.legacyFilenameDetectNonStandardURLEncoded) {
+		try {
+			const seq = unescape(s)
+			if (seq !== s) {
+				const arr = [...seq].map(v => v.charCodeAt(0)).filter(v => v <= 255)
+				const encoding = getLegacyFilenameEncoding(settings)
+				return new TextDecoder(encoding).decode(Uint8Array.from(arr))
+			}
+		} catch (err) { }
+	}
+	return undefined
+}
+
+function parseLegacyFilename(value: string, settings: Settings) {
+	const decoded = parseURLEncodedFilename(value, settings)
+	if (decoded) return decoded
+	if (settings.legacyFilenameDetectUTF8) try {
 		return decodeURIComponent(escape(value))
 	} catch { }
 	try {
-		const encoding = legacyFilenameSettings.legacyFilenameEncoding ||
-			document.characterSet || 'UTF-8'
+		const encoding = getLegacyFilenameEncoding(settings)
 		const arr = [...value].map(v => v.charCodeAt(0)).filter(v => v <= 255)
 		return (new TextDecoder(encoding)).decode(Uint8Array.from(arr))
 	} catch { return undefined }
 }
 
 function getSuggestedFilename(url: string, contentDisposition: string,
-	legacyFilenameSettings?: Settings): string | Promise<string> {
-	if (!legacyFilenameSettings)
+	settings?: Settings): string | Promise<string> {
+	if (!settings)
 		return Settings.load([
 			'legacyFilenameEncoding', 'legacyFilenameDetectUTF8',
 			'legacyFilenameDetectURLEncoded',
+			'legacyFilenameDetectNonStandardURLEncoded',
 		]).then(v => getSuggestedFilename(url, contentDisposition, v))
 	const regex = /^\s*filename(\*?)\s*=\s*("[^"]+"?|[^\s;]+)(;?)/i
 	let filename = ''
@@ -1015,12 +1037,14 @@ function getSuggestedFilename(url: string, contentDisposition: string,
 				if (value.endsWith('"')) value = value.slice(0, -1)
 			}
 			filename = (match[1] ? parseRFC5987(value) :
-				parseLegacyFilename(value, legacyFilenameSettings)) || value
+				parseLegacyFilename(value, settings)) || value
 			if (match[1]) break // star
 		}
 		if (!match[3]) break // semicolon
 	}
-	return filename || getSuggestedFilenameFromURL(url)
+	if (filename) return filename
+	filename = getSuggestedFilenameFromURL(url)
+	return parseURLEncodedFilename(filename, settings) || filename
 }
 
 if (!browser.contextMenus)

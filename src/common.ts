@@ -122,6 +122,7 @@ class Settings {
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
 	legacyFilenameDetectURLEncoded = true
+	legacyFilenameDetectNonStandardURLEncoded = false
 
 	removeAfterImport = true
 

@@ -158,5 +158,7 @@ legacyFilenameDetectUTF8:
 	message: '检测 UTF-8'
 legacyFilenameDetectURLEncoded:
 	message: '检测百分号编码（如 %20）'
+legacyFilenameDetectNonStandardURLEncoded:
+	message: '检测非标准的百分号编码'
 license3rdParty:
 	message: '第三方版权声明'

@@ -158,5 +158,7 @@ legacyFilenameDetectUTF8:
 	message: 'Detect UTF-8'
 legacyFilenameDetectURLEncoded:
 	message: 'Detect percent encoding (e.g. %20)'
+legacyFilenameDetectNonStandardURLEncoded:
+	message: 'Detect non-standard percent encoding'
 license3rdParty:
 	message: 'Third-Party Copyright Notices'
