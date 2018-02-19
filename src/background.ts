@@ -996,12 +996,8 @@ function parseLegacyFilename(value: string, legacyFilenameSettings: Settings) {
 	} catch { return undefined }
 }
 
-function getSuggestedFilename(url: string, contentDisposition: string):
-	Promise<string>
 function getSuggestedFilename(url: string, contentDisposition: string,
-	legacyFilenameSettings: Settings): string
-function getSuggestedFilename(url: string, contentDisposition: string,
-	legacyFilenameSettings?: Settings) {
+	legacyFilenameSettings?: Settings): string | Promise<string> {
 	if (!legacyFilenameSettings)
 		return Settings.load([
 			'legacyFilenameEncoding', 'legacyFilenameDetectUTF8',
@@ -1261,16 +1257,16 @@ function monitorDownloadListener(
 	const portName = `monitor/${encodeURIComponent(requestId)}`
 
 	const resultPromise = new Promise<{ cancel?: boolean }>(resolve => {
-		portListeners.set(portName, port => {
+		portListeners.set(portName, async port => {
 			onPortDisconnect(port, () => resolve({ cancel: true }))
 			port.onMessage.addListener(
 				({ name }: any) => { if (name === 'continue') resolve({}) })
-			getSuggestedFilename(url, contentDisposition).then(filename =>
-				port.postMessage({
-					name: 'options', options: {
-						url, filename, referrer: originUrl || ''
-					} as TaskOptions
-				}))
+			const filename = await getSuggestedFilename(url, contentDisposition)
+			port.postMessage({
+				name: 'options', options: {
+					url, filename, referrer: originUrl || ''
+				} as TaskOptions
+			})
 		})
 		setTimeout(() => {
 			if (portListeners.delete(portName)) resolve({})
