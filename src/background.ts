@@ -594,7 +594,8 @@ class Task extends TaskPersistentData {
 				if (snapshot) {
 					blobUrl.open(snapshot)
 				} else {
-					await this.file!.truncate(this.totalSize)
+					if (this.totalSize !== undefined)
+						await this.file!.truncate(this.totalSize)
 					await this.file!.getBlob(v => blobUrl.open(v))
 				}
 				const saveId = (snapshot || !await Settings.get(
