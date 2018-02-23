@@ -37,7 +37,7 @@ openInNewWindow:
 editURL:
 	message: 'Download:'
 editURLWarning:
-	message: 'Caution: Changing the downloads location will corrupt its files.'
+	message: 'Caution: Changing the downloads location to different content will corrupt it.'
 editFilename:
 	message: 'Filename:'
 editReferrer:
@@ -93,7 +93,7 @@ downloadFolder:
 alwaysAsk:
 	message: 'Always ask?'
 skipFirstSavingAttempt:
-	message: 'The first saving attempt was problematic and was skipped'
+	message: 'The first saving attempt was problematic and should be skipped'
 workaroundBlankPopup:
 	message: 'Fix the problem with blank extension windows'
 readMore:
