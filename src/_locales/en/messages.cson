@@ -1,7 +1,7 @@
 extensionName:
 	message: 'Multithreaded Download Manager'
 extensionDescription:
-	message: 'Download manager with multithreading support.'
+	message: 'Download manager with multithreaded support.'
 pause:
 	message: 'Pause'
 stop:
@@ -37,7 +37,7 @@ openInNewWindow:
 editURL:
 	message: 'Download:'
 editURLWarning:
-	message: 'Caution: changing download location to different files will corrupt the download.'
+	message: 'Caution: Changing the downloads location will corrupt its files.'
 editFilename:
 	message: 'Filename:'
 editReferrer:
@@ -57,15 +57,15 @@ download:
 continueInBrowser:
 	message: 'Continue in browser'
 browserDownloadError:
-	message: 'Failed to save downloaded file ($1)'
+	message: 'Failed to save file: ($1)'
 browserDownloadErased:
-	message: 'File saving is canceled'
+	message: 'File save was canceled'
 threadStopped:
-	message: 'A download thread stopped unexpectedly'
+	message: 'Download thread stopped unexpectedly'
 unsuccessfulResponse:
 	message: 'Server error ($1 $2)'
 rangesNotSupported:
-	message: 'Server does not support multithreaded download ($1)'
+	message: 'Server does not support multithreaded downloads ($1)'
 networkError:
 	message: 'Network error'
 unknownError:
@@ -79,23 +79,23 @@ downloadWith:
 unsupportedURL:
 	message: 'Unsupported download address: $1'
 confirmPauseIsStop:
-	message: 'This download cannot be resumed. Stop it?'
+	message: 'This download cannot be resumed. Abort?'
 confirmDeleteFile:
 	message: 'Delete downloaded file?'
 confirmRemove:
-	message: 'Remove this unfinished download?'
+	message: 'Remove current unfinished download?'
 general:
 	message: 'General'
 saveFileTo:
 	message: 'Save files to:'
 downloadFolder:
-	message: 'downloads folder'
+	message: 'Download folder'
 alwaysAsk:
-	message: 'always ask'
+	message: 'Always ask?'
 skipFirstSavingAttempt:
-	message: 'The first saving attempt is problematic and I want to skip it.'
+	message: 'The first saving attempt was problematic and was skipped'
 workaroundBlankPopup:
-	message: 'Fix the problem of blank extension windows'
+	message: 'Fix the problem with blank extension windows'
 readMore:
 	message: 'Read more'
 interface:
@@ -103,7 +103,7 @@ interface:
 iconColor:
 	message: 'Icon:'
 systemDefaultAfterRestart:
-	message: 'system default (restart to take effect)'
+	message: 'System default (Restart to take effect)'
 dark:
 	message: 'dark'
 darker:
