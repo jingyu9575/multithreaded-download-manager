@@ -4,7 +4,7 @@ applications:
 		id: 'multithreaded-download-manager@qw.linux-2g64.local'
 		strict_min_version: '57.0'
 name: '__MSG_extensionName__'
-version: '1.2a3'
+version: '1.2a4'
 description: '__MSG_extensionDescription__'
 icons:
 	'48': 'icons/icon.svg'

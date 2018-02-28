@@ -1,164 +1,164 @@
 extensionName:
-	message: "Multithreaded Download Manager"
+	message: 'Multithreaded Download Manager'
 extensionDescription:
-	message: "Gestionnaire de téléchargements avec support de multi-processus."
+	message: 'Gestionnaire de téléchargements avec support multi-processus.'
 pause:
-	message: "Pause"
+	message: 'Pause'
 stop:
-	message: "Stop"
+	message: 'Stopper'
 start:
-	message: "Lancer"
+	message: 'Démarrer'
 openFileButton:
-	message: "Ouvrir le fichier \nShift: Ouvrir le dossier conteneur"
+	message: 'Ouvrir le fichier \nShift: Ouvrir le dossier conteneur'
 edit:
-	message: "Editer"
+	message: 'Editer'
 copyLinkButton:
-	message: "Copier le lien de téléchargement \nShift: Ouvrir la page de référence"
+	message: 'Copier le lien de téléchargement \nShift: Ouvrir la page référente'
 deleted:
-	message: "Supprimer"
+	message: 'Supprimer'
 removeButton:
-	message: "Supprimer \nShift: Supprimer le fichier"
+	message: 'Supprimer \nShift: Supprimer le fichier'
 preallocating:
-	message: "Préallouer"
+	message: 'Préallouer'
 emptyTasks:
 	message: "Il n'y a pas de tâche de téléchargement."
 noStorageAccess:
 	message: "Impossibilité d'accéder au stockage interne."
 createDownload:
-	message: "Créer une tâche de téléchargement"
+	message: 'Créer une tâche de téléchargement'
 importDownload:
-	message: "Importer des tâches à partir de la liste de téléchargement intégrée"
+	message: 'Importer des tâches à partir de la liste de téléchargement intégrée'
 options:
-	message: "Options"
+	message: 'Options'
 openInNewTab:
-	message: "Ouvrir dans un nouvel onglet"
+	message: 'Ouvrir dans un nouvel onglet'
 openInNewWindow:
-	message: "Ouvrir dans une nouvelle fenêtre"
+	message: 'Ouvrir dans une nouvelle fenêtre'
 editURL:
-	message: "Téléchargement:"
+	message: 'Téléchargement:'
 editURLWarning:
 	message: "Attention: Changer l'emplacement des téléchargements endommagera ses fichiers"
 editFilename:
-	message: "Nom de fichier:"
+	message: 'Nom de fichier:'
 editReferrer:
-	message: "Page de référence:"
+	message: 'Page de référence:'
 maxThreads:
-	message: "Processus:"
+	message: 'Processus:'
 minChunkSize:
-	message: "Morceau minimal:"
+	message: 'Taille minimale:'
 maxRetries:
-	message: "Maximum de tentatives:"
+	message: 'Nombre de tentatives maximums:'
 OK:
-	message: "OK"
+	message: 'OK'
 cancel:
-	message: "Annuler"
+	message: 'Annuler'
 download:
-	message: "Télécharger"
+	message: 'Télécharger'
 continueInBrowser:
-	message: "Continuee dans le navigateur"
+	message: 'Continuee dans le navigateur'
 browserDownloadError:
-	message: "Echec de la sauvegarde du fichier: ($1)"
+	message: 'Echec de la sauvegarde du fichier: ($1)'
 browserDownloadErased:
-	message: "La sauvegarde de fichier a été annulée"
+	message: 'La sauvegarde de fichier a été annulée'
 threadStopped:
 	message: "Le fil de téléchargement s'est arrêté de manière inattendue"
 unsuccessfulResponse:
-	message: "Erreure du serveur: ($1 $2)"
+	message: 'Erreure du serveur: ($1 $2)'
 rangesNotSupported:
-	message: "Le serveur ne supporte pas les téléchargements par multi-processus ($1)"
+	message: 'Le serveur ne supporte pas les téléchargements par multi-processus ($1)'
 networkError:
-	message: "Erreur du réseau"
+	message: 'Erreur du réseau'
 unknownError:
-	message: "Erreur inconnue ($1)"
+	message: 'Erreur inconnue ($1)'
 showCompleted:
-	message: "Afficher les téléchargés terminés"
+	message: 'Afficher les téléchargés terminés'
 removeAfterImport:
 	message: "Supprimer les éléments originaux après l'importation"
 downloadWith:
-	message: "Télécharger avec $1"
+	message: 'Télécharger avec $1'
 unsupportedURL:
-	message: "Adresse de téléchargement non-supportée: $1"
+	message: 'Adresse de téléchargement non-supportée: $1'
 confirmPauseIsStop:
-	message: "Ce téléchargement ne peut pas reprendre. Annuler ?"
+	message: 'Ce téléchargement ne peut pas reprendre. Annuler ?'
 confirmDeleteFile:
-	message: "Supprimer le fichier téléchargé?"
+	message: 'Supprimer le fichier téléchargé?'
 confirmRemove:
-	message: "Supprimer le fichier actuellement non-terminé?"
+	message: 'Supprimer le fichier actuellement non-terminé?'
 general:
-	message: "Général"
+	message: 'Général'
 saveFileTo:
-	message: "Sauvegarder les fichiers dans:"
+	message: 'Sauvegarder les fichiers dans:'
 downloadFolder:
-	message: "Fichier de téléchargement"
+	message: 'Fichier de téléchargement'
 alwaysAsk:
-	message: "Toujours demander?"
+	message: 'Toujours demander?'
 skipFirstSavingAttempt:
-	message: "La première tentative d'enregistrement a été problématique et a été stoppée"
+	message: "La première tentative d'enregistrement était problématique et devrait être sautée"
 workaroundBlankPopup:
-	message: "Résoudre le problème avec les fenêtres d'extension vides"
+	message: "Corriger le problème avec les fenêtres d'extension vierges"
 readMore:
-	message: "Lire plus"
+	message: 'Lire plus'
 interface:
-	message: "Interface"
+	message: 'Interface'
 iconColor:
-	message: "Icône:"
+	message: 'Icône:'
 systemDefaultAfterRestart:
-	message: "Système défault (Relancer pour appliquer les modifications)"
+	message: 'Système par défaut (Relancer pour appliquer les modifications)'
 dark:
-	message: "noir"
+	message: 'Noir'
 darker:
-	message: "plus fonçé"
+	message: 'Plus fonçé'
 black:
-	message: "noir"
+	message: 'Noir'
 light:
-	message: "lumière"
+	message: 'Lumineux'
 lighter:
-	message: "plus lumineux"
+	message: 'Plus lumineux'
 white:
-	message: "blanc"
+	message: 'Blanc'
 showOnBadge:
 	message: "Afficher sur l'icône de l'extension:"
 badgeTypeNone:
-	message: "Aucun"
+	message: 'Rien'
 badgeTypeNumber:
-	message: "Nombre de tâches en cours"
+	message: 'Nombre de tâches en cours'
 hideBadgeZero:
-	message: "Masquer le nombre sur l'icône après que toutes les tâches ait été complêtées"
+	message: "Masquer le nombre sur l'icône après que toutes les tâches ait été complétées"
 addContextMenuToLink:
-	message: "Ajouter un menu contextuel aux liens"
+	message: 'Ajouter un menu contextuel aux liens'
 windowPosition:
 	message: "Position de la fenêtre d'extension:"
 systemDefault:
-	message: "défaillance du système"
+	message: "Réglage par défaut de l'extension"
 parentCenter:
-	message: "centre de la fenêtre actuelle"
+	message: 'Centrer la fenêtre'
 rememberLast:
-	message: "rappelez-vous la dernière valeur"
+	message: 'Se rappeler de la dernière valeur'
 windowSize:
-	message: "Taille de la fenêtre d'extension:"
+	message: "Taille de la fenêtre de l'extension:"
 newTaskAtTop:
-	message: "Afficher les nouvelles tâches en haut"
+	message: 'Afficher les nouvelles tâches en haut'
 removeCompletedTasksOnStart:
-	message: "Supprimer les tâches terminées au démarrage du navigateur"
+	message: 'Supprimer les tâches terminées au démarrage du navigateur'
 monitorDownload:
-	message: "Moniteur de téléchargements"
+	message: 'Moniteur de téléchargements'
 monitorDownloadDesc:
-	message: "Demander automatiquement le téléchargement"
+	message: 'Lancer automatiquement le téléchargement'
 monitorDownloadMinSize:
-	message: "Désactiver pour les fichiers plus petits que:"
+	message: 'Désactiver pour les fichiers plus petits que:'
 autoCloseBlankTab:
-	message: "Automatiquement fermer les onglets vides lorsce qu'ils sont téléchargés"
+	message: "Automatiquement fermer les téléchargements vides lors ce qu'ils sont téléchargés"
 defaultNetworkOptions:
-	message: "Options de réseau par défaut"
+	message: 'Options de réseau par défaut'
 legacyFilenameDetection:
-	message: "Détection du nom de fichier pour sites approuvés"
+	message: 'Détection du nom de fichier pour sites approuvés'
 legacyFilenameEncoding:
-	message: "Encodage:"
+	message: 'Encodage:'
 legacyFilenameDetectUTF8:
-	message: "Détecter UTF-8"
+	message: 'Détecter UTF-8'
 legacyFilenameDetectURLEncoded:
-	message: "Détecter le pourcentage d'encodage (par exemple %20)"
+	message: "Détecter l'encodage du pourcentage (par exemple %20)"
 legacyFilenameDetectNonStandardURLEncoded:
-	message: "Détecter le pourcentage d'encodage non standard"
+	message: "Détecter l'encodage du pourcentage non standard"
 license3rdParty:
-	message: "Avis de copyright de tiers"
+	message: 'Avis de copyright de tiers'
