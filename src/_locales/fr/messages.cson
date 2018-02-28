@@ -1,0 +1,164 @@
+extensionName:
+	message: "Multithreaded Download Manager"
+extensionDescription:
+	message: "Gestionnaire de téléchargements avec support de multi-processus."
+pause:
+	message: "Pause"
+stop:
+	message: "Stop"
+start:
+	message: "Lancer"
+openFileButton:
+	message: "Ouvrir le fichier \nShift: Ouvrir le dossier conteneur"
+edit:
+	message: "Editer"
+copyLinkButton:
+	message: "Copier le lien de téléchargement \nShift: Ouvrir la page de référence"
+deleted:
+	message: "Supprimer"
+removeButton:
+	message: "Supprimer \nShift: Supprimer le fichier"
+preallocating:
+	message: "Préallouer"
+emptyTasks:
+	message: "Il n'y a pas de tâche de téléchargement."
+noStorageAccess:
+	message: "Impossibilité d'accéder au stockage interne."
+createDownload:
+	message: "Créer une tâche de téléchargement"
+importDownload:
+	message: "Importer des tâches à partir de la liste de téléchargement intégrée"
+options:
+	message: "Options"
+openInNewTab:
+	message: "Ouvrir dans un nouvel onglet"
+openInNewWindow:
+	message: "Ouvrir dans une nouvelle fenêtre"
+editURL:
+	message: "Téléchargement:"
+editURLWarning:
+	message: "Attention: Changer l'emplacement des téléchargements endommagera ses fichiers"
+editFilename:
+	message: "Nom de fichier:"
+editReferrer:
+	message: "Page de référence:"
+maxThreads:
+	message: "Processus:"
+minChunkSize:
+	message: "Morceau minimal:"
+maxRetries:
+	message: "Maximum de tentatives:"
+OK:
+	message: "OK"
+cancel:
+	message: "Annuler"
+download:
+	message: "Télécharger"
+continueInBrowser:
+	message: "Continuee dans le navigateur"
+browserDownloadError:
+	message: "Echec de la sauvegarde du fichier: ($1)"
+browserDownloadErased:
+	message: "La sauvegarde de fichier a été annulée"
+threadStopped:
+	message: "Le fil de téléchargement s'est arrêté de manière inattendue"
+unsuccessfulResponse:
+	message: "Erreure du serveur: ($1 $2)"
+rangesNotSupported:
+	message: "Le serveur ne supporte pas les téléchargements par multi-processus ($1)"
+networkError:
+	message: "Erreur du réseau"
+unknownError:
+	message: "Erreur inconnue ($1)"
+showCompleted:
+	message: "Afficher les téléchargés terminés"
+removeAfterImport:
+	message: "Supprimer les éléments originaux après l'importation"
+downloadWith:
+	message: "Télécharger avec $1"
+unsupportedURL:
+	message: "Adresse de téléchargement non-supportée: $1"
+confirmPauseIsStop:
+	message: "Ce téléchargement ne peut pas reprendre. Annuler ?"
+confirmDeleteFile:
+	message: "Supprimer le fichier téléchargé?"
+confirmRemove:
+	message: "Supprimer le fichier actuellement non-terminé?"
+general:
+	message: "Général"
+saveFileTo:
+	message: "Sauvegarder les fichiers dans:"
+downloadFolder:
+	message: "Fichier de téléchargement"
+alwaysAsk:
+	message: "Toujours demander?"
+skipFirstSavingAttempt:
+	message: "La première tentative d'enregistrement a été problématique et a été stoppée"
+workaroundBlankPopup:
+	message: "Résoudre le problème avec les fenêtres d'extension vides"
+readMore:
+	message: "Lire plus"
+interface:
+	message: "Interface"
+iconColor:
+	message: "Icône:"
+systemDefaultAfterRestart:
+	message: "Système défault (Relancer pour appliquer les modifications)"
+dark:
+	message: "noir"
+darker:
+	message: "plus fonçé"
+black:
+	message: "noir"
+light:
+	message: "lumière"
+lighter:
+	message: "plus lumineux"
+white:
+	message: "blanc"
+showOnBadge:
+	message: "Afficher sur l'icône de l'extension:"
+badgeTypeNone:
+	message: "Aucun"
+badgeTypeNumber:
+	message: "Nombre de tâches en cours"
+hideBadgeZero:
+	message: "Masquer le nombre sur l'icône après que toutes les tâches ait été complêtées"
+addContextMenuToLink:
+	message: "Ajouter un menu contextuel aux liens"
+windowPosition:
+	message: "Position de la fenêtre d'extension:"
+systemDefault:
+	message: "défaillance du système"
+parentCenter:
+	message: "centre de la fenêtre actuelle"
+rememberLast:
+	message: "rappelez-vous la dernière valeur"
+windowSize:
+	message: "Taille de la fenêtre d'extension:"
+newTaskAtTop:
+	message: "Afficher les nouvelles tâches en haut"
+removeCompletedTasksOnStart:
+	message: "Supprimer les tâches terminées au démarrage du navigateur"
+monitorDownload:
+	message: "Moniteur de téléchargements"
+monitorDownloadDesc:
+	message: "Demander automatiquement le téléchargement"
+monitorDownloadMinSize:
+	message: "Désactiver pour les fichiers plus petits que:"
+autoCloseBlankTab:
+	message: "Automatiquement fermer les onglets vides lorsce qu'ils sont téléchargés"
+defaultNetworkOptions:
+	message: "Options de réseau par défaut"
+legacyFilenameDetection:
+	message: "Détection du nom de fichier pour sites approuvés"
+legacyFilenameEncoding:
+	message: "Encodage:"
+legacyFilenameDetectUTF8:
+	message: "Détecter UTF-8"
+legacyFilenameDetectURLEncoded:
+	message: "Détecter le pourcentage d'encodage (par exemple %20)"
+legacyFilenameDetectNonStandardURLEncoded:
+	message: "Détecter le pourcentage d'encodage non standard"
+license3rdParty:
+	message: "Avis de copyright de tiers"
