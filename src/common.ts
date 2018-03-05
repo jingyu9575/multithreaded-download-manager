@@ -129,9 +129,11 @@ class Settings {
 
 	taskOrder: number[] = []
 
+	private static readonly sharedPrototype = new Settings()
+
 	static async load(keys: (keyof Settings)[] | null = null) {
 		const result = await browser.storage.local.get(keys) as Readonly<Settings>
-		Object.setPrototypeOf(result, new Settings())
+		Object.setPrototypeOf(result, Settings.sharedPrototype)
 		return result
 	}
 
