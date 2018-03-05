@@ -244,8 +244,12 @@ document.querySelector('#create')!.addEventListener('click',
 	() => { backgroundRemote.openPopupWindow('edit.html') })
 document.querySelector('#import')!.addEventListener('click',
 	() => { backgroundRemote.openPopupWindow('import.html') })
-document.querySelector('#options')!.addEventListener('click',
-	() => { browser.runtime.openOptionsPage() })
+document.querySelector('#options')!.addEventListener('click', async () => {
+	if (await Settings.get('showOptionsInDedicatedTab'))
+		void browser.tabs.create({ url: browser.runtime.getURL('options.html') })
+	else
+		void browser.runtime.openOptionsPage()
+})
 
 backgroundRemote.checkStorageAccess().then(hasAccess => {
 	if (!hasAccess) document.querySelector('#empty-tasks')!.textContent =

@@ -25,3 +25,12 @@ for (const input of document.querySelectorAll(
 		void Settings.set({ [key]: value })
 	})
 }
+
+Settings.get('showOptionsInDedicatedTab').then(async v => {
+	if (!v) return
+	const tab = await browser.tabs.getCurrent()
+	if (!tab || !tab.url ||
+		tab.url.toLowerCase().startsWith(location.origin.toLowerCase())) return
+	await browser.tabs.create({ url: location.href })
+	location.href = 'about:blank'
+})

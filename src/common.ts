@@ -108,6 +108,7 @@ class Settings {
 	windowSize = '500x300' as '500x300' | 'remember'
 	newTaskAtTop = true
 	removeCompletedTasksOnStart = false
+	showOptionsInDedicatedTab = false
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB

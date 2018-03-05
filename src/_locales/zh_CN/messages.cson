@@ -140,6 +140,8 @@ newTaskAtTop:
 	message: '新任务显示在最上方'
 removeCompletedTasksOnStart:
 	message: '浏览器启动时清除已完成的任务'
+showOptionsInDedicatedTab:
+	message: '在单独的标签页中显示扩展选项'
 monitorDownload:
 	message: '监视下载'
 monitorDownloadDesc:

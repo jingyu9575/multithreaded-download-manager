@@ -140,6 +140,8 @@ newTaskAtTop:
 	message: 'Show new tasks at the top'
 removeCompletedTasksOnStart:
 	message: 'Remove completed tasks on browser start'
+showOptionsInDedicatedTab:
+	message: 'Show the options page in a dedicated tab'
 monitorDownload:
 	message: 'Monitor download'
 monitorDownloadDesc:
