@@ -116,6 +116,14 @@ lighter:
 	message: 'lighter'
 white:
 	message: 'white'
+altIcon1:
+	message: '1'
+altIcon2:
+	message: '2'
+altIcon3:
+	message: '3'
+altIcon4:
+	message: '4'
 showOnBadge:
 	message: 'Show on the extension icon:'
 badgeTypeNone:
