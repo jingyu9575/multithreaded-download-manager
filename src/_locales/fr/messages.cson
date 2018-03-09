@@ -103,7 +103,7 @@ interface:
 iconColor:
 	message: 'Icône:'
 systemDefaultAfterRestart:
-	message: 'Système par défaut (Relancer pour appliquer les modifications)'
+	message: 'Icône Par défaut (Relancer pour appliquer la modification)'
 dark:
 	message: 'Noir'
 darker:
@@ -116,6 +116,14 @@ lighter:
 	message: 'Plus lumineux'
 white:
 	message: 'Blanc'
+altIcon1:
+	message: 'Flêche à fond bleu marine'
+altIcon2:
+	message: "Flèche à fond noir entourée d'un rond vert"
+altIcon3:
+	message: 'Flèche à fond bleu fonçé'
+altIcon4:
+	message: 'Flèche blanche à fond carré vert'
 showOnBadge:
 	message: "Afficher sur l'icône de l'extension:"
 badgeTypeNone:
