@@ -43,7 +43,7 @@ editFilename:
 editReferrer:
 	message: 'Page de référence:'
 maxThreads:
-	message: 'Processus:'
+	message: 'Processus de téléchargements:'
 minChunkSize:
 	message: 'Taille minimale:'
 maxRetries:
@@ -57,15 +57,15 @@ download:
 continueInBrowser:
 	message: 'Continuee dans le navigateur'
 browserDownloadError:
-	message: 'Echec de la sauvegarde du fichier: ($1)'
+	message: "Echec de l'enregistrement du fichier: ($1)"
 browserDownloadErased:
-	message: 'La sauvegarde de fichier a été annulée'
+	message: "L'enregistrement du fichier a été annulée"
 threadStopped:
 	message: "Le fil de téléchargement s'est arrêté de manière inattendue"
 unsuccessfulResponse:
 	message: 'Erreure du serveur: ($1 $2)'
 rangesNotSupported:
-	message: 'Le serveur ne supporte pas les téléchargements par multi-processus ($1)'
+	message: 'Le serveur ne supporte pas les téléchargements multi-processus ($1)'
 networkError:
 	message: 'Erreur du réseau'
 unknownError:
@@ -73,7 +73,7 @@ unknownError:
 showCompleted:
 	message: 'Afficher les téléchargés terminés'
 removeAfterImport:
-	message: "Supprimer les éléments originaux après l'importation"
+	message: "Supprimer les éléments originaux après importation"
 downloadWith:
 	message: 'Télécharger avec $1'
 unsupportedURL:
@@ -81,29 +81,29 @@ unsupportedURL:
 confirmPauseIsStop:
 	message: 'Ce téléchargement ne peut pas reprendre. Annuler ?'
 confirmDeleteFile:
-	message: 'Supprimer le fichier téléchargé?'
+	message: 'Effacer le fichier téléchargé?'
 confirmRemove:
-	message: 'Supprimer le fichier actuellement non-terminé?'
+	message: 'Effacer le fichier actuellement non-terminé?'
 general:
 	message: 'Général'
 saveFileTo:
-	message: 'Sauvegarder les fichiers dans:'
+	message: 'Enregistrer les fichiers sous:'
 downloadFolder:
-	message: 'Fichier de téléchargement'
+	message: 'Un fichier de téléchargement'
 alwaysAsk:
-	message: 'Toujours demander?'
+	message: 'Toujours demander'
 skipFirstSavingAttempt:
 	message: "La première tentative d'enregistrement était problématique et devrait être sautée"
 workaroundBlankPopup:
 	message: "Corriger le problème avec les fenêtres d'extension vierges"
 readMore:
-	message: 'Lire plus'
+	message: 'Plus d\'information'
 interface:
 	message: 'Interface'
 iconColor:
 	message: 'Icône:'
 systemDefaultAfterRestart:
-	message: 'Système par défaut (Relancer pour appliquer les modifications)'
+	message: 'Icône Par défaut (Relancer pour appliquer la modification)'
 dark:
 	message: 'Noir'
 darker:
@@ -116,14 +116,22 @@ lighter:
 	message: 'Plus lumineux'
 white:
 	message: 'Blanc'
+altIcon1:
+	message: 'Flêche à fond bleu marine'
+altIcon2:
+	message: "Flèche à fond noir entourée d'un rond vert"
+altIcon3:
+	message: 'Flèche à fond bleu fonçé'
+altIcon4:
+	message: 'Flèche blanche à fond carré vert'
 showOnBadge:
 	message: "Afficher sur l'icône de l'extension:"
 badgeTypeNone:
-	message: 'Rien'
+	message: 'Aucun élément'
 badgeTypeNumber:
-	message: 'Nombre de tâches en cours'
+	message: 'Nombre de téléchargements en cours'
 hideBadgeZero:
-	message: "Masquer le nombre sur l'icône après que toutes les tâches ait été complétées"
+	message: "Masquer le numéro sur l'icône après que toutes les tâches ait été complétées"
 addContextMenuToLink:
 	message: 'Ajouter un menu contextuel aux liens'
 windowPosition:
@@ -140,6 +148,8 @@ newTaskAtTop:
 	message: 'Afficher les nouvelles tâches en haut'
 removeCompletedTasksOnStart:
 	message: 'Supprimer les tâches terminées au démarrage du navigateur'
+showOptionsInDedicatedTab:
+	message: 'Afficher la page des paramètres dans un onglet dédié'
 monitorDownload:
 	message: 'Moniteur de téléchargements'
 monitorDownloadDesc:
