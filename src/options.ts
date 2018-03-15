@@ -37,3 +37,12 @@ Settings.get('showOptionsInDedicatedTab').then(async v => {
 
 document.getElementById('customCSSButton')!.addEventListener('click',
 	() => browser.tabs.create({ url: browser.runtime.getURL('custom-css.html') }))
+
+for (const h2 of document.querySelectorAll('section > h2')) {
+	h2.addEventListener('click', () => {
+		const active = document.querySelector('section.active')
+		if (active) active.classList.remove('active')
+		const section = h2.parentNode as HTMLElement
+		section.classList.add('active')
+	})
+}
