@@ -172,3 +172,9 @@ legacyFilenameDetectNonStandardURLEncoded:
 	message: 'Detect non-standard percent encoding'
 license3rdParty:
 	message: 'Third-Party Copyright Notices'
+customCSSButton:
+	message: 'Custom CSS...'
+customCSSDesc:
+	message: 'Custom CSS for extension pages. This can completely change the interface, so proceed with caution.'
+save:
+	message: 'Save'

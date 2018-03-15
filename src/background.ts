@@ -101,87 +101,6 @@ function waitForBrowserDownload(id: number) {
 	return deferred.promise
 }
 
-class SimpleStorageOptions {
-	readonly databaseName: string = 'simpleStorage'
-	readonly storeName: string = 'simpleStorage'
-	readonly persistent: boolean = true
-
-	constructor(source: Partial<SimpleStorageOptions>) { Object.assign(this, source) }
-}
-
-class SimpleStorage extends SimpleStorageOptions {
-	private database?: IDBDatabase
-	readonly initialization: Promise<void>
-
-	static request(r: IDBRequest) {
-		return new Promise<any>((resolve, reject) => {
-			r.onsuccess = () => resolve(r.result)
-			r.onerror = () => reject(r.error)
-		})
-	}
-
-	constructor(options: Partial<SimpleStorageOptions> = {}) {
-		super(options)
-		const request = indexedDB.open(this.databaseName,
-			this.persistent ? { version: 1, storage: "persistent" } : 1 as any)
-		request.onupgradeneeded = event => {
-			const db = request.result as IDBDatabase
-			db.createObjectStore(this.storeName)
-		}
-		this.initialization = SimpleStorage.request(request)
-			.then(v => this.database = v)
-	}
-
-	async transaction(
-		generator: (store: IDBObjectStore, db: IDBDatabase) => Iterator<IDBRequest>,
-		mode: 'readonly' | 'readwrite' | 'nolock' = 'readwrite') {
-		if (!this.database) await this.initialization
-		return new Promise<any>((resolve, reject) => {
-			const store = mode === 'nolock' ? undefined :
-				this.database!.transaction(this.storeName, mode)
-					.objectStore(this.storeName)
-			const iterator = generator(store!, this.database!)
-			function callNext(result: any) {
-				const { value: request, done } = iterator.next(result)
-				if (done) return resolve(request as any)
-				request.addEventListener('success', () => callNext(request.result))
-				request.addEventListener('error', () => reject(request.error))
-			}
-			callNext(undefined)
-		})
-	}
-
-	get(key: IDBValidKey) {
-		return this.transaction(function* (store) {
-			return yield store.get(key)
-		}, 'readonly')
-	}
-
-	getAll(range: IDBKeyRange): Promise<any[]> {
-		return this.transaction(function* (store) {
-			return yield store.getAll(range)
-		}, 'readonly')
-	}
-
-	keys(): Promise<IDBValidKey[]> {
-		return this.transaction(function* (store) {
-			return yield store.getAllKeys()
-		}, 'readonly')
-	}
-
-	set(key: IDBValidKey, value: any): Promise<void> {
-		return this.transaction(function* (store) {
-			return yield store.put(value, key)
-		})
-	}
-
-	delete(key: IDBValidKey | IDBKeyRange): Promise<void> {
-		return this.transaction(function* (store) {
-			return yield store.delete(key)
-		})
-	}
-}
-
 class WritableFile {
 	private mutableFile?: IDBMutableFile
 	private handle?: IDBFileHandle
@@ -243,9 +162,6 @@ class WritableFile {
 			return callback(yield that.mutableFile!.getFile())
 		}, 'nolock')
 	}
-}
-namespace WritableFile {
-	export interface MergeSpec { id: number, location: number, blob: Blob }
 }
 
 let taskStorage: SimpleStorage
@@ -1053,7 +969,7 @@ if (!browser.contextMenus)
 
 const initialization = async function () {
 	await Settings.set({ version: 0 })
-	const persistent = (await browser.runtime.getPlatformInfo()).os !== 'android'
+	const persistent = await hasPersistentDB()
 	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
 	fileStorage = new SimpleStorage({
 		persistent, databaseName: 'IDBFilesStorage-DB-taskFiles',

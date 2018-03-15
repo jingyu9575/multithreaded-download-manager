@@ -34,3 +34,6 @@ Settings.get('showOptionsInDedicatedTab').then(async v => {
 	await browser.tabs.create({ url: location.href })
 	location.href = 'about:blank'
 })
+
+document.getElementById('customCSSButton')!.addEventListener('click',
+	() => browser.tabs.create({ url: browser.runtime.getURL('custom-css.html') }))
