@@ -354,11 +354,7 @@ async function hasPersistentDB() {
 	return (await browser.runtime.getPlatformInfo()).os !== 'android'
 }
 
-let isCustomCSSDisabled = false
-
 async function loadCustomCSS() {
-	await undefined
-	if (isCustomCSSDisabled) return
 	const storage = new SimpleStorage(
 		{ databaseName: 'etc', persistent: await hasPersistentDB() })
 	const css = await storage.get('customCSS')
@@ -403,5 +399,6 @@ if (!isBackground) {
 
 	document.documentElement.dataset['name'] = location.pathname
 		.toLowerCase().replace(/^\//, '').replace(/\.html$/i, '')
-	void loadCustomCSS()
+	if (!document.currentScript!.classList.contains('disable-custom-css'))
+		void loadCustomCSS()
 }

@@ -5,12 +5,11 @@ html
 		meta(name="viewport" content="width=device-width, initial-scale=1.0")
 		title(data-i18n='extensionName')
 		link(rel='stylesheet' href='custom-css.css')
-		link(rel='stylesheet' href='custom-css.css')
 		link(rel="icon" href="icons/icon.svg#dark")
 	body
 		span(data-i18n='customCSSDesc')
 		div
 			button#save(data-i18n='save')
 		textarea#customCSS
-		script(src='common.js')
+		script.disable-custom-css(src='common.js')
 		script(src='custom-css.js')
