@@ -170,3 +170,5 @@ customCSSDesc:
 	message: '为扩展页面设置自定义 CSS。这可以彻底改变扩展界面，请谨慎设置。'
 save:
 	message: '保存'
+byteSymbol:
+	message: 'B'

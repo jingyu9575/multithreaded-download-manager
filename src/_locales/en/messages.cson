@@ -178,3 +178,5 @@ customCSSDesc:
 	message: 'Custom CSS for extension pages. This can completely change the interface, so proceed with caution.'
 save:
 	message: 'Save'
+byteSymbol:
+	message: 'B'

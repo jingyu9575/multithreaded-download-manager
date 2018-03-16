@@ -1,5 +1,8 @@
 applyI18n()
 
+for (const v of document.getElementsByClassName('unit-KB'))
+	v.textContent = 'K' + browser.i18n.getMessage('byteSymbol')
+
 backgroundRemote.getFallbackEncoding().then(value => {
 	(document.querySelector('input[data-key="legacyFilenameEncoding"]'
 	) as HTMLInputElement).placeholder = value
