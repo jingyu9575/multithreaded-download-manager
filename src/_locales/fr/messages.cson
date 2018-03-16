@@ -177,4 +177,4 @@ customCSSButton:
 customCSSDesc:
 	message: "CSS personalisé pour les pages de l'extension. Celà peut complêtement changer l'interface, procéder sonc avec prudence."
 save:
-message: 'Save'
+	message: 'Save'
