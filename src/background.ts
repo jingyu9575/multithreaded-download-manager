@@ -1301,7 +1301,7 @@ const siteHandlerMap = new Map<string, SiteHandler>([
 		if (!/doc-[-\w]+-docs.googleusercontent.com/.test(hostname)) return
 		const id = pathname.replace(new URL('.', url).pathname, '')
 		const response = await fetch(
-			`https://drive.google.com/file/d/${id}/view`)
+			`https://drive.google.com/file/d/${id}/view`, { credentials: "include" })
 		if (!response.ok) return
 		const text = await response.text()
 		const match = /\[null,"[^\r\n]+\[null,\d+,"(\d+)"\]/.exec(text)
