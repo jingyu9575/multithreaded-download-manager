@@ -180,3 +180,5 @@ save:
 	message: 'Save'
 byteSymbol:
 	message: 'B'
+useSiteHandlers:
+	message: 'Enable specific behaviors for certain websites'

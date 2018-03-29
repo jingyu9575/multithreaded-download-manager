@@ -172,3 +172,5 @@ save:
 	message: '保存'
 byteSymbol:
 	message: 'B'
+useSiteHandlers:
+	message: '启用特定网站的特殊行为'

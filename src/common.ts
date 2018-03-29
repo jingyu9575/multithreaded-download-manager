@@ -99,6 +99,7 @@ class Settings {
 	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
 	skipFirstSavingAttempt = false
 	workaroundBlankPopup = false
+	useSiteHandlers = false
 
 	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'

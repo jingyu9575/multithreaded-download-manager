@@ -797,13 +797,21 @@ class Thread {
 				: [string, string] => [name.toLowerCase(), value || '']))
 			let totalSize: number | undefined = Number(
 				headers.get('content-length') || NaN)
+			const acceptRanges = (headers.get('accept-ranges') || '')
+				.toLowerCase() === 'bytes'
+
+			const siteResult = await callSiteHandler(url)
+			if (siteResult) {
+				if (!Number.isInteger(totalSize) &&
+					siteResult.totalSize !== undefined)
+					totalSize = siteResult.totalSize
+			}
+
 			if (!Number.isInteger(totalSize)) {
 				totalSize = undefined
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Content-Length']))
 			}
-			const acceptRanges = (headers.get('accept-ranges') || '')
-				.toLowerCase() === 'bytes'
 			if (!acceptRanges)
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Accept-Ranges']))
@@ -1268,3 +1276,38 @@ async function updateIconColor() {
 }
 updateIconColor()
 Settings.setListener('iconColor', updateIconColor)
+
+type SiteHandler = (url: string) => Promise<{
+	totalSize?: number
+} | undefined>
+
+const siteHandlerMap = new Map<string, SiteHandler>([
+
+	// Google Drive
+	['.googleusercontent.com.', async (url: string) => {
+		const { hostname, pathname } = new URL(url)
+		if (!/doc-[-\w]+-docs.googleusercontent.com/.test(hostname)) return
+		const id = pathname.replace(new URL('.', url).pathname, '')
+		const response = await fetch(
+			`https://drive.google.com/file/d/${id}/view`)
+		if (!response.ok) return
+		const text = await response.text()
+		const match = /\[null,"[^\r\n]+\[null,\d+,"(\d+)"\]/.exec(text)
+		if (!match) return
+		return { totalSize: Number(match[1]) || undefined }
+	}],
+
+])
+
+async function callSiteHandler(url: string) {
+	if (!await Settings.get('useSiteHandlers')) return undefined
+	try {
+		let s = '.' + new URL(url).hostname.toLowerCase() + '.'
+		while (s) {
+			const result = siteHandlerMap.get(s)
+			if (result) return await result(url)
+			s = s.replace(/.[^.]*/, '')
+		}
+	} catch { }
+	return undefined
+}
