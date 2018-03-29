@@ -116,6 +116,7 @@ class Settings {
 	monitorDownloadInclude = ''
 	monitorDownloadExclude = ''
 	autoCloseBlankTab = true
+	monitorLinksWithoutRange = false
 
 	maxThreads = 4
 	minChunkSize = 1024 // KiB

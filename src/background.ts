@@ -1161,12 +1161,22 @@ const monitorDownloadParams = {
 	include: undefined as RegExp | undefined,
 	exclude: undefined as RegExp | undefined,
 	settingsKeys: ['monitorDownload', 'monitorDownloadMinSize',
-		'monitorDownloadInclude', 'monitorDownloadExclude'] as (keyof Settings)[]
+		'monitorDownloadInclude', 'monitorDownloadExclude'] as (keyof Settings)[],
+	linksWithoutRange: false
 }
 
+async function updateMonitorLinksWithoutRange() {
+	await initialization
+	monitorDownloadParams.linksWithoutRange =
+		!!await Settings.get('monitorLinksWithoutRange')
+}
+updateMonitorLinksWithoutRange()
+Settings.setListener('monitorLinksWithoutRange', updateMonitorLinksWithoutRange)
+
 function monitorDownloadListener(
-	{ requestId, url, originUrl, responseHeaders, statusCode, tabId, type }: {
+	{ requestId, method, url, originUrl, responseHeaders, statusCode, tabId, type }: {
 		requestId: string,
+		method: string,
 		url: string,
 		originUrl: string,
 		responseHeaders?: { name: string, value?: string }[],
@@ -1177,6 +1187,7 @@ function monitorDownloadListener(
 	let contentDisposition = '', lengthPresent = false,
 		contentTypeIncluded = false, acceptRanges = false
 	if (!(statusCode >= 200 && statusCode < 300)) return {}
+	if (method.toLowerCase() !== 'get') return {}
 	for (const header of responseHeaders!) {
 		const name = header.name.toLowerCase()
 		if (name === 'content-disposition') {
@@ -1185,7 +1196,8 @@ function monitorDownloadListener(
 				return {}
 		} else if (name === 'content-length') {
 			lengthPresent = true
-			if (!header.value ||
+			if ((!header.value && !monitorDownloadParams.linksWithoutRange)
+				|| header.value &&
 				Number(header.value) < monitorDownloadParams.minSize * 1024)
 				return {}
 		} else if (name === 'content-type') {
@@ -1201,8 +1213,8 @@ function monitorDownloadListener(
 		} else if (name === 'accept-ranges')
 			acceptRanges = (header.value || '').toLowerCase() === 'bytes'
 	}
-	if (!lengthPresent || !acceptRanges ||
-		!contentDisposition && !contentTypeIncluded) return {}
+	if ((!lengthPresent || !acceptRanges) && !monitorDownloadParams.linksWithoutRange
+		|| !contentDisposition && !contentTypeIncluded) return {}
 	const portName = `monitor/${encodeURIComponent(requestId)}`
 
 	const resultPromise = new Promise<{ cancel?: boolean }>(resolve => {
