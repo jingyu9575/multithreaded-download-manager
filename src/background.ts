@@ -713,7 +713,7 @@ class Chunk {
 }
 
 const extensionHeader = 'x-multithreaded-download-manager-' +
-	[...window.crypto.getRandomValues(new Uint8Array(12))].map(
+	[...window.crypto.getRandomValues(new Uint8Array(12)) as Uint8Array].map(
 		v => 'abcdefghijklmnopqrstuvwxyz'[v % 26]).join('')
 
 interface ThreadInfo {
