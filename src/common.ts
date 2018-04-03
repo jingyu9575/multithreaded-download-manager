@@ -99,6 +99,7 @@ class Settings {
 	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
 	skipFirstSavingAttempt = false
 	workaroundBlankPopup = false
+	useSiteHandlers = false
 
 	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'
@@ -108,12 +109,14 @@ class Settings {
 	windowSize = '500x300' as '500x300' | 'remember'
 	newTaskAtTop = true
 	removeCompletedTasksOnStart = false
+	showOptionsInDedicatedTab = false
 
 	monitorDownload = false
 	monitorDownloadMinSize = 1024 // KiB
 	monitorDownloadInclude = ''
 	monitorDownloadExclude = ''
 	autoCloseBlankTab = true
+	monitorLinksWithoutRange = false
 
 	maxThreads = 4
 	minChunkSize = 1024 // KiB
@@ -128,9 +131,11 @@ class Settings {
 
 	taskOrder: number[] = []
 
+	private static readonly sharedPrototype = new Settings()
+
 	static async load(keys: (keyof Settings)[] | null = null) {
 		const result = await browser.storage.local.get(keys) as Readonly<Settings>
-		Object.setPrototypeOf(result, new Settings())
+		Object.setPrototypeOf(result, Settings.sharedPrototype)
 		return result
 	}
 
@@ -266,6 +271,101 @@ async function bindPortToPopupWindow(port: browser.runtime.Port) {
 	window.addEventListener('beforeunload', () => port.disconnect())
 }
 
+class SimpleStorageOptions {
+	readonly databaseName: string = 'simpleStorage'
+	readonly storeName: string = 'simpleStorage'
+	readonly persistent: boolean = true
+
+	constructor(source: Partial<SimpleStorageOptions>) { Object.assign(this, source) }
+}
+
+class SimpleStorage extends SimpleStorageOptions {
+	private database?: IDBDatabase
+	readonly initialization: Promise<void>
+
+	static request(r: IDBRequest) {
+		return new Promise<any>((resolve, reject) => {
+			r.onsuccess = () => resolve(r.result)
+			r.onerror = () => reject(r.error)
+		})
+	}
+
+	constructor(options: Partial<SimpleStorageOptions> = {}) {
+		super(options)
+		const request = indexedDB.open(this.databaseName,
+			this.persistent ? { version: 1, storage: "persistent" } : 1 as any)
+		request.onupgradeneeded = event => {
+			const db = request.result as IDBDatabase
+			db.createObjectStore(this.storeName)
+		}
+		this.initialization = SimpleStorage.request(request)
+			.then(v => this.database = v)
+	}
+
+	async transaction(
+		generator: (store: IDBObjectStore, db: IDBDatabase) => Iterator<IDBRequest>,
+		mode: 'readonly' | 'readwrite' | 'nolock' = 'readwrite') {
+		if (!this.database) await this.initialization
+		return new Promise<any>((resolve, reject) => {
+			const store = mode === 'nolock' ? undefined :
+				this.database!.transaction(this.storeName, mode)
+					.objectStore(this.storeName)
+			const iterator = generator(store!, this.database!)
+			function callNext(result: any) {
+				const { value: request, done } = iterator.next(result)
+				if (done) return resolve(request as any)
+				request.addEventListener('success', () => callNext(request.result))
+				request.addEventListener('error', () => reject(request.error))
+			}
+			callNext(undefined)
+		})
+	}
+
+	get(key: IDBValidKey) {
+		return this.transaction(function* (store) {
+			return yield store.get(key)
+		}, 'readonly')
+	}
+
+	getAll(range: IDBKeyRange): Promise<any[]> {
+		return this.transaction(function* (store) {
+			return yield store.getAll(range)
+		}, 'readonly')
+	}
+
+	keys(): Promise<IDBValidKey[]> {
+		return this.transaction(function* (store) {
+			return yield store.getAllKeys()
+		}, 'readonly')
+	}
+
+	set(key: IDBValidKey, value: any): Promise<void> {
+		return this.transaction(function* (store) {
+			return yield store.put(value, key)
+		})
+	}
+
+	delete(key: IDBValidKey | IDBKeyRange): Promise<void> {
+		return this.transaction(function* (store) {
+			return yield store.delete(key)
+		})
+	}
+}
+
+async function hasPersistentDB() {
+	return (await browser.runtime.getPlatformInfo()).os !== 'android'
+}
+
+async function loadCustomCSS() {
+	const storage = new SimpleStorage(
+		{ databaseName: 'etc', persistent: await hasPersistentDB() })
+	const css = await storage.get('customCSS')
+	if (!css) return
+	const node = document.createElement('style')
+	node.textContent = String(css)
+	document.head.appendChild(node)
+}
+
 const backgroundRemote = messageRemoteProxy('remote-background') as BackgroundRemote
 
 const isBackground = new URL((browser.runtime.getManifest() as any).background.page,
@@ -298,4 +398,9 @@ if (!isBackground) {
 					{ height: event.data.height }))
 		}
 	})
+
+	document.documentElement.dataset['name'] = location.pathname
+		.toLowerCase().replace(/^\//, '').replace(/\.html$/i, '')
+	if (!document.currentScript!.classList.contains('disable-custom-css'))
+		void loadCustomCSS()
 }

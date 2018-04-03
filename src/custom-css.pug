@@ -1,0 +1,15 @@
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+		title(data-i18n='extensionName')
+		link(rel='stylesheet' href='custom-css.css')
+		link(rel="icon" href="icons/icon.svg#dark")
+	body
+		span(data-i18n='customCSSDesc')
+		div
+			button#save(data-i18n='save')
+		textarea#customCSS
+		script.disable-custom-css(src='common.js')
+		script(src='custom-css.js')

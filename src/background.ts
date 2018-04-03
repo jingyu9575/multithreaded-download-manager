@@ -101,87 +101,6 @@ function waitForBrowserDownload(id: number) {
 	return deferred.promise
 }
 
-class SimpleStorageOptions {
-	readonly databaseName: string = 'simpleStorage'
-	readonly storeName: string = 'simpleStorage'
-	readonly persistent: boolean = true
-
-	constructor(source: Partial<SimpleStorageOptions>) { Object.assign(this, source) }
-}
-
-class SimpleStorage extends SimpleStorageOptions {
-	private database?: IDBDatabase
-	readonly initialization: Promise<void>
-
-	static request(r: IDBRequest) {
-		return new Promise<any>((resolve, reject) => {
-			r.onsuccess = () => resolve(r.result)
-			r.onerror = () => reject(r.error)
-		})
-	}
-
-	constructor(options: Partial<SimpleStorageOptions> = {}) {
-		super(options)
-		const request = indexedDB.open(this.databaseName,
-			this.persistent ? { version: 1, storage: "persistent" } : 1 as any)
-		request.onupgradeneeded = event => {
-			const db = request.result as IDBDatabase
-			db.createObjectStore(this.storeName)
-		}
-		this.initialization = SimpleStorage.request(request)
-			.then(v => this.database = v)
-	}
-
-	async transaction(
-		generator: (store: IDBObjectStore, db: IDBDatabase) => Iterator<IDBRequest>,
-		mode: 'readonly' | 'readwrite' | 'nolock' = 'readwrite') {
-		if (!this.database) await this.initialization
-		return new Promise<any>((resolve, reject) => {
-			const store = mode === 'nolock' ? undefined :
-				this.database!.transaction(this.storeName, mode)
-					.objectStore(this.storeName)
-			const iterator = generator(store!, this.database!)
-			function callNext(result: any) {
-				const { value: request, done } = iterator.next(result)
-				if (done) return resolve(request as any)
-				request.addEventListener('success', () => callNext(request.result))
-				request.addEventListener('error', () => reject(request.error))
-			}
-			callNext(undefined)
-		})
-	}
-
-	get(key: IDBValidKey) {
-		return this.transaction(function* (store) {
-			return yield store.get(key)
-		}, 'readonly')
-	}
-
-	getAll(range: IDBKeyRange): Promise<any[]> {
-		return this.transaction(function* (store) {
-			return yield store.getAll(range)
-		}, 'readonly')
-	}
-
-	keys(): Promise<IDBValidKey[]> {
-		return this.transaction(function* (store) {
-			return yield store.getAllKeys()
-		}, 'readonly')
-	}
-
-	set(key: IDBValidKey, value: any): Promise<void> {
-		return this.transaction(function* (store) {
-			return yield store.put(value, key)
-		})
-	}
-
-	delete(key: IDBValidKey | IDBKeyRange): Promise<void> {
-		return this.transaction(function* (store) {
-			return yield store.delete(key)
-		})
-	}
-}
-
 class WritableFile {
 	private mutableFile?: IDBMutableFile
 	private handle?: IDBFileHandle
@@ -243,9 +162,6 @@ class WritableFile {
 			return callback(yield that.mutableFile!.getFile())
 		}, 'nolock')
 	}
-}
-namespace WritableFile {
-	export interface MergeSpec { id: number, location: number, blob: Blob }
 }
 
 let taskStorage: SimpleStorage
@@ -881,13 +797,21 @@ class Thread {
 				: [string, string] => [name.toLowerCase(), value || '']))
 			let totalSize: number | undefined = Number(
 				headers.get('content-length') || NaN)
+			const acceptRanges = (headers.get('accept-ranges') || '')
+				.toLowerCase() === 'bytes'
+
+			const siteResult = await callSiteHandler(url)
+			if (siteResult) {
+				if (!Number.isInteger(totalSize) &&
+					siteResult.totalSize !== undefined)
+					totalSize = siteResult.totalSize
+			}
+
 			if (!Number.isInteger(totalSize)) {
 				totalSize = undefined
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Content-Length']))
 			}
-			const acceptRanges = (headers.get('accept-ranges') || '')
-				.toLowerCase() === 'bytes'
 			if (!acceptRanges)
 				Log.warn(browser.i18n.getMessage(
 					'rangesNotSupported', ['Accept-Ranges']))
@@ -1053,7 +977,7 @@ if (!browser.contextMenus)
 
 const initialization = async function () {
 	await Settings.set({ version: 0 })
-	const persistent = (await browser.runtime.getPlatformInfo()).os !== 'android'
+	const persistent = await hasPersistentDB()
 	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
 	fileStorage = new SimpleStorage({
 		persistent, databaseName: 'IDBFilesStorage-DB-taskFiles',
@@ -1237,12 +1161,22 @@ const monitorDownloadParams = {
 	include: undefined as RegExp | undefined,
 	exclude: undefined as RegExp | undefined,
 	settingsKeys: ['monitorDownload', 'monitorDownloadMinSize',
-		'monitorDownloadInclude', 'monitorDownloadExclude'] as (keyof Settings)[]
+		'monitorDownloadInclude', 'monitorDownloadExclude'] as (keyof Settings)[],
+	linksWithoutRange: false
 }
 
+async function updateMonitorLinksWithoutRange() {
+	await initialization
+	monitorDownloadParams.linksWithoutRange =
+		!!await Settings.get('monitorLinksWithoutRange')
+}
+updateMonitorLinksWithoutRange()
+Settings.setListener('monitorLinksWithoutRange', updateMonitorLinksWithoutRange)
+
 function monitorDownloadListener(
-	{ requestId, url, originUrl, responseHeaders, statusCode, tabId, type }: {
+	{ requestId, method, url, originUrl, responseHeaders, statusCode, tabId, type }: {
 		requestId: string,
+		method: string,
 		url: string,
 		originUrl: string,
 		responseHeaders?: { name: string, value?: string }[],
@@ -1253,6 +1187,7 @@ function monitorDownloadListener(
 	let contentDisposition = '', lengthPresent = false,
 		contentTypeIncluded = false, acceptRanges = false
 	if (!(statusCode >= 200 && statusCode < 300)) return {}
+	if (method.toLowerCase() !== 'get') return {}
 	for (const header of responseHeaders!) {
 		const name = header.name.toLowerCase()
 		if (name === 'content-disposition') {
@@ -1261,7 +1196,8 @@ function monitorDownloadListener(
 				return {}
 		} else if (name === 'content-length') {
 			lengthPresent = true
-			if (!header.value ||
+			if ((!header.value && !monitorDownloadParams.linksWithoutRange)
+				|| header.value &&
 				Number(header.value) < monitorDownloadParams.minSize * 1024)
 				return {}
 		} else if (name === 'content-type') {
@@ -1277,8 +1213,8 @@ function monitorDownloadListener(
 		} else if (name === 'accept-ranges')
 			acceptRanges = (header.value || '').toLowerCase() === 'bytes'
 	}
-	if (!lengthPresent || !acceptRanges ||
-		!contentDisposition && !contentTypeIncluded) return {}
+	if ((!lengthPresent || !acceptRanges) && !monitorDownloadParams.linksWithoutRange
+		|| !contentDisposition && !contentTypeIncluded) return {}
 	const portName = `monitor/${encodeURIComponent(requestId)}`
 
 	const resultPromise = new Promise<{ cancel?: boolean }>(resolve => {
@@ -1352,3 +1288,38 @@ async function updateIconColor() {
 }
 updateIconColor()
 Settings.setListener('iconColor', updateIconColor)
+
+type SiteHandler = (url: string) => Promise<{
+	totalSize?: number
+} | undefined>
+
+const siteHandlerMap = new Map<string, SiteHandler>([
+
+	// Google Drive
+	['.googleusercontent.com.', async (url: string) => {
+		const { hostname, pathname } = new URL(url)
+		if (!/doc-[-\w]+-docs.googleusercontent.com/.test(hostname)) return
+		const id = pathname.replace(new URL('.', url).pathname, '')
+		const response = await fetch(
+			`https://drive.google.com/file/d/${id}/view`, { credentials: "include" })
+		if (!response.ok) return
+		const text = await response.text()
+		const match = /\[null,"[^\r\n]+\[null,\d+,"(\d+)"\]/.exec(text)
+		if (!match) return
+		return { totalSize: Number(match[1]) || undefined }
+	}],
+
+])
+
+async function callSiteHandler(url: string) {
+	if (!await Settings.get('useSiteHandlers')) return undefined
+	try {
+		let s = '.' + new URL(url).hostname.toLowerCase() + '.'
+		while (s) {
+			const result = siteHandlerMap.get(s)
+			if (result) return await result(url)
+			s = s.replace(/.[^.]*/, '')
+		}
+	} catch { }
+	return undefined
+}

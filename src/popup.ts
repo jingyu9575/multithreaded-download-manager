@@ -61,6 +61,8 @@ function getProgressCanvas(data: TaskDisplayData) {
 	return { canvas, context }
 }
 
+const byteSymbol = browser.i18n.getMessage('byteSymbol')
+
 function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 	let data = taskDisplayDataMap.get(id)
 	if (!data) {
@@ -180,10 +182,11 @@ function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 	const texts = {
 		filename: data.filename || getSuggestedFilenameFromURL(data.url || ''),
 		averageSpeed: data.isPreallocating ? browser.i18n.getMessage('preallocating') :
-			(data.averageSpeed ? formatSize(data.averageSpeed) : '-- ') + 'B/s',
-		currentSize: formatSize(data.currentSize) + 'B',
+			(data.averageSpeed ? formatSize(data.averageSpeed) : '-- ')
+			+ byteSymbol + '/s',
+		currentSize: formatSize(data.currentSize) + byteSymbol,
 		totalSize: data.totalSize != undefined ?
-			formatSize(data.totalSize) + 'B' : '?',
+			formatSize(data.totalSize) + byteSymbol : '?',
 		percentage: !Number.isFinite(percentage) ? '--%' :
 			percentage.toFixed(percentage === 100 ? 0 : 1) + '%',
 		estimatedTime: data.totalSize && data.averageSpeed ? formatTimeSpan((
@@ -244,8 +247,12 @@ document.querySelector('#create')!.addEventListener('click',
 	() => { backgroundRemote.openPopupWindow('edit.html') })
 document.querySelector('#import')!.addEventListener('click',
 	() => { backgroundRemote.openPopupWindow('import.html') })
-document.querySelector('#options')!.addEventListener('click',
-	() => { browser.runtime.openOptionsPage() })
+document.querySelector('#options')!.addEventListener('click', async () => {
+	if (await Settings.get('showOptionsInDedicatedTab'))
+		void browser.tabs.create({ url: browser.runtime.getURL('options.html') })
+	else
+		void browser.runtime.openOptionsPage()
+})
 
 backgroundRemote.checkStorageAccess().then(hasAccess => {
 	if (!hasAccess) document.querySelector('#empty-tasks')!.textContent =

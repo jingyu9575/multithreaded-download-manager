@@ -116,6 +116,14 @@ lighter:
 	message: 'lighter'
 white:
 	message: 'white'
+altIcon1:
+	message: '1'
+altIcon2:
+	message: '2'
+altIcon3:
+	message: '3'
+altIcon4:
+	message: '4'
 showOnBadge:
 	message: 'Show on the extension icon:'
 badgeTypeNone:
@@ -140,6 +148,8 @@ newTaskAtTop:
 	message: 'Show new tasks at the top'
 removeCompletedTasksOnStart:
 	message: 'Remove completed tasks on browser start'
+showOptionsInDedicatedTab:
+	message: 'Show the options page in a dedicated tab'
 monitorDownload:
 	message: 'Monitor download'
 monitorDownloadDesc:
@@ -162,3 +172,15 @@ legacyFilenameDetectNonStandardURLEncoded:
 	message: 'Detect non-standard percent encoding'
 license3rdParty:
 	message: 'Third-Party Copyright Notices'
+customCSSButton:
+	message: 'Custom CSS...'
+customCSSDesc:
+	message: 'Custom CSS for extension pages. This can completely change the interface, so proceed with caution.'
+save:
+	message: 'Save'
+byteSymbol:
+	message: 'B'
+useSiteHandlers:
+	message: 'Enable specific behaviors for certain websites'
+monitorLinksWithoutRange:
+	message: 'Enable prompt for links without multithreading support'

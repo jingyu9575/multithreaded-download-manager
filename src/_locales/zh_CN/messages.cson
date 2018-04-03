@@ -140,6 +140,8 @@ newTaskAtTop:
 	message: '新任务显示在最上方'
 removeCompletedTasksOnStart:
 	message: '浏览器启动时清除已完成的任务'
+showOptionsInDedicatedTab:
+	message: '在单独的标签页中显示扩展选项'
 monitorDownload:
 	message: '监视下载'
 monitorDownloadDesc:
@@ -162,3 +164,15 @@ legacyFilenameDetectNonStandardURLEncoded:
 	message: '检测非标准的百分号编码'
 license3rdParty:
 	message: '第三方版权声明'
+customCSSButton:
+	message: '自定义 CSS...'
+customCSSDesc:
+	message: '为扩展页面设置自定义 CSS。这可以彻底改变扩展界面，请谨慎设置。'
+save:
+	message: '保存'
+byteSymbol:
+	message: 'B'
+useSiteHandlers:
+	message: '启用特定网站的特殊行为'
+monitorLinksWithoutRange:
+	message: '允许提示不支持多线程下载的链接'
