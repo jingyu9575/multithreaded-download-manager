@@ -1228,6 +1228,8 @@ function monitorDownloadListener(
 					url, filename, referrer: originUrl || ''
 				} as TaskOptions
 			})
+			if (!lengthPresent || !acceptRanges)
+				port.postMessage({ name: 'link-without-range' })
 		})
 		setTimeout(() => {
 			if (portListeners.delete(portName)) resolve({})

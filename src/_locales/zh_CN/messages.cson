@@ -176,3 +176,5 @@ useSiteHandlers:
 	message: '启用特定网站的特殊行为'
 monitorLinksWithoutRange:
 	message: '允许提示不支持多线程下载的链接'
+linkWithoutRangeWarning:
+	message: '此下载不支持多线程或断点续传。'
