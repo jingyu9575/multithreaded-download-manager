@@ -30,12 +30,3 @@ declare namespace browser.webRequest {
 		addEventListener(type: string, listener: EventListener): void
 	}
 }
-
-declare class TextDecoder {
-	constructor(label?: string, options?: { fatal?: boolean, ignoreBOM: boolean })
-	readonly encoding: string
-	readonly fatal: boolean
-	readonly ignoreBOM: boolean
-	decode(input?: ArrayBuffer | ArrayBufferView,
-		options?: { stream?: boolean }): string
-}
