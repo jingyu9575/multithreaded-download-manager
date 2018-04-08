@@ -179,4 +179,8 @@ customCSSDesc:
 save:
 	message: 'Save'
 byteSymbol:
-	message: 'o'
+	message: 'B'
+useSiteHandlers:
+	message: 'Activer les comportements spécifiques pour certains sites Web'
+monitorLinksWithoutRange:
+	message: 'Activer demande pour les liens sans support multi-processus'
