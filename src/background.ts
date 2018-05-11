@@ -101,17 +101,22 @@ function waitForBrowserDownload(id: number) {
 	return deferred.promise
 }
 
+class NotFoundError extends ExtendableError {
+	constructor(message = 'not found') { super(message) }
+}
+
 class WritableFile {
 	private mutableFile?: IDBMutableFile
 	private handle?: IDBFileHandle
-	private readonly initialization: Promise<void>
+	readonly initialization: Promise<void>
 
 	constructor(private readonly storage: SimpleStorage,
-		private readonly filename: string, mode: 'create' | 'open') {
+		private readonly filename: string, mode: 'create' | 'open' | 'opencreate') {
 		this.initialization = (async () => {
-			if (mode === 'open')
+			if (mode === 'open' || mode === 'opencreate')
 				this.mutableFile = await storage.get(filename)
 			if (!this.mutableFile) {
+				if (mode === 'open') throw new NotFoundError()
 				this.mutableFile = await storage.transaction(function* (_, db) {
 					return yield db.createMutableFile(filename,
 						'application/octet-stream')
@@ -165,7 +170,8 @@ class WritableFile {
 }
 
 let taskStorage: SimpleStorage
-let fileStorage: SimpleStorage
+let fileStorageV0: SimpleStorage
+let fileStorageV1: SimpleStorage
 
 class TaskPersistentData extends TaskOptions {
 	state: DownloadState = 'paused'
@@ -228,10 +234,25 @@ class Task extends TaskPersistentData {
 				if (this[key] === undefined)
 					this[key] = await Settings.get(key)
 			if (options.state !== 'completed') {
-				this.file = new WritableFile(fileStorage,
-					`${this.id}`, loadId === undefined ? 'create' : 'open')
-				if (loadId === undefined)
-					await fileStorage.delete(this.snapshotName)
+				if (loadId === undefined) {
+					this.file = new WritableFile(fileStorageV1, `${this.id}`, 'create')
+				} else {
+					const params: [SimpleStorage, 'open' | 'create'][] = [
+						[fileStorageV1, 'open'], [fileStorageV0, 'open'],
+						[fileStorageV1, 'create']
+					]
+					for (const param of params) {
+						try {
+							this.file = new WritableFile(param[0], `${this.id}`, param[1])
+							await this.file.initialization // check error
+							break // finish if there is no error
+						} catch { }
+					}
+				}
+				if (loadId === undefined) {
+					await fileStorageV0.delete(this.snapshotName)
+					await fileStorageV1.delete(this.snapshotName)
+				}
 			}
 			if (options.totalSize !== undefined) {
 				if (options.state === 'saving' || options.state === 'completed') {
@@ -506,7 +527,7 @@ class Task extends TaskPersistentData {
 
 		try {
 			for (const lastTrial of [false, true]) {
-				const snapshot = await fileStorage.get(this.snapshotName)
+				const snapshot = await fileStorageV1.get(this.snapshotName)
 				if (snapshot) {
 					blobUrl.open(snapshot)
 				} else {
@@ -536,9 +557,9 @@ class Task extends TaskPersistentData {
 					blobUrl.close()
 					if (Number.isFinite(saveId))
 						await removeBrowserDownload(saveId)
-					await fileStorage.initialization /* prevent async */
+					await fileStorageV1.initialization /* prevent async */
 					await this.file!.getBlob(blob =>
-						fileStorage.set(this.snapshotName, blob))
+						fileStorageV1.set(this.snapshotName, blob))
 					continue
 				}
 				this.fileAccessId = saveId
@@ -565,7 +586,8 @@ class Task extends TaskPersistentData {
 	async cleanupFileStorage() {
 		if (this.file) void this.file.destroy()
 		delete this.file
-		void fileStorage.delete(this.snapshotName)
+		void fileStorageV0.delete(this.snapshotName)
+		void fileStorageV1.delete(this.snapshotName)
 	}
 
 	remove() {
@@ -975,14 +997,46 @@ function getSuggestedFilename(url: string, contentDisposition: string,
 if (!browser.contextMenus)
 	browser.contextMenus = { create() { }, remove() { } } as any
 
+async function migrateLegacyPersistentSimpleStorage(databaseName: string) {
+	try {
+		const oldStorage = new SimpleStorage({ databaseName, legacyPersistent: true })
+		const newStorage = new SimpleStorage({ databaseName, legacyPersistent: false })
+		await Promise.all((await oldStorage.keys())
+			.map(async key => newStorage.set(key, await oldStorage.get(key))))
+		void indexedDB.deleteDatabase(databaseName, { storage: "persistent" });
+	} catch { }
+}
+
 const initialization = async function () {
-	await Settings.set({ version: 0 })
-	const persistent = await hasPersistentDB()
-	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
-	fileStorage = new SimpleStorage({
-		persistent, databaseName: 'IDBFilesStorage-DB-taskFiles',
-		storeName: 'IDBFilesObjectStorage',
-	})
+	if (navigator.storage && navigator.storage.persist)
+		void navigator.storage.persist()
+
+	const legacyPersistent = (await browser.runtime.getPlatformInfo()).os !== 'android'
+
+	if (await Settings.get("version") < 1 && legacyPersistent) {
+		await migrateLegacyPersistentSimpleStorage('tasks')
+		await migrateLegacyPersistentSimpleStorage('etc')
+	}
+	await Settings.set({ version: 1 })
+
+	taskStorage = new SimpleStorage({ databaseName: 'tasks' })
+	fileStorageV1 = new SimpleStorage({ databaseName: 'files' })
+	try {
+		fileStorageV0 = new SimpleStorage({
+			legacyPersistent,
+			databaseName: 'IDBFilesStorage-DB-taskFiles',
+			storeName: 'IDBFilesObjectStorage',
+		})
+		if (!(await fileStorageV0.keys()).length) {
+			fileStorageV0 = fileStorageV1
+			if (legacyPersistent)
+				void indexedDB.deleteDatabase(fileStorageV0.databaseName,
+					{ storage: "persistent" })
+			else
+				void indexedDB.deleteDatabase(fileStorageV0.databaseName)
+		}
+	} catch { fileStorageV0 = fileStorageV1 }
+
 	const taskOrder = new Map((await Settings.get('taskOrder')).map(
 		(v, i) => [v, i] as [number, number]))
 	const getTaskOrder = (v: IDBValidKey) =>

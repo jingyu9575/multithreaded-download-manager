@@ -30,3 +30,15 @@ declare namespace browser.webRequest {
 		addEventListener(type: string, listener: EventListener): void
 	}
 }
+
+interface Navigator {
+	storage: StorageManager
+}
+
+interface StorageManager {
+	persist(): Promise<boolean>
+}
+
+interface IDBFactory {
+	deleteDatabase(name: string, options: { storage: string }): IDBOpenDBRequest;
+}
