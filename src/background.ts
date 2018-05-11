@@ -1027,14 +1027,6 @@ const initialization = async function () {
 			databaseName: 'IDBFilesStorage-DB-taskFiles',
 			storeName: 'IDBFilesObjectStorage',
 		})
-		if (!(await fileStorageV0.keys()).length) {
-			fileStorageV0 = fileStorageV1
-			if (legacyPersistent)
-				void indexedDB.deleteDatabase(fileStorageV0.databaseName,
-					{ storage: "persistent" })
-			else
-				void indexedDB.deleteDatabase(fileStorageV0.databaseName)
-		}
 	} catch { fileStorageV0 = fileStorageV1 }
 
 	const taskOrder = new Map((await Settings.get('taskOrder')).map(
