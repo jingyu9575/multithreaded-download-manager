@@ -1332,7 +1332,10 @@ async function updateNewTaskAtTop() {
 updateNewTaskAtTop()
 Settings.setListener('newTaskAtTop', updateNewTaskAtTop)
 
-browser.runtime.onUpdateAvailable.addListener(() => { })
+browser.runtime.onUpdateAvailable.addListener(() => {
+	if (Task.list.some(v => DownloadState.isProgressing(v.state))) return
+	browser.runtime.reload()
+})
 
 async function updateIconColor() {
 	const iconColor = await Settings.get('iconColor')
