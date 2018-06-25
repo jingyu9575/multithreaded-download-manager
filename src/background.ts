@@ -855,7 +855,8 @@ class Thread {
 			const data = new Uint8Array(buffers.reduce((s, v) => s + v.byteLength, 0))
 			buffers.reduce((s, v) =>
 				(data.set(new Uint8Array(v), s), s + v.byteLength), 0)
-			void this.task.write(this, data.buffer as ArrayBuffer)
+			if (data.byteLength)
+				void this.task.write(this, data.buffer as ArrayBuffer)
 			buffers.length = 0
 			lastCommitTime = performance.now()
 		}
