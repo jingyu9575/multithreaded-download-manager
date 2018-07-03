@@ -27,7 +27,9 @@ html
 					span(data-i18n='minChunkSize')
 					span
 						input#min-chunk-size(type='number' required min='0')
-						span.input-unit KB
+						span.input-unit
+							span K
+							span(data-i18n='byteSymbol')
 				label
 					span(data-i18n='maxRetries')
 					input#max-retries(type='number' required min='0')

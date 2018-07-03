@@ -83,7 +83,9 @@ html
 			label.input-label
 				span(data-i18n='monitorDownloadMinSize')
 				input(data-key='monitorDownloadMinSize' type='number' required min='0')
-				span.input-unit.unit-KB
+				span.input-unit
+					span K
+					span(data-i18n='byteSymbol')
 			label.input-label
 				input(type='checkbox' data-key='autoCloseBlankTab')
 				span(data-i18n='autoCloseBlankTab')
@@ -100,7 +102,9 @@ html
 					span(data-i18n='minChunkSize')
 					span
 						input(data-key='minChunkSize' type='number' required min='0')
-						span.input-unit.unit-KB
+						span.input-unit
+							span K
+							span(data-i18n='byteSymbol')
 				label
 					span(data-i18n='maxRetries')
 					input(data-key='maxRetries' type='number' required min='0')
