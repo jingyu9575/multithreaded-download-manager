@@ -186,3 +186,7 @@ monitorLinksWithoutRange:
 	message: 'Enable prompt for links without multithreading support'
 linkWithoutRangeWarning:
 	message: 'This download does not support multithreading or resuming.'
+simultaneousTasks:
+	message: 'Simultaneous download tasks:'
+unlimited:
+	message: 'Unlimited'

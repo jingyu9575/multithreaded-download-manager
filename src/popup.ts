@@ -149,7 +149,7 @@ function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 		icon.querySelector('use')!.setAttribute('href',
 			`icons/bytesize-symbols.svg#i-${{
 				downloading: 'play', paused: 'pause', saving: 'archive',
-				failed: 'close', completed: 'checkmark'
+				failed: 'close', completed: 'checkmark', queued: 'clock',
 			}[data.state]}`)
 		icon.style.color = DownloadState.colors[updateData.state]
 		icon.querySelector('title')!.textContent =
@@ -159,7 +159,7 @@ function updateTask(id: number, updateData: Partial<TaskUpdateData>) {
 
 		const primaryButtonMap = {
 			downloading: 'pause', saving: 'pause', paused: 'start',
-			failed: 'start', completed: 'open-file',
+			failed: 'start', completed: 'open-file', queued: 'pause',
 		}
 		for (const cls of Object.values(primaryButtonMap))
 			(data.node.querySelector(`.${cls}`) as HTMLElement).hidden =

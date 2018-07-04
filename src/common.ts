@@ -42,19 +42,19 @@ function messageRemoteProxy(name: string) {
 	return remoteProxy(data => browser.runtime.sendMessage({ name, data }))
 }
 
-type DownloadState = 'downloading' | 'saving' | 'paused' | 'completed' | 'failed'
+type DownloadState = 'downloading' | 'saving' | 'paused' | 'completed' | 'failed' | 'queued'
 const DownloadState = {
 	isProgressing(state: DownloadState) {
-		return ['downloading', 'saving'].includes(state)
+		return ['downloading', 'saving', 'queued'].includes(state)
 	},
 	canPause(state: DownloadState) {
-		return ['downloading'].includes(state)
+		return ['downloading', 'queued'].includes(state)
 	},
 	canStart(state: DownloadState) {
 		return ['paused', 'failed'].includes(state)
 	},
 	canWriteChunks(state: DownloadState) {
-		return ['downloading', 'paused', 'failed'].includes(state)
+		return ['downloading', 'paused', 'failed', 'queued'].includes(state)
 	},
 	colors: {
 		downloading: 'cornflowerblue',
@@ -62,6 +62,7 @@ const DownloadState = {
 		failed: 'red',
 		paused: 'goldenrod',
 		completed: 'green',
+		queued: 'cornflowerblue',
 	},
 }
 
@@ -100,6 +101,7 @@ class Settings {
 	skipFirstSavingAttempt = false
 	workaroundBlankPopup = false
 	useSiteHandlers = false
+	simultaneousTasks: number | '' = ''
 
 	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'

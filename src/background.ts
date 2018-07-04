@@ -208,6 +208,7 @@ class Task extends TaskPersistentData {
 	static readonly list: Task[] = []
 	static get(id: number) { return this.list.find(v => v.id === id) }
 	static newTaskAtTop = false
+	static simultaneousTasks: number = Infinity
 
 	public readonly initialization: Promise<void>
 
@@ -267,7 +268,8 @@ class Task extends TaskPersistentData {
 			}
 			if (options.state === 'completed' || options.state === 'failed') {
 				this.setState(options.state, true)
-			} else if (options.state && DownloadState.isProgressing(options.state))
+			} else if (options.state && DownloadState.isProgressing(options.state)
+				&& options.state !== 'queued')
 				this.start()
 			if (loadId === undefined) void this.persist()
 		})
@@ -349,6 +351,8 @@ class Task extends TaskPersistentData {
 				}
 			}
 		}
+		if (this.state === 'downloading' && state !== 'downloading')
+			setTimeout(() => Task.tryStartQueuedTasks(), 0);
 		this.state = state
 		broadcastRemote.update([[this.id, {
 			state: this.state, error: this.error || '',
@@ -359,12 +363,25 @@ class Task extends TaskPersistentData {
 		void this.writeChunks()
 	}
 
+	private static remainingSimultaneousTasks() {
+		let n = Task.simultaneousTasks
+		if (n == Infinity) return Infinity
+		for (const task of Task.list) if (task.state === 'downloading') n--
+		return n
+	}
+
 	start() {
-		void this.criticalSection.sync(() => {
+		void this.criticalSection.sync(async () => {
 			if (!DownloadState.canStart(this.state)) return
 			this.error = undefined
 			this.currentMaxThreads = this.maxThreads!
 			this.currentMaxRetries = this.maxRetries!
+
+			if (Task.remainingSimultaneousTasks() <= 0) {
+				this.setState('queued')
+				return
+			}
+
 			this.setState('downloading')
 			if (!writeChunksTimer.isStarted) {
 				Log.log('writeChunksTimer.start')
@@ -372,6 +389,18 @@ class Task extends TaskPersistentData {
 			}
 			this.adjustThreads()
 		})
+	}
+
+	private static tryStartQueuedTasks() {
+		let n = Task.remainingSimultaneousTasks()
+		if (n == Infinity || n <= 0) return
+		for (const task of Task.list.slice().sort((v1, v2) => v1.id - v2.id)) {
+			if (task.state !== 'queued') continue
+			task.pause()
+			task.start()
+			--n
+			if (n <= 0) break
+		}
 	}
 
 	setDetail(thread: Thread, filename: string, totalSize: number | undefined,
@@ -1036,18 +1065,22 @@ const initialization = async function () {
 		})
 	} catch { fileStorageV0 = fileStorageV1 }
 
+	await updateSimultaneousTasks()
 	const taskOrder = await Settings.get('taskOrder')
 	const taskIds = (await taskStorage.keys() as number[]).sort((v0, v1) => v0 - v1)
 	const completedTasks: Task[] = []
+	const queuedTasks: Task[] = []
 	for (const id of taskIds) {
 		const data = await taskStorage.get(id) as TaskPersistentData
 		const task = new Task(data, id)
 		try { await task.initialization } catch { }
 		if (data.state === 'completed') completedTasks.push(task)
+		if (data.state === 'queued') queuedTasks.push(task)
 	}
 	if (await Settings.get('removeCompletedTasksOnStart'))
 		for (const task of completedTasks)
 			task.remove()
+	for (const task of queuedTasks) task.start()
 	Task.list.sort((v0, v1) => taskOrder.indexOf(v0.id) - taskOrder.indexOf(v1.id))
 	Task.saveAndBroadcastTaskOrder()
 	void updateLinkContextMenu()
@@ -1344,6 +1377,11 @@ async function updateIconColor() {
 }
 updateIconColor()
 Settings.setListener('iconColor', updateIconColor)
+
+async function updateSimultaneousTasks() {
+	Task.simultaneousTasks = await Settings.get('simultaneousTasks') || Infinity
+}
+Settings.setListener('simultaneousTasks', updateSimultaneousTasks)
 
 type SiteHandler = (url: string) => Promise<{
 	totalSize?: number

@@ -17,13 +17,16 @@ for (const input of document.querySelectorAll(
 	input.addEventListener('change', () => {
 		if (!input.checkValidity()) return
 		let value: any
-		if (input.type === 'number')
-			value = Number(input.value)
-		else if (input.type === 'checkbox')
+		if (input.type === 'number') {
+			value = (!input.required && !input.value) ? '' : Number(input.value)
+		} else if (input.type === 'checkbox')
 			value = (input as HTMLInputElement).checked
 		else value = input.value
 		void Settings.set({ [key]: value })
 	})
+	const placeholderI18n = input.dataset['placeholderI18n']
+	if (placeholderI18n)
+		(input as HTMLInputElement).placeholder = browser.i18n.getMessage(placeholderI18n)
 }
 
 Settings.get('showOptionsInDedicatedTab').then(async v => {
