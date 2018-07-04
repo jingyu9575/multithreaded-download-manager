@@ -6,10 +6,19 @@
 		{
 			"label": "Watch",
 			"type": "process",
-			"command": "make",
-			"args": [
-				"watch"
-			],
+			"windows": {
+				"command": "wsl",
+				"args": [
+					"make",
+					"watch"
+				]
+			},
+			"linux": {
+				"command": "make",
+				"args": [
+					"watch"
+				],
+			},
 			"group": {
 				"kind": "build",
 				"isDefault": true

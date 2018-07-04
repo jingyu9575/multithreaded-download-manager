@@ -42,19 +42,19 @@ function messageRemoteProxy(name: string) {
 	return remoteProxy(data => browser.runtime.sendMessage({ name, data }))
 }
 
-type DownloadState = 'downloading' | 'saving' | 'paused' | 'completed' | 'failed'
+type DownloadState = 'downloading' | 'saving' | 'paused' | 'completed' | 'failed' | 'queued'
 const DownloadState = {
 	isProgressing(state: DownloadState) {
-		return ['downloading', 'saving'].includes(state)
+		return ['downloading', 'saving', 'queued'].includes(state)
 	},
 	canPause(state: DownloadState) {
-		return ['downloading'].includes(state)
+		return ['downloading', 'queued'].includes(state)
 	},
 	canStart(state: DownloadState) {
 		return ['paused', 'failed'].includes(state)
 	},
 	canWriteChunks(state: DownloadState) {
-		return ['downloading', 'paused', 'failed'].includes(state)
+		return ['downloading', 'paused', 'failed', 'queued'].includes(state)
 	},
 	colors: {
 		downloading: 'cornflowerblue',
@@ -62,6 +62,7 @@ const DownloadState = {
 		failed: 'red',
 		paused: 'goldenrod',
 		completed: 'green',
+		queued: 'cornflowerblue',
 	},
 }
 
@@ -100,6 +101,7 @@ class Settings {
 	skipFirstSavingAttempt = false
 	workaroundBlankPopup = false
 	useSiteHandlers = false
+	simultaneousTasks: number | '' = ''
 
 	iconColor = 'default' as 'default' | string
 	badgeType = 'number' as 'none' | 'number'
@@ -274,7 +276,7 @@ async function bindPortToPopupWindow(port: browser.runtime.Port) {
 class SimpleStorageOptions {
 	readonly databaseName: string = 'simpleStorage'
 	readonly storeName: string = 'simpleStorage'
-	readonly persistent: boolean = true
+	readonly legacyPersistent: boolean = false
 
 	constructor(source: Partial<SimpleStorageOptions>) { Object.assign(this, source) }
 }
@@ -293,7 +295,7 @@ class SimpleStorage extends SimpleStorageOptions {
 	constructor(options: Partial<SimpleStorageOptions> = {}) {
 		super(options)
 		const request = indexedDB.open(this.databaseName,
-			this.persistent ? { version: 1, storage: "persistent" } : 1 as any)
+			this.legacyPersistent ? { version: 1, storage: "persistent" } : 1 as any)
 		request.onupgradeneeded = event => {
 			const db = request.result as IDBDatabase
 			db.createObjectStore(this.storeName)
@@ -352,13 +354,8 @@ class SimpleStorage extends SimpleStorageOptions {
 	}
 }
 
-async function hasPersistentDB() {
-	return (await browser.runtime.getPlatformInfo()).os !== 'android'
-}
-
 async function loadCustomCSS() {
-	const storage = new SimpleStorage(
-		{ databaseName: 'etc', persistent: await hasPersistentDB() })
+	const storage = new SimpleStorage({ databaseName: 'etc' })
 	const css = await storage.get('customCSS')
 	if (!css) return
 	const node = document.createElement('style')

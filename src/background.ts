@@ -101,17 +101,22 @@ function waitForBrowserDownload(id: number) {
 	return deferred.promise
 }
 
+class NotFoundError extends ExtendableError {
+	constructor(message = 'not found') { super(message) }
+}
+
 class WritableFile {
 	private mutableFile?: IDBMutableFile
 	private handle?: IDBFileHandle
-	private readonly initialization: Promise<void>
+	readonly initialization: Promise<void>
 
 	constructor(private readonly storage: SimpleStorage,
-		private readonly filename: string, mode: 'create' | 'open') {
+		private readonly filename: string, mode: 'create' | 'open' | 'opencreate') {
 		this.initialization = (async () => {
-			if (mode === 'open')
+			if (mode === 'open' || mode === 'opencreate')
 				this.mutableFile = await storage.get(filename)
 			if (!this.mutableFile) {
+				if (mode === 'open') throw new NotFoundError()
 				this.mutableFile = await storage.transaction(function* (_, db) {
 					return yield db.createMutableFile(filename,
 						'application/octet-stream')
@@ -165,7 +170,8 @@ class WritableFile {
 }
 
 let taskStorage: SimpleStorage
-let fileStorage: SimpleStorage
+let fileStorageV0: SimpleStorage
+let fileStorageV1: SimpleStorage
 
 class TaskPersistentData extends TaskOptions {
 	state: DownloadState = 'paused'
@@ -202,6 +208,9 @@ class Task extends TaskPersistentData {
 	static readonly list: Task[] = []
 	static get(id: number) { return this.list.find(v => v.id === id) }
 	static newTaskAtTop = false
+	static simultaneousTasks: number = Infinity
+
+	public readonly initialization: Promise<void>
 
 	constructor(options: Partial<TaskPersistentData>, loadId?: number) {
 		super(options)
@@ -218,20 +227,33 @@ class Task extends TaskPersistentData {
 			url: this.url, filename: this.filename, referrer: this.referrer,
 			state: this.state
 		}]])
-		const taskOrder = Task.list.map(v => v.id)
-		void Settings.set({ taskOrder })
-		broadcastRemote.setTaskOrder(taskOrder)
+		if (loadId === undefined) Task.saveAndBroadcastTaskOrder()
 		void updateBadge()
-		void this.criticalSection.sync(async () => {
+		this.initialization = this.criticalSection.sync(async () => {
 			const keys = { maxThreads: 1, minChunkSize: 1, maxRetries: 1 }
 			for (const key of Object.keys(keys) as (keyof typeof keys)[])
 				if (this[key] === undefined)
 					this[key] = await Settings.get(key)
 			if (options.state !== 'completed') {
-				this.file = new WritableFile(fileStorage,
-					`${this.id}`, loadId === undefined ? 'create' : 'open')
-				if (loadId === undefined)
-					await fileStorage.delete(this.snapshotName)
+				if (loadId === undefined) {
+					this.file = new WritableFile(fileStorageV1, `${this.id}`, 'create')
+				} else {
+					const params: [SimpleStorage, 'open' | 'create'][] = [
+						[fileStorageV1, 'open'], [fileStorageV0, 'open'],
+						[fileStorageV1, 'create']
+					]
+					for (const param of params) {
+						try {
+							this.file = new WritableFile(param[0], `${this.id}`, param[1])
+							await this.file.initialization // check error
+							break // finish if there is no error
+						} catch { }
+					}
+				}
+				if (loadId === undefined) {
+					await fileStorageV0.delete(this.snapshotName)
+					await fileStorageV1.delete(this.snapshotName)
+				}
 			}
 			if (options.totalSize !== undefined) {
 				if (options.state === 'saving' || options.state === 'completed') {
@@ -246,10 +268,17 @@ class Task extends TaskPersistentData {
 			}
 			if (options.state === 'completed' || options.state === 'failed') {
 				this.setState(options.state, true)
-			} else if (options.state && DownloadState.isProgressing(options.state))
+			} else if (options.state && DownloadState.isProgressing(options.state)
+				&& options.state !== 'queued')
 				this.start()
 			if (loadId === undefined) void this.persist()
 		})
+	}
+
+	static saveAndBroadcastTaskOrder() {
+		const taskOrder = Task.list.map(v => v.id)
+		void Settings.set({ taskOrder })
+		broadcastRemote.setTaskOrder(taskOrder)
 	}
 
 	private async persist() {
@@ -322,6 +351,8 @@ class Task extends TaskPersistentData {
 				}
 			}
 		}
+		if (this.state === 'downloading' && state !== 'downloading')
+			setTimeout(() => Task.tryStartQueuedTasks(), 0);
 		this.state = state
 		broadcastRemote.update([[this.id, {
 			state: this.state, error: this.error || '',
@@ -332,12 +363,25 @@ class Task extends TaskPersistentData {
 		void this.writeChunks()
 	}
 
+	private static remainingSimultaneousTasks() {
+		let n = Task.simultaneousTasks
+		if (n == Infinity) return Infinity
+		for (const task of Task.list) if (task.state === 'downloading') n--
+		return n
+	}
+
 	start() {
-		void this.criticalSection.sync(() => {
+		void this.criticalSection.sync(async () => {
 			if (!DownloadState.canStart(this.state)) return
 			this.error = undefined
 			this.currentMaxThreads = this.maxThreads!
 			this.currentMaxRetries = this.maxRetries!
+
+			if (Task.remainingSimultaneousTasks() <= 0) {
+				this.setState('queued')
+				return
+			}
+
 			this.setState('downloading')
 			if (!writeChunksTimer.isStarted) {
 				Log.log('writeChunksTimer.start')
@@ -345,6 +389,18 @@ class Task extends TaskPersistentData {
 			}
 			this.adjustThreads()
 		})
+	}
+
+	private static tryStartQueuedTasks() {
+		let n = Task.remainingSimultaneousTasks()
+		if (n == Infinity || n <= 0) return
+		for (const task of Task.list.slice().sort((v1, v2) => v1.id - v2.id)) {
+			if (task.state !== 'queued') continue
+			task.pause()
+			task.start()
+			--n
+			if (n <= 0) break
+		}
 	}
 
 	setDetail(thread: Thread, filename: string, totalSize: number | undefined,
@@ -506,7 +562,7 @@ class Task extends TaskPersistentData {
 
 		try {
 			for (const lastTrial of [false, true]) {
-				const snapshot = await fileStorage.get(this.snapshotName)
+				const snapshot = await fileStorageV1.get(this.snapshotName)
 				if (snapshot) {
 					blobUrl.open(snapshot)
 				} else {
@@ -536,9 +592,9 @@ class Task extends TaskPersistentData {
 					blobUrl.close()
 					if (Number.isFinite(saveId))
 						await removeBrowserDownload(saveId)
-					await fileStorage.initialization /* prevent async */
+					await fileStorageV1.initialization /* prevent async */
 					await this.file!.getBlob(blob =>
-						fileStorage.set(this.snapshotName, blob))
+						fileStorageV1.set(this.snapshotName, blob))
 					continue
 				}
 				this.fileAccessId = saveId
@@ -565,7 +621,8 @@ class Task extends TaskPersistentData {
 	async cleanupFileStorage() {
 		if (this.file) void this.file.destroy()
 		delete this.file
-		void fileStorage.delete(this.snapshotName)
+		void fileStorageV0.delete(this.snapshotName)
+		void fileStorageV1.delete(this.snapshotName)
 	}
 
 	remove() {
@@ -713,7 +770,7 @@ class Chunk {
 }
 
 const extensionHeader = 'x-multithreaded-download-manager-' +
-	[...window.crypto.getRandomValues(new Uint8Array(12))].map(
+	[...window.crypto.getRandomValues(new Uint8Array(12)) as Uint8Array].map(
 		v => 'abcdefghijklmnopqrstuvwxyz'[v % 26]).join('')
 
 interface ThreadInfo {
@@ -833,7 +890,8 @@ class Thread {
 			const data = new Uint8Array(buffers.reduce((s, v) => s + v.byteLength, 0))
 			buffers.reduce((s, v) =>
 				(data.set(new Uint8Array(v), s), s + v.byteLength), 0)
-			void this.task.write(this, data.buffer as ArrayBuffer)
+			if (data.byteLength)
+				void this.task.write(this, data.buffer as ArrayBuffer)
 			buffers.length = 0
 			lastCommitTime = performance.now()
 		}
@@ -975,30 +1033,56 @@ function getSuggestedFilename(url: string, contentDisposition: string,
 if (!browser.contextMenus)
 	browser.contextMenus = { create() { }, remove() { } } as any
 
+async function migrateLegacyPersistentSimpleStorage(databaseName: string) {
+	try {
+		const oldStorage = new SimpleStorage({ databaseName, legacyPersistent: true })
+		const newStorage = new SimpleStorage({ databaseName, legacyPersistent: false })
+		await Promise.all((await oldStorage.keys())
+			.map(async key => newStorage.set(key, await oldStorage.get(key))))
+		void indexedDB.deleteDatabase(databaseName, { storage: "persistent" });
+	} catch { }
+}
+
 const initialization = async function () {
-	await Settings.set({ version: 0 })
-	const persistent = await hasPersistentDB()
-	taskStorage = new SimpleStorage({ databaseName: 'tasks', persistent })
-	fileStorage = new SimpleStorage({
-		persistent, databaseName: 'IDBFilesStorage-DB-taskFiles',
-		storeName: 'IDBFilesObjectStorage',
-	})
-	const taskOrder = new Map((await Settings.get('taskOrder')).map(
-		(v, i) => [v, i] as [number, number]))
-	const getTaskOrder = (v: IDBValidKey) =>
-		taskOrder.has(v as number) ? taskOrder.get(v as number)! : Infinity
-	const taskIds = (await taskStorage.keys()).sort(
-		(v0, v1) => getTaskOrder(v0) - getTaskOrder(v1)) as number[]
+	if (navigator.storage && navigator.storage.persist)
+		void navigator.storage.persist()
+
+	const legacyPersistent = (await browser.runtime.getPlatformInfo()).os !== 'android'
+
+	if (await Settings.get("version") < 1 && legacyPersistent) {
+		await migrateLegacyPersistentSimpleStorage('tasks')
+		await migrateLegacyPersistentSimpleStorage('etc')
+	}
+	await Settings.set({ version: 1 })
+
+	taskStorage = new SimpleStorage({ databaseName: 'tasks' })
+	fileStorageV1 = new SimpleStorage({ databaseName: 'files' })
+	try {
+		fileStorageV0 = new SimpleStorage({
+			legacyPersistent,
+			databaseName: 'IDBFilesStorage-DB-taskFiles',
+			storeName: 'IDBFilesObjectStorage',
+		})
+	} catch { fileStorageV0 = fileStorageV1 }
+
+	await updateSimultaneousTasks()
+	const taskOrder = await Settings.get('taskOrder')
+	const taskIds = (await taskStorage.keys() as number[]).sort((v0, v1) => v0 - v1)
 	const completedTasks: Task[] = []
+	const queuedTasks: Task[] = []
 	for (const id of taskIds) {
 		const data = await taskStorage.get(id) as TaskPersistentData
 		const task = new Task(data, id)
+		try { await task.initialization } catch { }
 		if (data.state === 'completed') completedTasks.push(task)
+		if (data.state === 'queued') queuedTasks.push(task)
 	}
 	if (await Settings.get('removeCompletedTasksOnStart'))
 		for (const task of completedTasks)
 			task.remove()
-
+	for (const task of queuedTasks) task.start()
+	Task.list.sort((v0, v1) => taskOrder.indexOf(v0.id) - taskOrder.indexOf(v1.id))
+	Task.saveAndBroadcastTaskOrder()
 	void updateLinkContextMenu()
 
 	browser.contextMenus.create({
@@ -1228,6 +1312,8 @@ function monitorDownloadListener(
 					url, filename, referrer: originUrl || ''
 				} as TaskOptions
 			})
+			if (!lengthPresent || !acceptRanges)
+				port.postMessage({ name: 'link-without-range' })
 		})
 		setTimeout(() => {
 			if (portListeners.delete(portName)) resolve({})
@@ -1276,7 +1362,10 @@ async function updateNewTaskAtTop() {
 updateNewTaskAtTop()
 Settings.setListener('newTaskAtTop', updateNewTaskAtTop)
 
-browser.runtime.onUpdateAvailable.addListener(() => { })
+browser.runtime.onUpdateAvailable.addListener(() => {
+	if (Task.list.some(v => DownloadState.isProgressing(v.state))) return
+	browser.runtime.reload()
+})
 
 async function updateIconColor() {
 	const iconColor = await Settings.get('iconColor')
@@ -1288,6 +1377,11 @@ async function updateIconColor() {
 }
 updateIconColor()
 Settings.setListener('iconColor', updateIconColor)
+
+async function updateSimultaneousTasks() {
+	Task.simultaneousTasks = await Settings.get('simultaneousTasks') || Infinity
+}
+Settings.setListener('simultaneousTasks', updateSimultaneousTasks)
 
 type SiteHandler = (url: string) => Promise<{
 	totalSize?: number

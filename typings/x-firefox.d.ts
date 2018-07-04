@@ -31,11 +31,14 @@ declare namespace browser.webRequest {
 	}
 }
 
-declare class TextDecoder {
-	constructor(label?: string, options?: { fatal?: boolean, ignoreBOM: boolean })
-	readonly encoding: string
-	readonly fatal: boolean
-	readonly ignoreBOM: boolean
-	decode(input?: ArrayBuffer | ArrayBufferView,
-		options?: { stream?: boolean }): string
+interface Navigator {
+	storage: StorageManager
+}
+
+interface StorageManager {
+	persist(): Promise<boolean>
+}
+
+interface IDBFactory {
+	deleteDatabase(name: string, options: { storage: string }): IDBOpenDBRequest;
 }

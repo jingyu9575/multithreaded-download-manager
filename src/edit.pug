@@ -13,6 +13,7 @@ html
 					span(data-i18n='editURL')
 					input#url(type='url' required pattern="https?:.+")
 				span#url-warning(data-i18n='editURLWarning' hidden)
+				span#link-without-range(data-i18n='linkWithoutRangeWarning' hidden)
 				label
 					span(data-i18n='editFilename')
 					input#filename
@@ -26,7 +27,9 @@ html
 					span(data-i18n='minChunkSize')
 					span
 						input#min-chunk-size(type='number' required min='0')
-						span.input-unit KB
+						span.input-unit
+							span K
+							span(data-i18n='byteSymbol')
 				label
 					span(data-i18n='maxRetries')
 					input#max-retries(type='number' required min='0')

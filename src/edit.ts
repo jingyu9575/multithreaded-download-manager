@@ -16,7 +16,11 @@ const monitorPort = function () {
 	const port = browser.runtime.connect(undefined, { name: match[1] })
 	bindPortToPopupWindow(port)
 	port.onMessage.addListener((message: any) => {
-		if (message.name === 'options') setInputValues(message.options)
+		if (message.name === 'options')
+			setInputValues(message.options)
+		else if (message.name === 'link-without-range')
+			(document.querySelector('#link-without-range') as
+				HTMLElement).hidden = false
 	})
 	return port
 }()

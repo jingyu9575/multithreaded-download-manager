@@ -37,7 +37,7 @@ dist/%: src/%
 watch:
 	@exec 3>&1; while true; do \
         make --no-print-directory other; \
-        inotifywait -qqre close_write src; \
+        inotifywait -qqre modify src; \
     done 4>&1 >&3 3>&- | tsc  --locale $(LOCALE) -w 3>&- | awk 'NF'
 
 clean:
