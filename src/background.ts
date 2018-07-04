@@ -224,9 +224,7 @@ class Task extends TaskPersistentData {
 			url: this.url, filename: this.filename, referrer: this.referrer,
 			state: this.state
 		}]])
-		const taskOrder = Task.list.map(v => v.id)
-		void Settings.set({ taskOrder })
-		broadcastRemote.setTaskOrder(taskOrder)
+		if (loadId === undefined) Task.saveAndBroadcastTaskOrder()
 		void updateBadge()
 		void this.criticalSection.sync(async () => {
 			const keys = { maxThreads: 1, minChunkSize: 1, maxRetries: 1 }
@@ -271,6 +269,12 @@ class Task extends TaskPersistentData {
 				this.start()
 			if (loadId === undefined) void this.persist()
 		})
+	}
+
+	static saveAndBroadcastTaskOrder() {
+		const taskOrder = Task.list.map(v => v.id)
+		void Settings.set({ taskOrder })
+		broadcastRemote.setTaskOrder(taskOrder)
 	}
 
 	private async persist() {
@@ -1030,12 +1034,8 @@ const initialization = async function () {
 		})
 	} catch { fileStorageV0 = fileStorageV1 }
 
-	const taskOrder = new Map((await Settings.get('taskOrder')).map(
-		(v, i) => [v, i] as [number, number]))
-	const getTaskOrder = (v: IDBValidKey) =>
-		taskOrder.has(v as number) ? taskOrder.get(v as number)! : Infinity
-	const taskIds = (await taskStorage.keys()).sort(
-		(v0, v1) => getTaskOrder(v0) - getTaskOrder(v1)) as number[]
+	const taskOrder = await Settings.get('taskOrder')
+	const taskIds = (await taskStorage.keys() as number[]).sort((v0, v1) => v0 - v1)
 	const completedTasks: Task[] = []
 	for (const id of taskIds) {
 		const data = await taskStorage.get(id) as TaskPersistentData
@@ -1045,7 +1045,8 @@ const initialization = async function () {
 	if (await Settings.get('removeCompletedTasksOnStart'))
 		for (const task of completedTasks)
 			task.remove()
-
+	Task.list.sort((v0, v1) => taskOrder.indexOf(v0.id) - taskOrder.indexOf(v1.id))
+	Task.saveAndBroadcastTaskOrder()
 	void updateLinkContextMenu()
 
 	browser.contextMenus.create({
