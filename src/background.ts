@@ -209,6 +209,8 @@ class Task extends TaskPersistentData {
 	static get(id: number) { return this.list.find(v => v.id === id) }
 	static newTaskAtTop = false
 
+	public readonly initialization: Promise<void>
+
 	constructor(options: Partial<TaskPersistentData>, loadId?: number) {
 		super(options)
 		this.state = 'paused'
@@ -226,7 +228,7 @@ class Task extends TaskPersistentData {
 		}]])
 		if (loadId === undefined) Task.saveAndBroadcastTaskOrder()
 		void updateBadge()
-		void this.criticalSection.sync(async () => {
+		this.initialization = this.criticalSection.sync(async () => {
 			const keys = { maxThreads: 1, minChunkSize: 1, maxRetries: 1 }
 			for (const key of Object.keys(keys) as (keyof typeof keys)[])
 				if (this[key] === undefined)
@@ -1040,6 +1042,7 @@ const initialization = async function () {
 	for (const id of taskIds) {
 		const data = await taskStorage.get(id) as TaskPersistentData
 		const task = new Task(data, id)
+		try { await task.initialization } catch { }
 		if (data.state === 'completed') completedTasks.push(task)
 	}
 	if (await Settings.get('removeCompletedTasksOnStart'))
