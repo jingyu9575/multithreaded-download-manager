@@ -72,6 +72,7 @@ class TaskOptions {
 	maxThreads?: number = undefined
 	minChunkSize?: number = undefined // KiB
 	maxRetries?: number = undefined
+	speedLimit?: number | '' = undefined // KiB/s
 
 	constructor(source: Partial<TaskOptions>) { Object.assign(this, source) }
 }
@@ -128,6 +129,8 @@ class Settings {
 	legacyFilenameDetectNonStandardURLEncoded = false
 
 	removeAfterImport = true
+
+	enableSpeedLimit = false
 
 	taskOrder: number[] = []
 

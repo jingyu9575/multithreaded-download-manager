@@ -200,6 +200,7 @@ class Task extends TaskPersistentData {
 	private isRangeSupported = true
 	private isSavingDownload = false
 	private isPreallocating = false
+	speedLimitSharedData = new SpeedLimitSharedData()
 
 	get totalSize() { return this.lastChunk ? this.lastChunk.initPosition : undefined }
 	set totalSize(v) { } // used in base class
@@ -208,6 +209,7 @@ class Task extends TaskPersistentData {
 	static readonly list: Task[] = []
 	static get(id: number) { return this.list.find(v => v.id === id) }
 	static newTaskAtTop = false
+	static enableSpeedLimit = false
 
 	constructor(options: Partial<TaskPersistentData>, loadId?: number) {
 		super(options)
@@ -847,6 +849,8 @@ class Thread {
 			}
 		}
 
+		const scheduler = new SpeedLimitScheduler()
+
 		const filter = browser.webRequest.filterResponseData(requestId)
 		const buffers: ArrayBuffer[] = []
 		let lastCommitTime = performance.now()
@@ -866,6 +870,8 @@ class Thread {
 			if (!this.exists) { stop(); return }
 			buffers.push(data)
 			if (performance.now() - lastCommitTime > 300) commit()
+			console.warn('got data: ', data.byteLength)
+			scheduler.schedule(filter, this.task.speedLimitSharedData)
 		}
 		filter.onstop = stop; filter.onerror = stop
 	}
@@ -1006,6 +1012,18 @@ async function migrateLegacyPersistentSimpleStorage(databaseName: string) {
 			.map(async key => newStorage.set(key, await oldStorage.get(key))))
 		void indexedDB.deleteDatabase(databaseName, { storage: "persistent" });
 	} catch { }
+}
+
+class SpeedLimitSharedData {
+
+}
+
+class SpeedLimitScheduler {
+	schedule(filter: browser.webRequest.StreamFilter, data: SpeedLimitSharedData) {
+		filter.suspend()
+		console.warn('suspended')
+		setTimeout(() => { try { filter.resume() } catch { } }, 3000);
+	}
 }
 
 const initialization = async function () {

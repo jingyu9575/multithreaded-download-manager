@@ -186,3 +186,9 @@ monitorLinksWithoutRange:
 	message: 'Enable prompt for links without multithreading support'
 linkWithoutRangeWarning:
 	message: 'This download does not support multithreading or resuming.'
+experimental:
+	message: 'Experimental'
+enableSpeedLimit:
+	message: 'Enable download speed limit feature'
+speedLimit:
+	message: 'Speed limit:'

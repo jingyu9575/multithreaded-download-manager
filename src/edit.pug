@@ -33,6 +33,14 @@ html
 				label
 					span(data-i18n='maxRetries')
 					input#max-retries(type='number' required min='0')
+				label()
+					span(data-i18n='speedLimit')
+					span
+						input#speed-limit(type='number' min='0')
+						span.input-unit
+							span K
+							span(data-i18n='byteSymbol')
+							span /s
 			.spacer
 			#actions
 				button#continue(data-i18n='continueInBrowser' type='button' hidden)

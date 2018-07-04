@@ -36,9 +36,11 @@ const taskId = function () {
 document.querySelector('#main-form')!.addEventListener('submit', async event => {
 	event.preventDefault()
 	const options = new TaskOptions({})
-	for (const key of Object.keys(options) as (keyof TaskOptions)[])
-		options[key] = (document.getElementById(
-			toHyphenCase(key)) as HTMLInputElement).value
+	for (const key of Object.keys(options) as (keyof TaskOptions)[]) {
+		const element = document.getElementById(toHyphenCase(key)) as HTMLInputElement
+		options[key] = element.type === 'number' && element.value ?
+			Number(element.value) : element.value
+	}
 	const id = taskId !== undefined ?
 		(await backgroundRemote.setTaskOptions(taskId, options), taskId) :
 		await backgroundRemote.createTask(options)
