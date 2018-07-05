@@ -184,3 +184,9 @@ useSiteHandlers:
 	message: 'Activer les comportements spécifiques pour certains sites Web'
 monitorLinksWithoutRange:
 	message: 'Activer demande pour les liens sans support multi-processus'
+linkWithoutRangeWarning:
+	message: 'Ce téléchargement ne supporte pas le multi-processus ou la reprise de téléchargement.'
+simultaneousTasks:
+	message: 'Tâches de téléchargement simultané:'
+unlimited:
+	message: 'Illimité'
