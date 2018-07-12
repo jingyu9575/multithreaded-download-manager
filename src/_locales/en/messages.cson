@@ -190,3 +190,5 @@ simultaneousTasks:
 	message: 'Simultaneous download tasks:'
 unlimited:
 	message: 'Unlimited'
+editFileSize:
+	message: 'Size:'

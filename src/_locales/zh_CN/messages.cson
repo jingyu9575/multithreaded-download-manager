@@ -182,3 +182,5 @@ simultaneousTasks:
 	message: '同时下载任务数：'
 unlimited:
 	message: '不限制'
+editFileSize:
+	message: '大小：'

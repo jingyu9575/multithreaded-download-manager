@@ -16,9 +16,14 @@ const monitorPort = function () {
 	const port = browser.runtime.connect(undefined, { name: match[1] })
 	bindPortToPopupWindow(port)
 	port.onMessage.addListener((message: any) => {
-		if (message.name === 'options')
+		if (message.name === 'options') {
 			setInputValues(message.options)
-		else if (message.name === 'link-without-range')
+			if (message.contentLength != null) {
+				document.getElementById('prompt-file-size-label')!.hidden = false
+				document.getElementById('prompt-file-size-value')!.textContent
+					= formatSize(message.contentLength)
+			}
+		} else if (message.name === 'link-without-range')
 			(document.querySelector('#link-without-range') as
 				HTMLElement).hidden = false
 	})
@@ -49,6 +54,14 @@ document.querySelector('#main-form')!.addEventListener('submit', async event => 
 document.querySelector('#continue')!.addEventListener('click', event => {
 	if (monitorPort) monitorPort.postMessage({ name: 'continue' })
 	void closeWindow()
+})
+
+let urlChanged = false
+document.getElementById('url')!.addEventListener('input', () => {
+	if (!urlChanged) {
+		urlChanged = true
+		document.getElementById('prompt-file-size-span')!.classList.add('obsolete')
+	}
 })
 
 const clipboardReader = document.querySelector('#clipboard-reader') as HTMLElement

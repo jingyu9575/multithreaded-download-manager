@@ -273,6 +273,17 @@ async function bindPortToPopupWindow(port: browser.runtime.Port) {
 	window.addEventListener('beforeunload', () => port.disconnect())
 }
 
+function formatSize(n: number,
+	{ base = 1024, valueCap = 1000, separator = ' ' } = {}) {
+	if (n === 0) return '0'
+	const sign = n < 0 ? (n = -n, '-') : ''
+	const symbols = ['', 'K', 'M', 'G', 'T', 'P', 'E']
+	let exp = Math.floor(Math.log(n) / Math.log(base))
+	if (n / base ** exp >= valueCap) exp++
+	exp = Math.max(0, Math.min(exp, symbols.length - 1))
+	return sign + (n / base ** exp).toFixed(1) + separator + symbols[exp]
+}
+
 class SimpleStorageOptions {
 	readonly databaseName: string = 'simpleStorage'
 	readonly storeName: string = 'simpleStorage'

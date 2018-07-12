@@ -1270,6 +1270,8 @@ function monitorDownloadListener(
 	}) {
 	let contentDisposition = '', lengthPresent = false,
 		contentTypeIncluded = false, acceptRanges = false
+	let contentLength: number | undefined = undefined
+
 	if (!(statusCode >= 200 && statusCode < 300)) return {}
 	if (method.toLowerCase() !== 'get') return {}
 	for (const header of responseHeaders!) {
@@ -1280,6 +1282,8 @@ function monitorDownloadListener(
 				return {}
 		} else if (name === 'content-length') {
 			lengthPresent = true
+			if (header.value && Number.isInteger(Number(header.value)))
+				contentLength = Number(header.value)
 			if ((!header.value && !monitorDownloadParams.linksWithoutRange)
 				|| header.value &&
 				Number(header.value) < monitorDownloadParams.minSize * 1024)
@@ -1308,7 +1312,7 @@ function monitorDownloadListener(
 				({ name }: any) => { if (name === 'continue') resolve({}) })
 			const filename = await getSuggestedFilename(url, contentDisposition)
 			port.postMessage({
-				name: 'options', options: {
+				name: 'options', contentLength, options: {
 					url, filename, referrer: originUrl || ''
 				} as TaskOptions
 			})
