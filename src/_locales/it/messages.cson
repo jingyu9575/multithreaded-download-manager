@@ -73,7 +73,7 @@ unknownError:
 showCompleted:
 	message: 'Mostra download completati'
 removeAfterImport:
-	message: 'Rimuovi gli elementi originali dopo l'importazione'
+	message: 'Rimuovi gli elementi originali dopo l\'importazione'
 downloadWith:
 	message: 'Scarica con $1'
 unsupportedURL:
@@ -135,7 +135,7 @@ hideBadgeZero:
 addContextMenuToLink:
 	message: 'Aggiungi menù contestuale ai link'
 windowPosition:
-	message: 'Posizione della finestra dell'\estensione:'
+	message: 'Posizione della finestra dell\'estensione:'
 systemDefault:
 	message: 'predefinita del sistema'
 parentCenter:
@@ -175,7 +175,7 @@ license3rdParty:
 customCSSButton:
 	message: 'CSS Personalizzato...'
 customCSSDesc:
-	message: 'CSS personalizzato per le pagine dell'estensione. Può cambiare completamente l'interfaccia, procedere con cautela.'
+	message: 'CSS personalizzato per le pagine dell\'estensione. Può cambiare completamente l\'interfaccia, procedere con cautela.'
 save:
 	message: 'Salva'
 byteSymbol:
