@@ -157,7 +157,7 @@ monitorDownloadDesc:
 monitorDownloadMinSize:
 	message: 'Disabilita per i file più piccoli di:'
 autoCloseBlankTab:
-	message: 'Chiudi automaticamentele schede vuote durante il download'
+	message: 'Chiudi automaticamente le schede vuote durante il download'
 defaultNetworkOptions:
 	message: 'Impostazioni di rete predefinite'
 legacyFilenameDetection:
