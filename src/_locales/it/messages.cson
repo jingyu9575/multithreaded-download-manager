@@ -27,7 +27,7 @@ noStorageAccess:
 createDownload:
 	message: 'Crea attività di download'
 importDownload:
-	message: 'Importa attività dalla lista incorporata dei download'
+	message: 'Importa attività dalla lista del browser'
 options:
 	message: 'Opzioni'
 openInNewTab:
@@ -91,7 +91,7 @@ saveFileTo:
 downloadFolder:
 	message: 'Cartella di download'
 alwaysAsk:
-	message: 'Chiedi sempre?'
+	message: 'Chiedi sempre'
 skipFirstSavingAttempt:
 	message: 'Il primo tentativo di salvataggio non è andato a termine e deve essere saltato'
 workaroundBlankPopup:
@@ -143,7 +143,7 @@ parentCenter:
 rememberLast:
 	message: 'ricorda ultima dimensione'
 windowSize:
-	message: 'Dimensione della pagina dell\'estensione:'
+	message: 'Dimensione della finestra dell\'estensione:'
 newTaskAtTop:
 	message: 'Mostra nuove attività in alto'
 removeCompletedTasksOnStart:
@@ -153,11 +153,11 @@ showOptionsInDedicatedTab:
 monitorDownload:
 	message: 'Monitora download'
 monitorDownloadDesc:
-	message: 'Chiedi automaticamente per il download'
+	message: 'Richiedi automaticamente il download'
 monitorDownloadMinSize:
 	message: 'Disabilita per i file più piccoli di:'
 autoCloseBlankTab:
-	message: 'Chiudi le schede vuote automaticamente durante il download'
+	message: 'Chiudi automaticamentele schede vuote durante il download'
 defaultNetworkOptions:
 	message: 'Impostazioni di rete predefinite'
 legacyFilenameDetection:
