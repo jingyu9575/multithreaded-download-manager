@@ -91,7 +91,7 @@ saveFileTo:
 downloadFolder:
 	message: 'Download folder'
 alwaysAsk:
-	message: 'Always ask?'
+	message: 'Always ask'
 skipFirstSavingAttempt:
 	message: 'The first saving attempt was problematic and should be skipped'
 workaroundBlankPopup:
