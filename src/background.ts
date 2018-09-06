@@ -1189,6 +1189,8 @@ async function updateBadge(state?: DownloadState) {
 		await browser.browserAction.setBadgeText({ text: '' })
 		return
 	}
+	if ('setBadgeTextColor' in browser.browserAction)
+		await (browser.browserAction as any).setBadgeTextColor({ color: 'white' })
 	await browser.browserAction.setBadgeText({ text: `${n}` })
 	await browser.browserAction.setBadgeBackgroundColor(
 		{ color: DownloadState.colors[displayState || 'downloading'] })
