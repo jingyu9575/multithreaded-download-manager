@@ -191,4 +191,4 @@ simultaneousTasks:
 unlimited:
 	message: 'Без ограничения'
 editFileSize:
-message: 'Размер:'
+	message: 'Размер:'
