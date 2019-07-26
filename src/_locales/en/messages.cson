@@ -318,3 +318,5 @@ configureOpen:
 	message: 'Configure "Open"'
 configureSave:
 	message: 'Configure "Save"'
+theme:
+	message: 'Theme:'

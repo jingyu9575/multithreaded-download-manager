@@ -29,6 +29,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	playSoundOnAllCompleted = false
 	showNotificationOnAllCompleted = false
 
+	theme = '' as '' | 'dark'
 	iconColor = 'default'
 	iconColorCode = '#000000'
 	iconColorAlpha = 100

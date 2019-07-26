@@ -67,6 +67,11 @@ append body
 					input(type='checkbox' data-key='showNotificationOnAllCompleted')
 					span(data-i18n='showNotificationOnAllCompleted')
 			x-page
+				label.input-label
+					span(data-i18n='theme')
+					select(data-key='theme')
+						option(value='' data-i18n='default')
+						option(value='dark' data-i18n='dark')
 				div
 					label.input-label
 						span(data-i18n='iconColor')

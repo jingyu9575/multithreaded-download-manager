@@ -1,0 +1,63 @@
+// Contributed by Onurtag
+// https://gist.github.com/Onurtag/1ea462f330a8cc26d4b72d3023966f65
+
+/* General */
+body
+	background-color: #4A4A4F
+	color: #f3f3f3
+
+input, select
+	background-color: #f7f7f7
+
+input[type='checkbox']
+	filter: brightness(95%)
+
+a
+	filter: invert(90%) hue-rotate(170deg)
+
+/* Options */
+x-tabs-nav, x-page
+	background-color: #4A4A4F
+	border-color: #4A4A4F
+
+x-tab[active]
+	color: #f3f3f3
+	outline-color: #c0c0d5 !important
+	border-top-color: #0A84FF
+	background-color: #6A6A70
+
+x-tab:hover
+	background-color: #71717b
+
+/* Popup */
+.state-icon > use
+	filter: drop-shadow(0.2px 0.2px 0.2px black) brightness(1.4) contrast(1.4)
+
+.progress-canvas
+	background-color: #2a2a2a
+	filter: brightness(1.1) contrast(0.9)
+	border: 1px solid rgba(0, 0, 0, 0.1)
+
+/* Popup buttons */
+.summary-row > button > svg > use
+	filter: invert(90%)
+
+.summary-row > button:not([disabled]):hover
+	background-color: rgba(220, 220, 220, 0.2)
+
+#toolbar > button
+	background-color: #4A4A4F
+
+#toolbar > button:not([disabled]):hover
+	background-color: rgba(220, 220, 220, 0.2)
+
+#toolbar > button > svg > use, #toolbar > button > img
+	filter: invert(100%) contrast(80%)
+
+#toolbar
+	background-color: #4A4A4F
+
+/* Create a download task window */
+th, .url-list-inner, textarea
+	background-color: #f7f7f7 !important
+	color: #444 !important

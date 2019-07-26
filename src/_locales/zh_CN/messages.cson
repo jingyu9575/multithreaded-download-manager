@@ -310,3 +310,5 @@ configureOpen:
 	message: '配置“打开”'
 configureSave:
 	message: '配置“保存”'
+theme:
+	message: '主题：'

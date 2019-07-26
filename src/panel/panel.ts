@@ -168,17 +168,20 @@ class XTaskElement extends HTMLElement {
 
 		if (clear) context.clearRect(0, 0, width, height)
 
-		if (!this.data.totalSize /* 0 | undefined */) return
+		const { totalSize } = this.data
+		if (!totalSize /* 0 | undefined */) return
 
 		for (const [key, { currentSize, writtenSize }] of Object.entries(items)) {
 			const position = Number(key)
 			context.fillStyle = DownloadState.colors[this.data.state]
-			context.fillRect(position / this.data.totalSize * width, 0,
-				currentSize / this.data.totalSize * width, height)
+
+			const x0 = Math.round(position / totalSize * width)
+			const xc = Math.round((position + currentSize) / totalSize * width)
+			context.fillRect(x0, 0, Math.max(xc - x0, 1), height)
 			if (writtenSize < currentSize) {
+				const xw = Math.round((position + writtenSize) / totalSize * width)
 				context.fillStyle = pendingWriteMaskColor
-				context.fillRect((position + writtenSize) / this.data.totalSize * width,
-					0, (currentSize - writtenSize) / this.data.totalSize * width, height)
+				context.fillRect(xw, 0, xc - xw, height)
 			}
 		}
 	}
