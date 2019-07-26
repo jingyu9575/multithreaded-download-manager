@@ -1,0 +1,52 @@
+x-tabs
+	display: flex
+	flex-direction: column
+
+x-tabs-nav
+	display: flex
+	background-color: #f9f9fa
+	flex-wrap: wrap
+	margin: 0
+	padding: 0
+	border-top: 1px solid #e0e0e2
+	border-bottom: 1px solid #e0e0e2
+
+x-tab
+	list-style: none
+	padding: 3px 10px 5px 10px
+	border-top: 2px solid transparent
+
+	&:hover
+		background-color: #ededf0
+		border-top-color: #bebec0
+
+	&[active]
+		color: #0060DF
+		border-top-color: currentColor
+
+x-tabs-nav:focus > x-tab[active]
+	outline: 1px dotted #0060DF
+	outline-offset: -1px
+
+x-tabs-main
+	flex: 1
+	display: flex
+
+x-page
+	flex: 1
+	display: flex
+
+	&:not([active])
+		position: absolute
+		visibility: hidden
+
+x-tabs-main[same-size]
+	display: grid
+	grid-template-columns: 1fr
+
+	> x-page
+		grid-row: 1
+		grid-column: 1
+
+		&:not([active])
+			position: unset

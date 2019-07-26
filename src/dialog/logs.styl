@@ -1,0 +1,43 @@
+@import '../common/common.css'
+
+#raw-data
+	margin: 8px 12px
+
+main
+	flex: 1
+	-webkit-user-select: text
+	position: relative
+	border-block-start: 1px solid lightgray
+
+#table-container
+	position: absolute
+	width: 100%
+	height: 100%
+	overflow: auto
+
+table
+	display: grid
+	grid-template-columns: auto 1fr auto
+	font-family: monospace
+
+tbody, tr
+	display: contents
+
+td
+	border-block-end: 1px solid lightgray
+	white-space: nowrap
+	text-overflow: ellipsis
+	overflow-x: hidden
+	line-height: 1.5
+	padding: 0 1ch
+
+td:not(:last-child)
+	border-inline-end: 1px solid lightgray
+
+.warning td
+	background-color: #ffffdd
+	color: #666600
+
+.error td
+	background-color: #fff0f0
+	color: #aa0022

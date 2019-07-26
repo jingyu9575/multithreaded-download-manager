@@ -1,0 +1,58 @@
+form.task-form(is='task-form')
+	.input-grid
+		label.input-label
+			span(data-i18n='editURL')
+			input(type="url" data-key='url' required pattern="https?:.+")
+		.warning-text.if-editing.if-not-readonly(data-i18n='editURLWarning')
+		.warning-text.if-no-range(data-i18n='linkWithoutRangeWarning')
+		label.input-label
+			span(data-i18n='editFilename')
+			input(type="text" data-key='filenameTemplate'
+					data-i18n-placeholder='filenamePlaceholder')
+			a.filename-template-help(href=`${repoRoot}wiki/Filename-template`
+					target='_blank' rel="noopener noreferrer" data-i18n-title='help')
+				svg.icon: use(href='../icons/photon-icons.svg#help')
+		label.input-label.file-size-label(hidden)
+			span(data-i18n='editFileSize')
+			span.file-size-span
+				span.file-size-value
+				span(data-i18n='byteSymbol')
+		label.input-label
+			span(data-i18n='editReferrer')
+			input(type="url" data-key='referrer' pattern="https?:.+")
+		label.input-label
+			span(data-i18n='editChecksum')
+			input(type="text" data-key='checksum'
+				pattern="[0-9A-Fa-f]{40}|[0-9A-Fa-f]{64}"
+				placeholder='SHA-1 / SHA-256')
+	details.network-options
+		summary(data-i18n='networkOptions')
+		.network-options-labels
+			label.input-label
+				span(data-i18n='maxThreads')
+				input(data-key='maxThreads' type='number' required min='1')
+			label.input-label
+				span(data-i18n='minChunkSize')
+				span
+					input(data-key='minChunkSize' type='number' required min='0')
+					span.input-unit
+						span K
+						span(data-i18n='byteSymbol')
+			label.input-label
+				span(data-i18n='maxRetries')
+				input(data-key='maxRetries' type='number' min='0'
+						data-i18n-placeholder='unlimited')
+	.spacer
+	.actions
+		button.copy-address.dialog-button(type='button' data-i18n='copyAddress')
+		button.continue-default.dialog-button.if-monitor(
+			data-i18n='continueInBrowser' type='button')
+		button.continue-open.dialog-button.if-monitor(data-i18n='open' type='button')
+		button.continue-save.dialog-button.if-monitor(data-i18n='save' type='button')
+		.spacer
+		button.cancel.dialog-button(type='button')
+			span.if-not-readonly(data-i18n='cancel')
+			span.if-readonly(data-i18n='close')
+		button.submit.dialog-button.if-not-readonly(type='submit')
+			span.if-not-editing(data-i18n='download')
+			span.if-editing(data-i18n='OK')

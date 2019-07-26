@@ -1,0 +1,119 @@
+.url-provider
+	display: flex
+	flex-direction: column
+
+.address-input
+	flex: 1
+	resize: none
+	font-family: monospace
+	font-size: inherit
+	white-space: pre
+	padding: 0.4ch
+	margin: 0 1px
+
+.convert-options
+	padding: 4px 8px
+	display: flex
+	flex-wrap: wrap
+	justify-content: space-between
+
+.url-list-filter-row
+	padding: 4px 8px
+	display: flex
+	align-items: center
+
+.url-list-filter-icon
+	width: 1.2em
+	height: 1.2em
+	margin-right: 0.6ch
+
+.url-list-filter-container
+	flex: 1
+	position: relative
+	display: flex
+	margin-right: 0.6ch
+
+.url-list-filter
+	flex: 1
+	padding-right: 1.6em
+
+.url-list-filter-clear
+	width: 1.2em
+	display: flex
+	align-items: center
+	justify-content: center
+	position: absolute
+	right: 0
+	height: 100%
+	cursor: pointer
+	color: gray
+
+	&:hover
+		color: black
+
+	.icon
+		width: 1em
+		height: 1em
+
+.url-list-outer
+	flex: 1
+	position: relative
+	border: 1px solid lightgray
+
+.url-list-inner
+	flex: 1
+	overflow: auto
+	position: absolute
+	width: 100%
+	height: 100%
+	background: white
+
+.url-list
+	display: grid
+	grid-template-columns: max-content 1fr 2fr
+
+	thead, tbody, tr
+		display: contents
+
+	th, td
+		padding-top: 2px
+		padding-bottom: 2px
+
+	th
+		font-weight: normal
+		text-align: start
+		border-bottom: 1px solid lightgray
+		position: sticky
+		top: 0
+		background: white
+
+	td
+		overflow-x: hidden
+		white-space: nowrap
+		text-overflow: ellipsis
+
+	th:not(:first-of-type), td:not(:first-of-type)
+		border-left: 1px solid lightgray
+		padding-left: 4px
+		padding-right: 4px
+
+	td:not(:first-of-type)
+		border-left-color: transparent
+
+.url-list-loading
+	height: 3px
+	overflow: hidden
+
+.url-list-loading-indicator
+	height: 100%
+	width: 40%
+	background: gray
+	position: relative
+	animation: url-list-loading-indicator 2s linear infinite
+
+@keyframes url-list-loading-indicator
+	from
+		left: -40%
+
+	to
+		left: 100%

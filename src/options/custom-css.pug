@@ -1,0 +1,11 @@
+extends ../common/base.i.pug
+append head
+	- subtitle = 'customCSS'
+	- disableCustomCSS = true
+	link(rel="stylesheet" href="custom-css.css")
+append body
+	div
+		button.dialog-button#save(data-i18n='save')
+		span(data-i18n='customCSSDesc')
+	textarea#customCSS
+	script(type='module' src='custom-css.js')

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<symbol id="play" viewBox="0 0 16 16">
+			<path d="M 3,2 V 14 L 13,8 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+		</symbol>
+		<symbol id="pause" viewBox="0 0 16 16">
+			<path d="M 4,2 V 14 M 12,2 V 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+		</symbol>
+		<symbol id="stop" viewBox="0 0 16 16">
+			<path d="m 14,14 -12,0 0,-12 12,0 z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+		</symbol>
+		<symbol id="file" viewBox="0 0 16 16">
+			<path d="M 8,1 H 2 V 15 H 14 V 7 M 6,1 h 3 l 5,5 v 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+			<path d="m 8,1 v 6 h 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+		</symbol>
+		<symbol id="picture" viewBox="0 0 16 16">
+			<rect y="1" x="1" height="14" width="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+			<circle r="0.75" cy="4.5" cx="6.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+			<path d="m 3,15 9,-9 3,3 M 1.4142136,11 4,8 7,11" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" />
+		</symbol>
+		<clipPath id="adjust-clipPath1">
+			<rect fill="black" stroke="none" width="8" height="16" x="0" y="0" />
+		</clipPath>
+		<symbol id="adjust" viewBox="0 0 16 16">
+			<circle r="7" cy="8" cx="8" fill="none" stroke="currentColor" stroke-width="2" />
+			<circle r="7" cy="8" cx="8" clip-path="url(#adjust-clipPath1)" fill="currentColor" stroke="currentColor" stroke-width="2" />
+		</symbol>
+	</defs>
+</svg>

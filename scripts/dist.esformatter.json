@@ -1,0 +1,19 @@
+{
+	"indent": {
+		"value": "\t"
+	},
+	"lineBreak": {
+		"before": {
+			"ExportNamedDeclaration": ">=2",
+			"ClassDeclaration": ">=2",
+			"FunctionDeclaration": ">=2",
+			"MethodDefinition": ">=2"
+		},
+		"after": {
+			"ExportNamedDeclaration": ">=2",
+			"ClassClosingBrace": ">=2",
+			"FunctionDeclarationClosingBrace": ">=2",
+			"MethodDefinitionClosingBrace": ">=2"
+		}
+	}
+}

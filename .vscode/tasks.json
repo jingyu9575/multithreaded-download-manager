@@ -1,0 +1,50 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Watch",
+			"type": "process",
+			"command": "node",
+			"args": [
+				"build.js",
+				"--watch",
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"isBackground": true,
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Fix import",
+			"type": "process",
+			"command": "make",
+			"windows": {
+				"command": "bash",
+				"args": [
+					"-l",
+					"-c",
+					"make fiximport"
+				]
+			},
+			"linux": {
+				"command": "make",
+				"args": [
+					"fiximport"
+				]
+			},
+			"problemMatcher": []
+		}
+	]
+}

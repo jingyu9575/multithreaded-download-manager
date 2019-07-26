@@ -1,0 +1,190 @@
+extends ../common/base.i.pug
+append head
+	- subtitle = 'options'
+	link(rel="stylesheet" href="options.css")
+append body
+	x-tabs
+		x-tabs-nav(tabindex='0')
+			x-tab.icon-text(active)
+				svg.icon: use(href='../icons/photon-icons.svg#preferences')
+				span(data-i18n="general")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/photon-icons.svg#window')
+				span(data-i18n="interface")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/photon-icons.svg#globe')
+				span(data-i18n="network")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/photon-icons.svg#developer')
+				span(data-i18n="advanced")
+		x-tabs-main(same-size)
+			x-page(active)
+				label.input-label
+					span(data-i18n='saveFileTo')
+					select(data-key='saveFileTo')
+						option(value='systemDefault' data-i18n='default')
+						option(value='downloadFolder' data-i18n='downloadFolder')
+						option(value='alwaysAsk' data-i18n='alwaysAsk')
+				label.input-label
+					input(type='checkbox' data-key='newTaskAtTop')
+					span(data-i18n='newTaskAtTop')
+				label.input-label
+					input(type='checkbox' data-key='removeCompletedTasksOnStart')
+					span(data-i18n='removeCompletedTasksOnStart')
+				label.input-label
+					span(data-i18n='simultaneousTasks')
+					input(data-key='simultaneousTasks' type='number' min='1' 
+							data-i18n-placeholder='unlimited')
+				hr
+				span.input-label
+					label.contents-label
+						input(type='checkbox' data-key='monitorDownload')
+						span(data-i18n='monitorDownloadDesc')
+					span
+					select(data-key='monitorDownloadType')
+						option(value='downloadDirectly' data-i18n='downloadDirectly')
+						option(value='askForOptions' data-i18n='askForOptions')
+				label.input-label
+					span(data-i18n='monitorDownloadMinSize')
+					input(data-key='monitorDownloadMinSize' type='number' required min='0')
+					span.input-unit
+						span K
+						span(data-i18n='byteSymbol')
+				label.input-label
+					input(type='checkbox' data-key='autoCloseBlankTab')
+					span(data-i18n='autoCloseBlankTab')
+				label.input-label
+					input(type='checkbox' data-key='monitorLinksWithoutRange')
+					span(data-i18n='monitorLinksWithoutRange')
+				hr
+				span.input-label
+					label.contents-label
+						input(type='checkbox' data-key='playSoundOnAllCompleted')
+						span(data-i18n='playSoundOnAllCompleted')
+					span
+					button#play-all-completed-sound(type='button') &#9654;
+				label.input-label
+					input(type='checkbox' data-key='showNotificationOnAllCompleted')
+					span(data-i18n='showNotificationOnAllCompleted')
+			x-page
+				div
+					label.input-label
+						span(data-i18n='iconColor')
+						select(data-key='iconColor')
+							option(value='default' data-i18n='default')
+							option(value='dark' data-i18n='dark')
+							option(value='black' data-i18n='black')
+							option(value='light' data-i18n='light')
+							option(value='white' data-i18n='white')
+							option(value='custom' data-i18n='customColor')
+							optgroup(data-i18n-label='thirdPartyIcons')
+								option(value='alt-1' data-i18n='altIcon1')
+								option(value='alt-2' data-i18n='altIcon2')
+								option(value='alt-3' data-i18n='altIcon3')
+								option(value='alt-4' data-i18n='altIcon4')
+					span#icon-color-details
+						input(type='color' data-key='iconColorCode')
+						input(type='number' min='0' max='100' data-key='iconColorAlpha')
+						span %
+				label.input-label
+					span(data-i18n='showOnBadge')
+					select(data-key='badgeType')
+						option(value='none' data-i18n='badgeTypeNone')
+						option(value='number' data-i18n='badgeTypeNumber')
+				label.input-label
+					input(type='checkbox' data-key='hideBadgeZero')
+					span(data-i18n='hideBadgeZero')
+				hr
+				label.input-label
+					span(data-i18n='windowPosition')
+					select(data-key='windowPosition')
+						option(value='default' data-i18n='default')
+						option(value='parentCenter' data-i18n='parentCenter')
+						option(value='remember' data-i18n='rememberLast')
+				label.input-label
+					span(data-i18n='windowSize')
+					select(data-key='windowSize')
+						option(value='default' data-i18n='default')
+						option(value='remember' data-i18n='rememberLast')
+				hr
+				span.input-label
+					label.contents-label
+						input(type='checkbox' data-key='addContextMenuToLink')
+						span(data-i18n='addContextMenuToLink')
+					span
+					select(data-key='addContextMenuToLinkType')
+						option(value='downloadDirectly' data-i18n='downloadDirectly')
+						option(value='askForOptions' data-i18n='askForOptions')
+				hr
+				label.input-label
+					input(type='checkbox' data-key='showOptionsInDedicatedTab')
+					span(data-i18n='showOptionsInDedicatedTab')
+				hr
+				div
+					a#customCSSButton.dialog-button(data-i18n='customCSSButton'
+						href='custom-css.html' target='_blank')
+			x-page
+				.input-grid
+					label.input-label
+						span(data-i18n='maxThreads')
+						input(data-key='maxThreads' type='number' required min='1')
+					label.input-label
+						span(data-i18n='minChunkSize')
+						span
+							input(data-key='minChunkSize' type='number' required min='0')
+							span.input-unit
+								span K
+								span(data-i18n='byteSymbol')
+					label.input-label
+						span(data-i18n='maxRetries')
+						input(data-key='maxRetries' type='number' min='0'
+								data-i18n-placeholder='unlimited')
+				label.input-label
+					input(type='checkbox' data-key='rememberLastNetworkOptions')
+					span(data-i18n='rememberLast')
+
+			x-page
+				label.input-label
+					span(data-i18n='legacyFilenameEncoding')
+					input(data-key='legacyFilenameEncoding')
+				label.input-label
+					input(type='checkbox' data-key='legacyFilenameDetectUTF8')
+					span(data-i18n='legacyFilenameDetectUTF8')
+				label.input-label
+					input(type='checkbox' data-key='legacyFilenameDetectURLEncoded')
+					span(data-i18n='legacyFilenameDetectURLEncoded')
+				label.input-label
+					input(type='checkbox' data-key='legacyFilenameDetectNonStandardURLEncoded')
+					span(data-i18n='legacyFilenameDetectNonStandardURLEncoded')
+				hr
+				label.input-label
+					input(type='checkbox' data-key='useSiteHandlers')
+					span(data-i18n='useSiteHandlers')
+				hr
+				label.input-label
+					span(data-i18n='connectionAPI')
+					select(data-key='connectionAPI')
+						option(value='Streams') Streams
+						option(value='StreamFilter') StreamFilter
+					span
+					a(href=`${repoRoot}wiki/Connection-API` 
+						data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+				hr
+				label.input-label
+					input(type='checkbox' data-key='monitorDownloadShowBuiltinActions')
+					span(data-i18n='monitorDownloadShowBuiltinActions')
+				span#configure-monitor-builtin-actions
+					a#configure-monitor-builtin-open(href='#' data-i18n='configureOpen')
+					a#configure-monitor-builtin-save(href='#' data-i18n='configureSave')
+					a(href=`${repoRoot}wiki/Quick-actions-for-built-in-download-in-automatic-prompt`
+						data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+				hr
+				label.input-label
+					span(data-i18n='logLevel')
+					select(data-key='logLevel')
+						option(value='info' data-i18n='info')
+						option(value='warning' data-i18n='warning')
+						option(value='error' data-i18n='error')
+				hr
+				a(target="_blank" href="/lib/LICENSE-3RD-PARTY.txt" data-i18n="license3rdParty")
+	script(type='module' src='options.js')

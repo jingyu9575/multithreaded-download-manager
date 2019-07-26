@@ -1,0 +1,66 @@
+html, body, #body-form
+	display: flex
+	flex-direction: column
+	flex: 1
+	margin: 0
+	padding: 0
+
+html
+	width: 100%
+	height: 100%
+
+body
+	font: caption
+	font-size: 14px
+	-webkit-user-select: none
+
+button, input, select
+	font-size: inherit
+
+[hidden]
+	display: none !important
+
+.spacer
+	flex: 1
+
+.dialog-button
+	display: inline-flex
+	align-items: center
+	justify-content: center
+	-webkit-appearance: button
+	min-width: 12ch
+	text-decoration: none
+
+	a&
+		color: initial
+
+	&, &::-moz-focus-inner
+		padding: 4px 12px
+
+.icon-text
+	> .icon
+		width: 1em
+		height: 1em
+		margin-right: 0.6ch
+
+	> *
+		vertical-align: middle
+
+.input-label
+	> *
+		vertical-align: middle
+
+	> span:not(:last-child)
+		padding-right: 0.6ch
+
+.input-grid
+	display: grid
+	grid-template-columns: auto 1fr
+	grid-row-gap: 4px
+	align-items: center
+
+	& > label
+		display: contents
+
+.input-unit
+	margin-left: 1ch

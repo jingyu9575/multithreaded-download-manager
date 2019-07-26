@@ -1,0 +1,15 @@
+- var repoRoot = 'https://github.com/jingyu9575/multithreaded-download-manager/'
+- var subtitle = false
+- var disableCustomCSS = false
+
+doctype html
+html
+	head
+		meta(charset='utf-8')
+		meta(name='viewport' content='width=device-width, initial-scale=1.0')
+		title
+		link(rel='icon' href='/icons/icon.svg')
+		block head
+	body(data-subtitle=subtitle data-disable-custom-css=disableCustomCSS)
+		script(type='module' src='/common/base.js')
+		block body

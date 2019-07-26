@@ -1,0 +1,12 @@
+{
+	"private": true,
+	"dependencies": {
+		"@types/firefox-webext-browser": "^67.0.2"
+	},
+	"devDependencies": {
+		"cson": "^5.1.0",
+		"pug-cli": "^1.0.0-alpha6",
+		"stylus": "^0.54.5",
+		"typescript": "^3.5.3"
+	}
+}

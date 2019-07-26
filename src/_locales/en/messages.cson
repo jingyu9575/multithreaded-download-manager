@@ -1,0 +1,320 @@
+extensionName:
+	message: 'Multithreaded Download Manager'
+extensionDescription:
+	message: 'Download manager with multithreaded support.'
+pause:
+	message: 'Pause'
+stop:
+	message: 'Stop'
+start:
+	message: 'Start'
+openFileButton:
+	message: 'Open file \nShift: Open containing folder'
+edit:
+	message: 'Edit'
+copyLinkButton:
+	message: 'Copy download link \nShift: Open referrer page'
+deleted:
+	message: 'Deleted'
+removeButton:
+	message: 'Remove \nShift: Delete file'
+preallocating:
+	message: 'Preallocating'
+emptyTasks:
+	message: 'There is no download task.'
+noStorageAccess:
+	message: 'Cannot access internal storage.'
+createDownload:
+	message: 'Create a download task'
+importDownload:
+	message: 'Import tasks from the built-in download list'
+options:
+	message: 'Options'
+openInNewTab:
+	message: 'Open in new tab'
+openInNewWindow:
+	message: 'Open in new window'
+editURL:
+	message: 'Download:'
+editURLWarning:
+	message: 'Caution: Changing the downloads location to different content will corrupt it.'
+editFilename:
+	message: 'Filename:'
+editReferrer:
+	message: 'Referring page:'
+maxThreads:
+	message: 'Threads:'
+minChunkSize:
+	message: 'Minimal chunk:'
+maxRetries:
+	message: 'Maximum retries:'
+OK:
+	message: 'OK'
+cancel:
+	message: 'Cancel'
+download:
+	message: 'Download'
+continueInBrowser:
+	message: 'Continue in browser'
+e_saveFileError:
+	message: 'Failed to save'
+e_threadStopped:
+	message: 'Unexpected stop'
+e_serverError:
+	message: 'Server error'
+rangesNotSupported:
+	message: 'Server does not support multithreaded downloads ($1)'
+e_networkError:
+	message: 'Network error'
+e_unknownError:
+	message: 'Unknown error'
+showCompleted:
+	message: 'Show completed download items'
+removeAfterImport:
+	message: 'Remove the original items after import'
+downloadWith:
+	message: 'Download with $1'
+unsupportedURL:
+	message: 'Unsupported download address: $1'
+confirmPauseIsStop:
+	message: 'This download cannot be resumed. Abort?'
+confirmDeleteFile:
+	message: 'Delete downloaded file?'
+confirmRemove:
+	message: 'Remove current unfinished download?'
+general:
+	message: 'General'
+saveFileTo:
+	message: 'Save files to:'
+downloadFolder:
+	message: 'Download folder'
+alwaysAsk:
+	message: 'Always ask'
+skipFirstSavingAttempt:
+	message: 'The first saving attempt was problematic and should be skipped'
+workaroundBlankPopup:
+	message: 'Fix the problem with blank extension windows'
+readMore:
+	message: 'Read more'
+interface:
+	message: 'Interface'
+iconColor:
+	message: 'Icon:'
+systemDefaultAfterRestart:
+	message: 'System default (Restart to take effect)'
+dark:
+	message: 'Dark'
+darker:
+	message: 'Darker'
+black:
+	message: 'Black'
+light:
+	message: 'Light'
+lighter:
+	message: 'Lighter'
+white:
+	message: 'White'
+altIcon1:
+	message: '1'
+altIcon2:
+	message: '2'
+altIcon3:
+	message: '3'
+altIcon4:
+	message: '4'
+showOnBadge:
+	message: 'Show on the extension icon:'
+badgeTypeNone:
+	message: 'None'
+badgeTypeNumber:
+	message: 'Number of running tasks'
+hideBadgeZero:
+	message: 'Hide the number on the icon after all tasks are completed'
+addContextMenuToLink:
+	message: 'Add a context menu to links:'
+windowPosition:
+	message: 'Position of extension window:'
+systemDefault:
+	message: 'System default'
+parentCenter:
+	message: 'Center of the current window'
+rememberLast:
+	message: 'Remember the last value'
+windowSize:
+	message: 'Size of extension window:'
+newTaskAtTop:
+	message: 'Show new tasks at the top'
+removeCompletedTasksOnStart:
+	message: 'Remove completed tasks on browser start'
+showOptionsInDedicatedTab:
+	message: 'Show the options page in a dedicated tab'
+monitorDownload:
+	message: 'Monitor download'
+monitorDownloadDesc:
+	message: 'Automatically prompt for download:'
+monitorDownloadMinSize:
+	message: 'Disable for files smaller than:'
+autoCloseBlankTab:
+	message: 'Automatically close blank tabs when downloading'
+defaultNetworkOptions:
+	message: 'Default network options'
+legacyFilenameDetection:
+	message: 'Filename detection for legacy websites'
+legacyFilenameEncoding:
+	message: 'Filename encoding for legacy websites:'
+legacyFilenameDetectUTF8:
+	message: 'Detect UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: 'Detect percent encoding (e.g. %20)'
+legacyFilenameDetectNonStandardURLEncoded:
+	message: 'Detect non-standard percent encoding'
+license3rdParty:
+	message: 'Third-Party Copyright Notices'
+customCSSButton:
+	message: 'Custom CSS...'
+customCSSDesc:
+	message: 'Custom CSS for extension pages. This can completely change the interface, so proceed with caution.'
+save:
+	message: 'Save'
+byteSymbol:
+	message: 'B'
+useSiteHandlers:
+	message: 'Enable specific behaviors for certain websites'
+monitorLinksWithoutRange:
+	message: 'Enable prompt for links without multithreading support'
+linkWithoutRangeWarning:
+	message: 'This download does not support multithreading or resuming.'
+simultaneousTasks:
+	message: 'Simultaneous download tasks:'
+unlimited:
+	message: 'Unlimited'
+editFileSize:
+	message: 'Size:'
+webextOOPDisabled:
+	message: 'Disabling "out of process extensions" is no longer supported.'
+address:
+	message: 'Address'
+enterAddress:
+	message: 'Enter download address list'
+selectAddressFromList:
+	message: 'Select download address from the list.'
+invalidAddress:
+	message: 'The download address is invalid.'
+copyAddress:
+	message: 'Copy Address'
+filenamePlaceholder:
+	message: 'Enter filename, subfolder name or filename template'
+convert:
+	message: 'Convert'
+link:
+	message: 'Link'
+media:
+	message: 'Media'
+openFile:
+	message: 'Open file'
+openContainingFolder:
+	message: 'Open containing folder'
+copyLink:
+	message: 'Copy download link'
+openReferrer:
+	message: 'Open referrer page'
+remove:
+	message: 'Remove'
+deleteFile:
+	message: 'Delete file'
+actionTitleWithShift:
+	message: '$1\nShift: $2'
+text:
+	message: 'Text'
+pageInaccessibleToExtensions:
+	message: 'This page is inaccessible to extensions.'
+pageHasBeenClosed:
+	message: 'This page has been closed.'
+network:
+	message: 'Network'
+advanced:
+	message: 'Advanced'
+thirdPartyIcons:
+	message: 'Third party icons'
+customColor:
+	message: 'Custom color'
+default:
+	message: 'Default'
+customCSS:
+	message: 'Custom CSS'
+help:
+	message: 'Help'
+viewLogs:
+	message: 'View logs'
+rawData:
+	message: 'Raw data'
+i_load:
+	message: 'Load task $1 from previous session'
+i_create:
+	message: 'Create task $1'
+i_start:
+	message: 'Start downloading $1'
+i_pause:
+	message: 'Pause task'
+i_queue:
+	message: 'Queue task'
+i_initialConnectionInfo:
+	message: 'Initial connection established. Total size: $1; Multi-threading support: $2'
+yes:
+	message: 'Yes'
+no:
+	message: 'No'
+i_initialConnectionAborted:
+	message: 'Initial connection aborted'
+i_createConnection:
+	message: 'Create connection at $1'
+i_connectionEnded:
+	message: 'Connection ended'
+i_save:
+	message: 'Save file'
+i_completed:
+	message: 'Download completed'
+logLevel:
+	message: 'Logging level:'
+info:
+	message: 'Info'
+warning:
+	message: 'Warning'
+error:
+	message: 'Error'
+editDownload:
+	message: 'Edit download task'
+networkOptions:
+	message: 'Network options'
+downloadDirectly:
+	message: 'Download directly'
+askForOptions:
+	message: 'Ask for options'
+close:
+	message: 'Close'
+playSoundOnAllCompleted:
+	message: 'Play a sound when all downloads are completed'
+showNotificationOnAllCompleted:
+	message: 'Show a notification when all downloads are completed'
+allDownloadsCompleted:
+	message: 'All downloads have been completed.'
+editChecksum:
+	message: 'Checksum:'
+e_checksumError:
+	message: 'Checksum Error'
+i_checksum:
+	message: 'Checksum: $1 / $2'
+connectionAPI:
+	message: 'Connection API:'
+i_api:
+	message: 'Connection API: $1'
+connectionAPIUnavailable:
+	message: 'The selected connection API is not available.'
+open:
+	message: 'Open'
+monitorDownloadShowBuiltinActions:
+	message: 'Show quick actions for built-in download in automatic prompt'
+configureOpen:
+	message: 'Configure "Open"'
+configureSave:
+	message: 'Configure "Save"'

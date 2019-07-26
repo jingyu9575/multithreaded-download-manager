@@ -1,0 +1,12 @@
+extends ../common/base.i.pug
+append head
+	- subtitle = 'viewLogs'
+	link(rel="stylesheet" href="logs.css")
+append body
+	header
+		button.dialog-button#raw-data(data-i18n='rawData')
+	main
+		#table-container
+			table
+				tbody#log-tbody
+	script(type='module' src='logs.js')

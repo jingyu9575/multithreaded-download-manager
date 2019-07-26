@@ -1,0 +1,10 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<svg xmlns="http://www.w3.org/2000/svg">
+	<defs>
+      <symbol id="multithreaded-download-stroke" viewBox="0 0 16 16">
+      	<path stroke="currentColor" d="M 6,1 v 9 M 10,1 v 9 M 3,7 l 5,5 l 5,-5 M 3,15 H 13"></path>
+		</symbol>
+	</defs>
+</svg>

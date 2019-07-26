@@ -1,0 +1,40 @@
+@import '../common/common.css'
+@import '../common/elements/x-tab.css'
+@import './url-provider.css'
+@import './task-form.css'
+
+body
+	background-color: #f9f9fa
+
+#referrer-select-label
+	padding: 8px
+	display: flex
+	align-items: center
+
+	& > input, & > select
+		flex: 1
+
+#url-provider-form
+	flex: 1
+	display: flex
+
+#url-providers
+	flex: 1
+
+	x-tab
+		display: flex
+		align-items: center
+
+		.icon
+			width: 1em
+			height: 1em
+			margin-right: 0.6ch
+
+	x-page > *
+		flex: 1
+
+#copy-success
+	height: 1.2em
+	width: 1.2em
+	align-self: center
+	color: green

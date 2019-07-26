@@ -1,0 +1,66 @@
+extends ../common/base.i.pug
+append head
+	link(rel="stylesheet" href="panel.css")
+append body
+	#panel-size-request
+	#tasks-wrapper
+		#tasks
+		#empty-tasks(data-i18n='emptyTasks')
+	#toolbar
+		button#create(data-i18n-title='createDownload')
+			svg.icon: use(href='../icons/photon-icons.svg#new')
+		button#options(data-i18n-title='options')
+			svg.icon: use(href='../icons/photon-icons.svg#preferences')
+	#info-bars
+		#webext-oop-disabled.error-bar.icon-text(hidden)
+			svg.icon: use(href='../icons/photon-icons.svg#cancel')
+			span(data-i18n='webextOOPDisabled')
+			a(href=`${repoRoot}wiki/Problems-with-disabling-the-feature-%22out-of-process-extensions%22` 
+				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+		#no-storage-access.error-bar.icon-text(hidden)
+			svg.icon: use(href='../icons/photon-icons.svg#cancel')
+			span(data-i18n='noStorageAccess')
+			a(href=`${repoRoot}wiki/About-%22Cannot-access-internal-storage%22` 
+				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+		#connection-api-unavailable.warning-bar.icon-text(hidden)
+			svg.icon: use(href='../icons/photon-icons.svg#warning')
+			span(data-i18n='connectionAPIUnavailable')
+			a(href=`${repoRoot}wiki/Connection-API` 
+				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+
+	template#x-task-template
+		.task-row.summary-row
+			svg.state-icon.icon: use
+			span.filename
+			button.task-action(data-action='start')
+				svg.icon: use(href='../icons/extra-icons.svg#play')
+			button.task-action(data-action='pause')
+				svg.icon: use(href='../icons/extra-icons.svg#pause')
+			button.task-action(data-action='stop')
+				svg.icon: use(href='../icons/extra-icons.svg#stop')
+			button.task-action(data-action='openFile')
+				svg.icon: use(href='../icons/extra-icons.svg#file')
+			button.task-action(data-action='copyLink')
+				svg.icon: use(href='../icons/photon-icons.svg#link')
+			button.task-action(data-action='edit')
+				svg.icon: use(href='../icons/photon-icons.svg#edit')
+			button.task-action(data-action='remove')
+				svg.icon: use(href='../icons/photon-icons.svg#stop')
+		.task-row.progress-row
+			.progress-canvas-wrapper
+				canvas.progress-canvas(width=1024 height=1)
+		.task-row.detail-row
+			span.estimated-time --:--
+			span.current-size-container
+				span.current-size 0
+				span.total-size ?
+				span.percentage --%
+			span.other-details
+				span.average-speed
+				span.error
+				span.icon-text
+					svg.icon: use(href='../icons/extra-icons-mpl.svg#multithreaded-download-stroke')
+					span.current-threads 0
+					span.max-threads -
+				
+	script(type='module' src='panel.js')

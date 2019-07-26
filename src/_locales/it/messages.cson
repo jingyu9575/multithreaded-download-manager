@@ -1,0 +1,186 @@
+extensionName:
+	message: 'Multithreaded Download Manager'
+extensionDescription:
+	message: 'Download manager con supporto a download multithread.'
+pause:
+	message: 'Pausa'
+stop:
+	message: 'Interrompi'
+start:
+	message: 'Avvia'
+openFileButton:
+	message: 'Apri file \nShift: Apri cartella di destinazione'
+edit:
+	message: 'Modifica'
+copyLinkButton:
+	message: 'Copia link download \nShift: Apri pagina sorgente'
+deleted:
+	message: 'Eliminato'
+removeButton:
+	message: 'Rimuovi \nShift: Elimina file'
+preallocating:
+	message: 'Allocazione in corso'
+emptyTasks:
+	message: 'Non ci sono attività di download.'
+noStorageAccess:
+	message: 'Impossibile accedere all\'archiviazione interna.'
+createDownload:
+	message: 'Crea attività di download'
+importDownload:
+	message: 'Importa attività dalla lista del browser'
+options:
+	message: 'Opzioni'
+openInNewTab:
+	message: 'Apri in una nuova scheda'
+openInNewWindow:
+	message: 'Apri in una nuova finestra'
+editURL:
+	message: 'Download:'
+editURLWarning:
+	message: 'Attenzione: se verrà cambiata la destinazione di download in corso diventeranno corrotti.'
+editFilename:
+	message: 'Nome file:'
+editReferrer:
+	message: 'Pagina sorgente:'
+maxThreads:
+	message: 'Threads:'
+minChunkSize:
+	message: 'Dimensione minima della parte:'
+maxRetries:
+	message: 'Tentativi massimi:'
+OK:
+	message: 'OK'
+cancel:
+	message: 'Annulla'
+download:
+	message: 'Download'
+continueInBrowser:
+	message: 'Continua nel browser'
+e_serverError:
+	message: 'Errore del server'
+rangesNotSupported:
+	message: 'Il server non supporta i download multithread ($1)'
+e_networkError:
+	message: 'Errore di rete'
+e_unknownError:
+	message: 'Errore sconosciuto'
+showCompleted:
+	message: 'Mostra download completati'
+removeAfterImport:
+	message: 'Rimuovi gli elementi originali dopo l\'importazione'
+downloadWith:
+	message: 'Scarica con $1'
+unsupportedURL:
+	message: 'Indirizzo non supportato: $1'
+confirmPauseIsStop:
+	message: 'Questo download non può essere ripreso. Annullarlo?'
+confirmDeleteFile:
+	message: 'Eliminare il file scaricato?'
+confirmRemove:
+	message: 'Rimuovere il download non completato?'
+general:
+	message: 'Generale'
+saveFileTo:
+	message: 'Salva i file in:'
+downloadFolder:
+	message: 'Cartella di download'
+alwaysAsk:
+	message: 'Chiedi sempre'
+skipFirstSavingAttempt:
+	message: 'Il primo tentativo di salvataggio non è andato a termine e deve essere saltato'
+workaroundBlankPopup:
+	message: 'Correggi il problema con le finestre bianche dell\'estensione'
+readMore:
+	message: 'Più informazioni'
+interface:
+	message: 'Interfaccia'
+iconColor:
+	message: 'Icona:'
+systemDefaultAfterRestart:
+	message: 'predefinita del sistema (Riavvia per applicare)'
+dark:
+	message: 'scuro'
+darker:
+	message: 'più scuro'
+black:
+	message: 'nero'
+light:
+	message: 'chiaro'
+lighter:
+	message: 'più chiaro'
+white:
+	message: 'bianco'
+altIcon1:
+	message: '1'
+altIcon2:
+	message: '2'
+altIcon3:
+	message: '3'
+altIcon4:
+	message: '4'
+showOnBadge:
+	message: 'Mostra sull\'icona dell\'estensione:'
+badgeTypeNone:
+	message: 'Nulla'
+badgeTypeNumber:
+	message: 'Numero di attività in esecuzione'
+hideBadgeZero:
+	message: 'Nascondi il numero sull\'icona quando tutte le attività sono completate'
+addContextMenuToLink:
+	message: 'Aggiungi menù contestuale ai link:'
+windowPosition:
+	message: 'Posizione della finestra dell\'estensione:'
+systemDefault:
+	message: 'predefinita del sistema'
+parentCenter:
+	message: 'al centro della finestra in uso'
+rememberLast:
+	message: 'ricorda ultima dimensione'
+windowSize:
+	message: 'Dimensione finestra dell\'estensione:'
+newTaskAtTop:
+	message: 'Mostra nuove attività in alto'
+removeCompletedTasksOnStart:
+	message: 'Rimuovi attività completate all\'avvio del browser'
+showOptionsInDedicatedTab:
+	message: 'Mostra la pagina delle impostazioni in una nuova scheda'
+monitorDownload:
+	message: 'Monitora download'
+monitorDownloadDesc:
+	message: 'Richiedi automaticamente il download:'
+monitorDownloadMinSize:
+	message: 'Disabilita per i file più piccoli di:'
+autoCloseBlankTab:
+	message: 'Chiudi automaticamente le schede vuote durante il download'
+defaultNetworkOptions:
+	message: 'Impostazioni di rete predefinite'
+legacyFilenameDetection:
+	message: 'Rilevamento nomi per siti web legacy'
+# legacyFilenameEncoding:
+# 	message: 'Codifica:'
+legacyFilenameDetectUTF8:
+	message: 'Rileva UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: 'Rileva codifica della percentuale (es. %20)'
+legacyFilenameDetectNonStandardURLEncoded:
+	message: 'Rileva codifica non standard della percentuale'
+license3rdParty:
+	message: 'Avvisi per Copyright di terze parti'
+customCSSButton:
+	message: 'CSS Personalizzato...'
+customCSSDesc:
+	message: 'CSS personalizzato per le pagine dell\'estensione. Può cambiare completamente l\'interfaccia, procedere con cautela.'
+save:
+	message: 'Salva'
+byteSymbol:
+	message: 'B'
+useSiteHandlers:
+	message: 'Abilita comportamenti specifici per alcuni siti web'
+monitorLinksWithoutRange:
+	message: 'Abilita richiesta per link senza il supporto multithread'
+linkWithoutRangeWarning:
+	message: 'Questo download non supporta multithread o pausa.'
+simultaneousTasks:
+	message: 'Attività di download contemporanee:'
+unlimited:
+	message: 'Senza limiti'

@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"target": "es2019",
+		"module": "esNext",
+		"moduleResolution": "node",
+		"strict": true,
+		"noImplicitReturns": true,
+		"pretty": true,
+		"lib": [
+			"es2019",
+			"dom",
+			"dom.iterable"
+		]
+	},
+	"include": [
+		"src/**/*",
+		"typings/**/*"
+	]
+}

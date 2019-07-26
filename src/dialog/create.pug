@@ -1,0 +1,60 @@
+extends ../common/base.i.pug
+append head
+	- subtitle = 'createDownload'
+	link(rel="stylesheet" href="create.css")
+append body
+	label#referrer-select-label.input-label
+		span(data-i18n='editReferrer')
+		select#referrer-select
+	x-tabs#url-providers
+		x-tabs-nav(tabindex='0')
+			x-tab.icon-text(active)
+				svg.icon: use(href='../icons/photon-icons.svg#globe')
+				span(data-i18n="address")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/photon-icons.svg#import')
+				span(data-i18n="convert")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/photon-icons.svg#link')
+				span(data-i18n="link")
+			x-tab.icon-text
+				svg.icon: use(href='../icons/extra-icons.svg#picture')
+				span(data-i18n="media")
+		x-tabs-main
+			x-page(active): address-url-provider
+				textarea.address-input(data-i18n-placeholder='enterAddress')
+			x-page: convert-url-provider
+				.convert-options
+					label.input-label
+						input.convert-show-completed(type='checkbox')
+						span(data-i18n='showCompleted')
+					label.input-label
+						input.convert-remove-after-import(type='checkbox')
+						span(data-i18n='removeAfterImport')
+			x-page: link-url-provider
+			x-page: media-url-provider
+	include task-form.pug
+	
+	template#list-url-provider-template
+		.url-list-filter-row
+			svg.icon.url-list-filter-icon: use(href='../icons/photon-icons.svg#search')
+			.url-list-filter-container
+				input.url-list-filter
+				.url-list-filter-clear(hidden)
+					svg.icon: use(href='../icons/photon-icons.svg#close')
+		.url-list-outer: .url-list-inner
+			table.url-list
+				thead
+					tr
+						th: input.url-list-select-all(type='checkbox')
+						th(data-i18n='text')
+						th(data-i18n='address')
+				tbody
+			.url-list-loading(hidden)
+				.url-list-loading-indicator
+					
+	template#url-list-item-template
+		td: input.url-list-item-checkbox(type='checkbox')
+		td.url-list-item-text
+		td.url-list-item-url
+	script(type='module' src='create.js')

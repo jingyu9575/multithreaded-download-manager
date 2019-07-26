@@ -1,0 +1,68 @@
+condition-class(parent, name)
+	{parent}:not(.{name}) .if-{name}, {parent}.{name} .if-not-{name}
+		display: none
+
+.task-form
+	display: flex
+	flex-direction: column
+	padding: 8px
+
+	& > *:not(:last-child):not(.spacer)
+		margin-block-end: 8px
+
+	.input-grid
+		grid-template-columns: auto 1fr auto
+
+		.input-label input
+			flex: 1
+
+		.input-label :first-child
+			grid-column: 1
+			text-align: end
+
+	.warning-text
+		grid-column: 2
+
+	.filename-template-help
+		height: 1.2em
+		width: 1.2em
+		display: inline-flex
+		margin-left: 4px
+		color: black
+
+	.file-size-span.obsolete
+		color: darkgray
+
+	.network-options-labels
+		display: flex
+		flex-wrap: wrap
+		justify-content: space-between
+
+		.input-label
+			display: inline-flex
+			align-items: center
+			margin-inline-end: 8px
+			margin-block-start: 4px
+
+			input[type='number']
+				width: 8ch
+
+				&[data-i18n-placeholder]
+					width: 12ch
+
+			.input-unit
+				margin-left: 0.5ch
+
+	.actions
+		display: flex
+
+		& > button:not(:last-child)
+			margin-inline-end: 8px
+
+	.continue-open, .continue-save
+		min-width: 8ch
+
+	condition-class('&', 'editing')
+	condition-class('&', 'readonly')
+	condition-class('&', 'no-range')
+	condition-class('&', 'monitor')
