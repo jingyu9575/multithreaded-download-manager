@@ -32,6 +32,7 @@ const extraWatchCmds = [
 	`pug -w -P -s -o ${d_} ${s_}`,
 ]
 const xpiCmd = `zip -r -FS "../${d_}.unsigned.xpi" *`
+const xpiCmd7z = `7z a "../${d_}.unsigned.xpi"`
 
 const messageCSON = '_locales/en/messages.cson'
 
@@ -114,7 +115,7 @@ listFiles(s_).then(async files => {
 		])
 		if (argv.includes('--xpi')) {
 			process.chdir(d_)
-			await execPromise(xpiCmd)
+			await execPromise(argv.includes('--7z') ? xpiCmd7z : xpiCmd)
 		}
 	}
 })
