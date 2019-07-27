@@ -71,7 +71,8 @@ export abstract class Task<Data extends TaskData = TaskData> {
 		const constructor = this.typeMap.get(data.type)
 		if (!constructor) throw new AssertionError('invalid task type')
 
-		const task = Object.assign(new constructor(), { id, data })
+		const task = new constructor()
+		Object.assign(task, { id, data })
 		await task.init(loadFromId !== undefined)
 		this.list[S.newTaskAtTop ? 'unshift' : 'push'](task)
 		void taskSyncRemote.create(id, task.data, S.newTaskAtTop)
@@ -116,11 +117,9 @@ export abstract class Task<Data extends TaskData = TaskData> {
 		Task.updateBadge()
 	}
 
-	static syncBootstrap() {
-		void taskSyncRemote.bootstrap(this.list.map(task => ({
-			id: task.id,
-			data: task.data,
-			progress: task.getProgress()
+	static async syncInit() {
+		void taskSyncRemote.init(this.list.map(task => ({
+			id: task.id, data: task.data, progress: task.getProgress()
 		})))
 	}
 

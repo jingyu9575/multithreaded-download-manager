@@ -274,11 +274,11 @@ class XTaskElement extends HTMLElement {
 customElements.define('x-task', XTaskElement)
 
 export class TaskSyncRemote {
-	bootstrapDone = false
+	private initialized = false
 
-	bootstrap(value: TaskSyncBootstrapItem[]) {
-		if (this.bootstrapDone) return
-		this.bootstrapDone = true
+	init(value: TaskSyncBootstrapItem[]) {
+		if (this.initialized) return
+		this.initialized = true
 		for (const { id, data, progress } of value) {
 			this.create(id, data, false)
 			this.progress(id, progress)
@@ -286,7 +286,7 @@ export class TaskSyncRemote {
 	}
 
 	create(id: number, data: TaskData, atTop: boolean) {
-		if (!this.bootstrapDone) return
+		if (!this.initialized) return
 		XTaskElement.parent[atTop ? 'prepend' : 'append'](
 			new XTaskElement(id).init(data))
 	}
@@ -310,7 +310,7 @@ export class TaskSyncRemote {
 }
 registerRemoteHandler(new TaskSyncRemote)
 
-void backgroundRemote.requestTaskSyncBootstrap()
+void backgroundRemote.requestTaskSyncInit()
 
 document.getElementById('create')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html')

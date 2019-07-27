@@ -320,3 +320,5 @@ configureSave:
 	message: 'Configure "Save"'
 theme:
 	message: 'Theme:'
+e_canceled:
+	message: 'Canceled'

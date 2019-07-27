@@ -33,7 +33,7 @@ export class BackgroundRemote {
 	async openPopupWindow(url: string) { return openPopupWindow(url) }
 	async openOptions() { return openOptions() }
 
-	requestTaskSyncBootstrap() { Task.syncBootstrap(); Task.updateBadge() }
+	requestTaskSyncInit() { Task.syncInit(); Task.updateBadge() }
 
 	async createTask(data: MultithreadedTaskData) {
 		return (await Task.create(data)).id

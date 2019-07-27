@@ -312,3 +312,5 @@ configureSave:
 	message: '配置“保存”'
 theme:
 	message: '主题：'
+e_canceled:
+	message: '已取消'
