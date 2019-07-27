@@ -27,24 +27,41 @@
 			]
 		},
 		{
-			"label": "Fix import",
+			"label": "Build",
 			"type": "process",
-			"command": "make",
-			"windows": {
-				"command": "bash",
-				"args": [
-					"-l",
-					"-c",
-					"make fiximport"
-				]
+			"command": "node",
+			"args": [
+				"build.js",
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared"
 			},
-			"linux": {
-				"command": "make",
-				"args": [
-					"fiximport"
-				]
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Create XPI",
+			"type": "process",
+			"command": "node",
+			"args": [
+				"build.js",
+				"--xpi",
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared"
 			},
-			"problemMatcher": []
-		}
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
 	]
 }
