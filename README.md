@@ -24,7 +24,7 @@ Run the build script to generate the unpacked extension in `dist`:
 node build
 ```
 
-Create unsigned XPI release:
+Create unsigned XPI release: (requires the `zip` command)
 
 ```bash
 node build --xpi
