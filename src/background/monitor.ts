@@ -75,11 +75,9 @@ function monitorDownloadListener({
 	}
 	if (contentLength === undefined) acceptRanges = false
 	if (!acceptRanges && !S.monitorLinksWithoutRange) return {}
-	if (!contentDispositionHeader && !contentTypeIncluded) return {}
-	if (!cachedMarkerHeader && contentDispositionHeader &&
-		!(contentDispositionHeader.value || '').trim().toLowerCase()
-			.startsWith('attachment'))
-		return {}
+	const isAttachment = contentDispositionHeader && /attachment\b/i.test(
+		(contentDispositionHeader.value || '').trimStart())
+	if (!cachedMarkerHeader && !isAttachment && !contentTypeIncluded) return {}
 
 	const paramData = { url, referrer: originUrl || '' }
 	const completeData = {
