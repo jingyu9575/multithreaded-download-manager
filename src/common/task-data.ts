@@ -51,6 +51,7 @@ export interface TaskData {
 	fileAccessId?: number
 	canResume?: boolean
 	creationDate: Date
+	completedDate?: Date
 	inum: number
 	text?: string
 	checksum?: string

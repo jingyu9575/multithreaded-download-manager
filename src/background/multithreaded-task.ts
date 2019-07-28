@@ -291,7 +291,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				connection.abortWithError(new ReportedError(M.e_timeout, elapsedTime))
 			return false
 		}
-		
+
 		if (checkNow !== undefined) connection.lastTransferTime = checkNow
 
 		let writtenData = receivedData
@@ -469,7 +469,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				if (blobURL) URL.revokeObjectURL(blobURL)
 			}
 			this.logger.i(M.i_completed, downloadId)
-			this.update({ fileAccessId: downloadId, state: 'completed' })
+			this.update({
+				fileAccessId: downloadId, state: 'completed',
+				completedDate: new Date(),
+			})
 			this.chunkStorage!.delete()
 		} catch (error) {
 			if (!isAbortError(error)) this.fail(error)

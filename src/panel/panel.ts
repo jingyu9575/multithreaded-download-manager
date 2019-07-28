@@ -21,6 +21,20 @@ function formatTimeSpan(seconds: number) {
 		`${m}:${s.padStart(2, '0')}`
 }
 
+function formatCompletedDate(date: Date) {
+	const now = new Date()
+	let format: Intl.DateTimeFormatOptions
+	if (date.getFullYear() === now.getFullYear()) {
+		if (date.getMonth() === now.getMonth() &&
+			date.getDate() === now.getDate())
+			format = { hour12: false, hour: '2-digit', minute: '2-digit' }
+		else
+			format = { month: 'short', day: 'numeric' }
+	} else
+		format = { year: 'numeric', month: 'short', day: 'numeric' }
+	return date.toLocaleString(undefined, format)
+}
+
 const pendingWriteMaskColor = 'rgba(255, 255, 255, 0.4)'
 
 const stateIcons = {
@@ -116,9 +130,12 @@ class XTaskElement extends HTMLElement {
 			}
 		}
 
-		if (data.error !== undefined) {
+		if (data.error !== undefined /* string | null */)
 			this.showError(data.error)
-		}
+
+		if (data.state === 'completed' || data.completedDate !== undefined)
+			if (this.data.state === 'completed' && this.data.completedDate)
+				this.showError(formatCompletedDate(this.data.completedDate))
 
 		if ((data as Partial<MultithreadedTaskData>).maxThreads !== undefined ||
 			data.canResume !== undefined) {
