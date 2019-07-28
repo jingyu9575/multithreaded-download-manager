@@ -42,8 +42,8 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	showOptionsInDedicatedTab = false
 
 	rememberLastNetworkOptions = false
-	connectionTimeout: number | '' = '' // s
-	transferTimeout: number | '' = '' // s
+	connectionTimeout: number | '' = 30 // s
+	transferTimeout: number | '' = 30 // s
 
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
