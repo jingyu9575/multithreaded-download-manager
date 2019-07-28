@@ -28,7 +28,9 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 	static getPreferredConnectionClass() {
 		return {
-			'Streams': StreamsConnection, 'StreamFilter': StreamFilterConnection,
+			'': StreamsConnection,
+			Streams: StreamsConnection,
+			StreamFilter: StreamFilterConnection,
 		}[S.connectionAPI]
 	}
 

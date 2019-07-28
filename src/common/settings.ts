@@ -50,7 +50,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	legacyFilenameDetectURLEncoded = true
 	legacyFilenameDetectNonStandardURLEncoded = false
 	useSiteHandlers = false
-	connectionAPI: 'Streams' | 'StreamFilter' = 'Streams'
+	connectionAPI: '' | 'Streams' | 'StreamFilter' = ''
 	monitorDownloadShowBuiltinActions = false
 	logLevel = 'warning' as LogLevel
 
