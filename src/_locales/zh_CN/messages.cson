@@ -182,8 +182,6 @@ unlimited:
 	message: '不限制'
 editFileSize:
 	message: '大小：'
-webextOOPDisabled:
-	message: '扩展不再支持禁用“主进程外扩展”。'
 address:
 	message: '网址'
 enterAddress:

@@ -324,8 +324,6 @@ document.querySelector('#options')!.addEventListener('click', async () => {
 void async function () {
 	if (!await backgroundRemote.isStorageAvailable())
 		document.getElementById('no-storage-access')!.hidden = false
-	if (await backgroundRemote.isWebExtOOPDisabled())
-		document.getElementById('webext-oop-disabled')!.hidden = false
 	if (!await backgroundRemote.isConnectionAPIAvailable())
 		document.getElementById('connection-api-unavailable')!.hidden = false
 }()

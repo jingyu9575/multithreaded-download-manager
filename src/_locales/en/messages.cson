@@ -190,8 +190,6 @@ unlimited:
 	message: 'Unlimited'
 editFileSize:
 	message: 'Size:'
-webextOOPDisabled:
-	message: 'Disabling "out of process extensions" is no longer supported.'
 address:
 	message: 'Address'
 enterAddress:

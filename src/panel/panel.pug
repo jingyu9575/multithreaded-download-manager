@@ -12,11 +12,6 @@ append body
 		button#options(data-i18n-title='options')
 			svg.icon: use(href='../icons/photon-icons.svg#preferences')
 	#info-bars
-		#webext-oop-disabled.error-bar.icon-text(hidden)
-			svg.icon: use(href='../icons/photon-icons.svg#cancel')
-			span(data-i18n='webextOOPDisabled')
-			a(href=`${repoRoot}wiki/Problems-with-disabling-the-feature-%22out-of-process-extensions%22` 
-				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
 		#no-storage-access.error-bar.icon-text(hidden)
 			svg.icon: use(href='../icons/photon-icons.svg#cancel')
 			span(data-i18n='noStorageAccess')
