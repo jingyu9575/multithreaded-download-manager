@@ -15,7 +15,6 @@ const siteHandlerMap = new Map<string, SiteHandler>([
 			{ credentials: "include", signal })
 		if (!response.ok) return {}
 		const text = await response.text()
-		console.log(text)
 		const match = /\[null,"[^\r\n]+\[null,(?:null|\d+),"(\d+)"\]/.exec(text)
 		if (match && match[1] && Number.isSafeInteger(Number(match[1])))
 			return { totalSize: Number(match[1]) }
