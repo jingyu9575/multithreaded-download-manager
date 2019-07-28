@@ -2,6 +2,7 @@ import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/buffer.js";
 import { CriticalSection } from "../util/promise.js";
 import { assert } from "../util/error.js";
+import { isWebExtOOPEnabled } from "./webext-oop.js";
 
 export interface ChunkStorageClass {
 	create(id: IDBValidKey, isLoaded: boolean): Promise<ChunkStorage>
@@ -105,13 +106,24 @@ export class MutableFileChunkStorage implements ChunkStorage {
 		})
 	}
 
-	async getFile() { return this.file.getFile() }
+	// Workaround for disabling webext-oop
+	private get snapshotName() { return `${this.id}-snapshot` }
+	
+	async getFile() {
+		if (!isWebExtOOPEnabled) {
+			const storage = await MutableFileChunkStorage.storage
+			storage.set(this.snapshotName, await this.file.getFile())
+			return storage.get<File>(this.snapshotName)
+		}
+		return this.file.getFile()
+	}
 
 	reset() { this.persistenceData = new Float64Array([0]) }
 
 	async delete() {
 		const storage = await MutableFileChunkStorage.storage
-		storage.delete(this.id)
+		void storage.delete(this.id)
+		void storage.delete(this.snapshotName)
 		// other methods can still access the unlinked file
 	}
 

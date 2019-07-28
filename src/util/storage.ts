@@ -1,7 +1,7 @@
 import { abortError, readOnlyError } from "./error.js";
 
 export class SimpleStorage {
-	// This version of SimpleStorage only supports Firefox 60+ (Bug 1193394)
+	// Bug 1193394 fixed in Firefox 60 (Promise invalidates IDBRequest)
 
 	private database!: IDBDatabase
 

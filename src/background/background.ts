@@ -2,6 +2,7 @@ import './init.js'
 import './multithreaded-task.js'
 import './monitor.js'
 
+import { isWebExtOOPEnabled } from './webext-oop.js';
 import { registerRemoteHandler } from "../util/webext/remote.js";
 import { MultithreadedTaskData, TaskData } from "../common/task-data.js";
 import { Task } from "./task.js";
@@ -9,26 +10,8 @@ import { openPopupWindow, openOptions } from "./open-window.js";
 import { SimpleMutableFile } from "../util/storage.js";
 import { MultithreadedTask } from './multithreaded-task.js';
 
-let isWebExtOOPEnabledResult: boolean | undefined
-
 export class BackgroundRemote {
-	isWebExtOOPEnabled() { // Detects bug 1272869 to check if webext-oop is enabled.
-		// TODO Android support: verify this check; see if other workarounds are needed
-		if (isWebExtOOPEnabledResult !== undefined) return isWebExtOOPEnabledResult
-		const element = document.getElementById('webext-oop-check') as HTMLTextAreaElement
-		let result = false
-		const handler = (event: ClipboardEvent) => {
-			if (event.target !== element) return
-			result = true
-			event.preventDefault() // prevent the actual copy action
-		}
-		document.addEventListener('copy', handler)
-		element.select()
-		document.execCommand("copy") // requires clipboardWrite permission
-		// W3C Clipboard: the copy event is fired synchronously
-		document.removeEventListener('copy', handler)
-		return (isWebExtOOPEnabledResult = result)
-	}
+	isWebExtOOPEnabled() { return isWebExtOOPEnabled }
 
 	async openPopupWindow(url: string) { return openPopupWindow(url) }
 	async openOptions() { return openOptions() }
