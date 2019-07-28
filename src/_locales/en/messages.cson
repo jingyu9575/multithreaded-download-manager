@@ -320,3 +320,5 @@ theme:
 	message: 'Theme:'
 e_canceled:
 	message: 'Canceled'
+e_sizeError:
+	message: 'Size error'

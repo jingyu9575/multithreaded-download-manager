@@ -30,6 +30,10 @@ export type ConnectionInfo = {
 export abstract class Connection {
 	static readonly isAvailable: boolean
 
+	private static readonly fatalErrors = new WeakSet<Error>()
+	private static toFatal(e: Error) { this.fatalErrors.add(e); return e }
+	static isFatal(e: Error) { return this.fatalErrors.has(e) }
+
 	private static nextInitId = 1 // Skip 0 to exclude `Number('')`
 
 	readonly info: Promise<ConnectionInfo | undefined>
@@ -37,8 +41,10 @@ export abstract class Connection {
 	private readonly controller = new AbortController()
 	private readonly referrer: string
 
-	constructor(request: Request, needInfo: boolean,
-		private readonly onFinish: (error?: Error) => void) {
+	constructor(request: Request, private readonly onFinish: (e?: Error) => void, {
+		expectRangeWithSize = undefined as number | undefined,
+		requestSubstituteFilename = false,
+	} = {}) {
 		const initId = Connection.nextInitId++
 		request.headers.set(connectionHeader, '' + initId)
 		connectionInitIdMap.set(initId, this)
@@ -57,11 +63,11 @@ export abstract class Connection {
 			} finally {
 				connectionInitIdMap.delete(initId)
 			}
-			if (!response.ok)
-				throw new ReportedError(M.e_serverError, response.status)
-			this.onResponse(response)
+			if (!response.ok) {
+				const error = new ReportedError(M.e_serverError, response.status)
+				throw Connection.toFatal(error)
+			}
 
-			if (!needInfo) return undefined
 			const info: ConnectionInfo = {
 				finalURL: response.url,
 				acceptRanges: false,
@@ -80,10 +86,19 @@ export abstract class Connection {
 					contentDisposition = value
 				}
 			}
-
-			info.substituteFilename = parseContentDisposition(contentDisposition)
+			if (expectRangeWithSize !== undefined &&
+				(!info.acceptRanges || info.totalSize !== expectRangeWithSize)) {
+				throw Connection.toFatal(new ReportedError(M.e_sizeError, info.totalSize))
+			}
+			if (requestSubstituteFilename)
+				info.substituteFilename = parseContentDisposition(contentDisposition)
+			this.onResponse(response)
 			return info
 		})().catch(error => {
+			if (Connection.fatalErrors.has(error)) {
+				this.abort()
+				return { error }
+			}
 			const MIN_ERROR_DELAY = 1000
 			const time = performance.now() - startTime
 			if (time < MIN_ERROR_DELAY && !isAbortError(error))
@@ -127,7 +142,10 @@ export abstract class Connection {
 		let error = info && info.error
 		if (!error && 'error' in details)
 			error = new ReportedError(M.e_networkError, details.error)
-		this.onFinish(this.controller.signal.aborted ? abortError() : error)
+		else if ((!error || !Connection.isFatal(error)) // override normal network error
+			&& this.controller.signal.aborted)
+			error = abortError()
+		this.onFinish(error)
 	}
 }
 
@@ -207,7 +225,6 @@ export class StreamFilterConnection extends Connection {
 			this.pendingData.push(new Uint8Array(data))
 		}
 		filter.onstop = filter.onerror = e => { console.warn(e); this.done = true; filter.close() }
-
 		return result
 	}
 }

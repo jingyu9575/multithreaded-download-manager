@@ -227,7 +227,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			.catch(error => this.fail(error))
 	}
 
-	private createConnection(position: number, needInfo: boolean) {
+	private createConnection(position: number, isInitial: boolean) {
 		this.logger.i(M('i_createConnection', position))
 		const headers: Record<string, string> =
 			position > 0 ? { Range: `bytes=${position}-`, } : {}
@@ -247,8 +247,13 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				headers,
 				referrer: this.data.referrer,
 				cache: "no-store",
-			}), needInfo, error => {
+			}), error => {
 				this.onConnectionComplete(connection, error)
+			}, {
+				expectRangeWithSize: this.data.canResume &&
+					this.data.totalSize !== undefined ?
+					this.data.totalSize - position : undefined,
+				requestSubstituteFilename: isInitial,
 			})
 		return connection
 	}
@@ -320,7 +325,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.connections.delete(connection) // already aborted
 
 		if (error && !isAbortError(error)) {
-			if (!this.data.canResume) return this.fail(error)
+			if (!this.data.canResume || Connection.isFatal(error))
+				return this.fail(error)
 			if (this.data.maxRetries !== '' &&
 				this.currentWarnings >= this.data.maxRetries!)
 				return this.fail(error)

@@ -312,3 +312,5 @@ theme:
 	message: '主题：'
 e_canceled:
 	message: '已取消'
+e_sizeError:
+	message: '大小错误'
