@@ -41,3 +41,15 @@ void async function () {
 		}
 	}
 }()
+
+const domContentLoaded = new Promise(resolve =>
+	document.addEventListener("DOMContentLoaded", resolve))
+
+window.addEventListener("message", event => {
+	if (event.source == window && event.data &&
+		event.data.type == "workaroundBlankPopup") {
+		domContentLoaded.then(() =>
+			browser.windows.update(browser.windows.WINDOW_ID_CURRENT,
+				{ height: event.data.height }))
+	}
+})

@@ -1,5 +1,6 @@
 import { remoteProxy } from "../util/webext/remote.js";
 import { S } from "./settings.js";
+import { isWebExtOOPDisabled } from "./webext-oop.js";
 
 const windowSizes: Record<string, [number, number]> = {
 	'/dialog/create.html': [700, 600],
@@ -30,13 +31,22 @@ export async function openPopupWindow(url: string) {
 		top = Math.max(0, centerAt.top! +
 			Math.floor((centerAt.height! - height) / 2))
 	}
-	const { id, width: newWidth, height: newHeight, left: newLeft, top: newTop } =
-		(await browser.windows.create(
-			{ url, type: 'popup', width, height, left, top }))!
+
+	// Bug 1402110 unlikely to be fixed (window is blank without webext-oop)
+	if (isWebExtOOPDisabled) height++
+
+	const { id, width: newWidth, height: newHeight, left: newLeft, top: newTop, tabs } =
+		(await browser.windows.create({ url, type: 'popup', width, height, left, top }))!
 	if (newWidth !== width || newHeight !== height) // privacy.resistFingerprinting
 		await browser.windows.update(id!, { width, height })
 	if (newLeft !== left || newTop !== top)
 		await browser.windows.update(id!, { left, top })
+
+	if (isWebExtOOPDisabled && tabs && tabs.length)
+		await browser.tabs.executeScript(tabs[0].id!, {
+			code: `window.postMessage({type: 'workaroundBlankPopup',
+				height: ${Number(--height)}}, '*')`
+		}).catch(() => { })
 }
 
 export async function openOptions() {

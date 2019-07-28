@@ -2,7 +2,7 @@ import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/buffer.js";
 import { CriticalSection } from "../util/promise.js";
 import { assert } from "../util/error.js";
-import { isWebExtOOPEnabled } from "./webext-oop.js";
+import { isWebExtOOPDisabled } from "./webext-oop.js";
 
 export interface ChunkStorageClass {
 	create(id: IDBValidKey, isLoaded: boolean): Promise<ChunkStorage>
@@ -110,7 +110,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	private get snapshotName() { return `${this.id}-snapshot` }
 	
 	async getFile() {
-		if (!isWebExtOOPEnabled) {
+		if (isWebExtOOPDisabled) {
 			const storage = await MutableFileChunkStorage.storage
 			storage.set(this.snapshotName, await this.file.getFile())
 			return storage.get<File>(this.snapshotName)

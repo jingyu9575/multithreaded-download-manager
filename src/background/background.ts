@@ -2,7 +2,7 @@ import './init.js'
 import './multithreaded-task.js'
 import './monitor.js'
 
-import { isWebExtOOPEnabled } from './webext-oop.js';
+import { isWebExtOOPDisabled } from './webext-oop.js';
 import { registerRemoteHandler } from "../util/webext/remote.js";
 import { MultithreadedTaskData, TaskData } from "../common/task-data.js";
 import { Task } from "./task.js";
@@ -11,7 +11,7 @@ import { SimpleMutableFile } from "../util/storage.js";
 import { MultithreadedTask } from './multithreaded-task.js';
 
 export class BackgroundRemote {
-	isWebExtOOPEnabled() { return isWebExtOOPEnabled }
+	isWebExtOOPDisabled() { return isWebExtOOPDisabled }
 
 	async openPopupWindow(url: string) { return openPopupWindow(url) }
 	async openOptions() { return openOptions() }
