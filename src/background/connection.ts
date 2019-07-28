@@ -24,8 +24,7 @@ export type ConnectionInfo = {
 	totalSize?: number
 	acceptRanges: boolean
 	substituteFilename?: string
-	error?: undefined
-} | { error: Error }
+}
 
 export abstract class Connection {
 	static readonly isAvailable: boolean
@@ -37,11 +36,14 @@ export abstract class Connection {
 	private static nextInitId = 1 // Skip 0 to exclude `Number('')`
 
 	readonly info: Promise<ConnectionInfo | undefined>
+	readonly startTime = performance.now()
+	error?: Error
+	connectedTime?: number
 
 	private readonly controller = new AbortController()
 	private readonly referrer: string
 
-	constructor(request: Request, private readonly onFinish: (e?: Error) => void, {
+	constructor(request: Request, private readonly onFinish: () => void, {
 		expectRangeWithSize = undefined as number | undefined,
 		requestSubstituteFilename = false,
 	} = {}) {
@@ -49,7 +51,6 @@ export abstract class Connection {
 		request.headers.set(connectionHeader, '' + initId)
 		connectionInitIdMap.set(initId, this)
 		this.referrer = request.referrer
-		const startTime = performance.now()
 
 		this.info = (async () => {
 			let response
@@ -92,19 +93,13 @@ export abstract class Connection {
 			}
 			if (requestSubstituteFilename)
 				info.substituteFilename = parseContentDisposition(contentDisposition)
+			this.connectedTime = performance.now()
 			this.onResponse(response)
 			return info
 		})().catch(error => {
-			if (Connection.fatalErrors.has(error)) {
-				this.abort()
-				return { error }
-			}
-			const MIN_ERROR_DELAY = 1000
-			const time = performance.now() - startTime
-			if (time < MIN_ERROR_DELAY && !isAbortError(error))
-				return new Promise(resolve => setTimeout(() => resolve({ error }),
-					MIN_ERROR_DELAY - time))
-			return { error }
+			this.error = error
+			this.abort()
+			return undefined
 		})
 	}
 
@@ -138,14 +133,14 @@ export abstract class Connection {
 	}
 
 	async onStopped(details: OnCompletedDetails | OnErrorOccurredDetails) {
-		const info = await this.info
-		let error = info && info.error
-		if (!error && 'error' in details)
-			error = new ReportedError(M.e_networkError, details.error)
-		else if ((!error || !Connection.isFatal(error)) // override normal network error
-			&& this.controller.signal.aborted)
-			error = abortError()
-		this.onFinish(error)
+		await this.info
+		if (!this.error) {
+			if (this.controller.signal.aborted)
+				this.error = abortError()
+			else if ('error' in details)
+				this.error = new ReportedError(M.e_networkError, details.error)
+		}
+		this.onFinish()
 	}
 }
 

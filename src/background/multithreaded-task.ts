@@ -176,12 +176,13 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		if (!this.firstChunk) {
 			const siteHanderResult = this.siteHandlerInvoker.invoke(this.data.url)
 			const conn = this.initialConnection = this.createConnection(0, true)
-			const info = (await conn.info)!
-			if (siteHanderResult) Object.assign(info, await siteHanderResult)
+			const info = (await conn.info)! // not undefined if !conn.error
+			if (info && siteHanderResult)
+				Object.assign(info, await siteHanderResult)
 
-			if (info.error) {
-				if (!isAbortError(info.error))
-					this.fail(info.error)
+			if (conn.error) {
+				if (!isAbortError(conn.error))
+					this.fail(conn.error)
 				else
 					this.logger.i(M.i_initialConnectionAborted)
 				return
@@ -247,9 +248,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				headers,
 				referrer: this.data.referrer,
 				cache: "no-store",
-			}), error => {
-				this.onConnectionComplete(connection, error)
-			}, {
+			}), () => { this.onConnectionComplete(connection) }, {
 				expectRangeWithSize: this.data.canResume &&
 					this.data.totalSize !== undefined ?
 					this.data.totalSize - position : undefined,
@@ -305,12 +304,20 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		return { items, currentSize, averageSpeed, currentWarnings, currentThreads }
 	}
 
-	private async onConnectionComplete(connection: Connection, error?: Error) {
-		const info = await connection.info // make sure reader is ready and inserted
+	private async onConnectionComplete(connection: Connection) {
+		await connection.info // make sure reader is ready and inserted
+		let { error } = connection
+		if (error && connection !== this.initialConnection &&
+			!isAbortError(error) && !Connection.isFatal(error)) {
+			const MIN_ERROR_DELAY = 1000
+			const time = performance.now() - connection.startTime
+			if (time < MIN_ERROR_DELAY)
+				await new Promise(r => setTimeout(r, MIN_ERROR_DELAY - time))
+		}
 
 		this.logger.i(M.i_connectionEnded, error)
 		if (!this.connections.get(connection)) return
-		if (!(info && info.error)) do {
+		if (!error) do {
 			// wait for stop event if prepare() returns void
 			await (connection.prepare() || new Promise(setImmediate))
 		} while (!await this.pipeConnectionToChunk(connection))

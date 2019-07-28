@@ -2,7 +2,7 @@ import { registerRemoteHandler } from "../util/webext/remote.js";
 import { applyI18n, applyI18nAttr, M } from "../util/webext/i18n.js";
 import {
 	DownloadState, TaskData, TaskProgress, TaskProgressItems, TaskSyncBootstrapItem,
-	taskActions, TaskActionDetail, taskActionPrefix, MultithreadedTaskData
+	taskActions, TaskActionDetail, taskActionPrefix, MultithreadedTaskData, TaskProgressItem
 } from "../common/task-data.js"
 import { importTemplate } from "../util/dom.js";
 import { formatSize, backgroundRemote } from "../common/common.js";
@@ -171,13 +171,16 @@ class XTaskElement extends HTMLElement {
 		const { totalSize } = this.data
 		if (!totalSize /* 0 | undefined */) return
 
-		for (const [key, { currentSize, writtenSize }] of Object.entries(items)) {
+		for (const [key, { currentSize, writtenSize }] of
+			Object.entries(items as Record<any, TaskProgressItem>)) {
 			const position = Number(key)
 			context.fillStyle = DownloadState.colors[this.data.state]
 
 			const x0 = Math.round(position / totalSize * width)
 			const xc = Math.round((position + currentSize) / totalSize * width)
-			context.fillRect(x0, 0, Math.max(xc - x0, 1), height)
+			let currentWidth = xc - x0
+			if (currentSize && currentWidth < 1) currentWidth = 1
+			context.fillRect(x0, 0, currentWidth, height)
 			if (writtenSize < currentSize) {
 				const xw = Math.round((position + writtenSize) / totalSize * width)
 				context.fillStyle = pendingWriteMaskColor
