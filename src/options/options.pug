@@ -147,7 +147,20 @@ append body
 				label.input-label
 					input(type='checkbox' data-key='rememberLastNetworkOptions')
 					span(data-i18n='rememberLast')
-
+				hr
+				.input-grid
+					label.input-label
+						span(data-i18n='connectionTimeout')
+						span
+							input(data-key='connectionTimeout' type='number' min='1'
+									data-i18n-placeholder='unlimited')
+							span.input-unit s
+					label.input-label
+						span(data-i18n='transferTimeout')
+						span
+							input(data-key='transferTimeout' type='number' min='1'
+									data-i18n-placeholder='unlimited')
+							span.input-unit s
 			x-page
 				label.input-label
 					span(data-i18n='legacyFilenameEncoding')

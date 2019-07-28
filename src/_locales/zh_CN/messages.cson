@@ -314,3 +314,9 @@ e_canceled:
 	message: '已取消'
 e_sizeError:
 	message: '大小错误'
+e_timeout:
+	message: '超时'
+connectionTimeout:
+	message: '连接超时：'
+transferTimeout:
+	message: '传输超时：'

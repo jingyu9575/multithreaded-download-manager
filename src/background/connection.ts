@@ -38,7 +38,7 @@ export abstract class Connection {
 	readonly info: Promise<ConnectionInfo | undefined>
 	readonly startTime = performance.now()
 	error?: Error
-	connectedTime?: number
+	lastTransferTime?: number // undefined until connected; publicly writable 
 
 	private readonly controller = new AbortController()
 	private readonly referrer: string
@@ -93,14 +93,10 @@ export abstract class Connection {
 			}
 			if (requestSubstituteFilename)
 				info.substituteFilename = parseContentDisposition(contentDisposition)
-			this.connectedTime = performance.now()
+			this.lastTransferTime = performance.now()
 			this.onResponse(response)
 			return info
-		})().catch(error => {
-			this.error = error
-			this.abort()
-			return undefined
-		})
+		})().catch(error => { this.abortWithError(error); return undefined })
 	}
 
 	protected onResponse(_response: Response) { }
@@ -120,6 +116,7 @@ export abstract class Connection {
 	}
 
 	abort() { this.controller.abort() }
+	abortWithError(e: Error) { if (!this.error) this.error = e; this.abort() }
 
 	onBeforeSendHeaders({ requestHeaders }: OnBeforeSendHeadersDetails) {
 		const newHeaders = requestHeaders!.filter(header => {
@@ -217,9 +214,12 @@ export class StreamFilterConnection extends Connection {
 		const filter = browser.webRequest.filterResponseData(
 			details.requestId) as browser.webRequest.StreamFilter
 		filter.ondata = ({ data }) => {
+			// Possible but unlikely to get data before this.info resolves.
 			this.pendingData.push(new Uint8Array(data))
 		}
-		filter.onstop = filter.onerror = e => { console.warn(e); this.done = true; filter.close() }
+		filter.onstop = filter.onerror = e => {
+			console.warn(e); this.done = true; filter.close()
+		}
 		return result
 	}
 }

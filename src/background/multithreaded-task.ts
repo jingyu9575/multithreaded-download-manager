@@ -71,7 +71,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		await new Promise(setImmediate)
 
 		if (this.data.state !== 'downloading') return
-		const promises = connections.map(c => this.pipeConnectionToChunk(c))
+		const now = performance.now()
+		const promises = connections.map(c => void this.pipeConnectionToChunk(c, now))
 		if (!this.updatedChunks.size) return
 
 		const chunks = [...this.updatedChunks]
@@ -176,7 +177,18 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		if (!this.firstChunk) {
 			const siteHanderResult = this.siteHandlerInvoker.invoke(this.data.url)
 			const conn = this.initialConnection = this.createConnection(0, true)
+
+			let connectionTimer: number | undefined
+			if (S.connectionTimeout !== '') {
+				connectionTimer = setTimeout(() => {
+					if (conn.lastTransferTime !== undefined) return
+					conn.abortWithError(new ReportedError(M.e_timeout,
+						performance.now() - conn.startTime))
+				}, S.connectionTimeout * 1000)
+			} // initialConnection is not checked in pipeConnectionToChunk
+
 			const info = (await conn.info)! // not undefined if !conn.error
+			if (connectionTimer !== undefined) clearTimeout(connectionTimer)
 			if (info && siteHanderResult)
 				Object.assign(info, await siteHanderResult)
 
@@ -262,12 +274,25 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.connections.set(connection, chunk)
 	}
 
-	private async pipeConnectionToChunk(connection: Connection) {
+	private async pipeConnectionToChunk(connection: Connection, checkNow?: number) {
 		const chunk = this.connections.get(connection)
 		if (!chunk) return true
+
 		const receivedData = connection.read()
 		if (!receivedData) return true // return true if there is no more data
-		if (!receivedData.byteLength) return false
+		if (!receivedData.byteLength) { // length = 0: check timeout and return false
+			if (checkNow === undefined) return false
+			const connected = connection.lastTransferTime !== undefined
+			const timeout = connected ? S.transferTimeout : S.connectionTimeout
+			if (timeout === '') return false
+			const elapsedTime = checkNow - (connected ?
+				connection.lastTransferTime! : connection.startTime)
+			if (elapsedTime > timeout * 1000)
+				connection.abortWithError(new ReportedError(M.e_timeout, elapsedTime))
+			return false
+		}
+		
+		if (checkNow !== undefined) connection.lastTransferTime = checkNow
 
 		let writtenData = receivedData
 		if (receivedData.byteLength > chunk.remainingSize) {

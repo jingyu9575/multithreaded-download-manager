@@ -322,3 +322,9 @@ e_canceled:
 	message: 'Canceled'
 e_sizeError:
 	message: 'Size error'
+e_timeout:
+	message: 'Timeout'
+connectionTimeout:
+	message: 'Connection timeout:'
+transferTimeout:
+	message: 'Transfer timeout:'
