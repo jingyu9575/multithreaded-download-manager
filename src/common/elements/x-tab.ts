@@ -20,7 +20,10 @@ export class XActivatableElement extends HTMLElement {
 }
 defineBooleanAttribute(XActivatableElement, 'active')
 
-customElements.define('x-page', XActivatableElement)
+customElements.define('x-page', class extends XActivatableElement {
+	// Bug 1546467 fixed in Firefox 68 (custom element prototype lost after GC)
+	protected readonly __workaround_bug_1546467 = this
+})
 
 customElements.define('x-tabs-nav', class extends HTMLElement {
 	constructor() {
