@@ -261,7 +261,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				credentials: 'include',
 				headers,
 				referrer: this.data.referrer,
-				cache: "no-store",
+				cache: S.cacheMode || 'no-store',
 			}), () => { this.onConnectionComplete(connection) }, {
 				expectRangeWithSize: this.data.canResume &&
 					this.data.totalSize !== undefined ?

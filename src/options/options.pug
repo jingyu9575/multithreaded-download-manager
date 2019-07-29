@@ -188,6 +188,16 @@ append body
 					span
 					a(href=`${repoRoot}wiki/Connection-API` 
 						data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+				label.input-label
+					span(data-i18n='cacheMode')
+					select(data-key='cacheMode')
+						option(value='' data-i18n='default')
+						option(value='default') cache
+						option(value='no-store') no-store
+						option(value='reload') reload
+						option(value='no-cache') no-cache
+						option(value='force-cache') force-cache
+						option(value='only-if-cached') only-if-cached
 				hr
 				label.input-label
 					input(type='checkbox' data-key='monitorDownloadShowBuiltinActions')

@@ -320,3 +320,5 @@ connectionTimeout:
 	message: '连接超时：'
 transferTimeout:
 	message: '传输超时：'
+cacheMode:
+	message: '缓存模式：'

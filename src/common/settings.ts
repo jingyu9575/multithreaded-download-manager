@@ -51,6 +51,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	legacyFilenameDetectNonStandardURLEncoded = false
 	useSiteHandlers = false
 	connectionAPI: '' | 'Streams' | 'StreamFilter' = ''
+	cacheMode: '' | RequestCache = ''
 	monitorDownloadShowBuiltinActions = false
 	logLevel = 'warning' as LogLevel
 

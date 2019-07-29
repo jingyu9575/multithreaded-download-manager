@@ -328,3 +328,5 @@ connectionTimeout:
 	message: 'Connection timeout:'
 transferTimeout:
 	message: 'Transfer timeout:'
+cacheMode:
+	message: 'Cache mode:'
