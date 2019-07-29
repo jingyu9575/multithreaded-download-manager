@@ -343,11 +343,17 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 
 		this.logger.i(M.i_connectionEnded, error)
-		if (!this.connections.get(connection)) return
+		const chunk0 = this.connections.get(connection)
+		if (!chunk0) return
+		const lastWrittenSize = chunk0.writtenSize
+
 		if (!error) do {
 			// wait for stop event if prepare() returns void
 			await (connection.prepare() || new Promise(setImmediate))
 		} while (!await this.pipeConnectionToChunk(connection))
+		if (chunk0.writtenSize === lastWrittenSize)
+			// no additional data are written; need to wait for the last write
+			await chunk0.writeCriticalSection.sync(() => { })
 		this.persistChunks()
 
 		const chunk = this.connections.get(connection)
