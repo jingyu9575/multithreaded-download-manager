@@ -44,7 +44,7 @@ export abstract class Connection {
 	private readonly referrer: string
 
 	constructor(request: Request, private readonly onFinish: () => void, {
-		expectRangeWithSize = undefined as number | undefined,
+		expectedSize = undefined as number | undefined,
 		requestSubstituteFilename = false,
 	} = {}) {
 		const initId = Connection.nextInitId++
@@ -87,8 +87,7 @@ export abstract class Connection {
 					contentDisposition = value
 				}
 			}
-			if (expectRangeWithSize !== undefined &&
-				(!info.acceptRanges || info.totalSize !== expectRangeWithSize)) {
+			if (expectedSize !== undefined && (info.totalSize !== expectedSize)) {
 				throw Connection.toFatal(new ReportedError(M.e_sizeError, info.totalSize))
 			}
 			if (requestSubstituteFilename)
