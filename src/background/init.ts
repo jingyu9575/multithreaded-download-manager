@@ -3,7 +3,7 @@ import { DownloadState, taskActions, taskActionPrefix, TaskData } from "../commo
 import { openPopupWindow } from "./open-window.js";
 import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
-import { isValidProtocol, isValidProtocolURL } from "../common/common.js";
+import { isValidProtocolURL } from "../common/common.js";
 
 void async function () {
 	const iconColor = S.iconColor
@@ -35,17 +35,43 @@ if (navigator.storage && navigator.storage.persist)
 
 const panelURL = browser.runtime.getManifest().browser_action!.default_popup!
 
+async function openPanelIn(position: 'tab' | 'window' | 'sidebar') {
+	if (position === 'tab') {
+		if (await taskSyncRemote.activateTab()) return
+		await browser.tabs.create({ url: panelURL })
+	} else if (position === 'window') {
+		if (await taskSyncRemote.activateWindow()) return
+		await openPopupWindow(panelURL)
+	} else if (position === 'sidebar') {
+		await browser.sidebarAction.open()
+	}
+}
+
 browser.menus.create({
 	title: M.openInNewTab,
 	contexts: ['browser_action'],
 	icons: { 16: '/icons/toolbar-menu/tab.svg' },
-	onclick: async () => { browser.tabs.create({ url: panelURL }) }
+	onclick: () => openPanelIn('tab')
 })
 browser.menus.create({
 	title: M.openInNewWindow,
 	contexts: ['browser_action'],
 	icons: { 16: '/icons/toolbar-menu/window.svg' },
-	onclick: async () => { openPopupWindow(panelURL) }
+	onclick: () => openPanelIn('window')
+})
+browser.menus.create({
+	title: M.openInSidebar,
+	contexts: ['browser_action'],
+	icons: { 16: '/icons/toolbar-menu/sidebar.svg' },
+	onclick: () => openPanelIn('sidebar')
+})
+
+browser.browserAction.onClicked.addListener(() => {
+	if (S.iconClickAction === 'default') return
+	openPanelIn(S.iconClickAction)
+})
+localSettings.listen('iconClickAction', value => {
+	void browser.browserAction.setPopup({ popup: value !== 'default' ? '' : null })
 })
 
 const linkMenuId = browser.menus.create({

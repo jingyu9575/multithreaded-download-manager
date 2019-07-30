@@ -34,6 +34,8 @@ openInNewTab:
 	message: 'Open in new tab'
 openInNewWindow:
 	message: 'Open in new window'
+openInSidebar:
+	message: 'Open in sidebar'
 editURL:
 	message: 'Download:'
 editURLWarning:
@@ -330,3 +332,5 @@ transferTimeout:
 	message: 'Transfer timeout:'
 cacheMode:
 	message: 'Cache mode:'
+iconClickAction:
+	message: 'Action when clicking the icon:'

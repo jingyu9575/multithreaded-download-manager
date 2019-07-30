@@ -327,8 +327,21 @@ export class TaskSyncRemote {
 	}
 
 	isAlive() { return true }
+	activateTab!: () => Promise<boolean>
+	activateWindow!: () => Promise<boolean>
 }
 registerRemoteHandler(new TaskSyncRemote)
+
+browser.windows.getCurrent().then(({ type }) => {
+	const activate = async () => {
+		const tab = await browser.tabs.getCurrent()
+		void browser.tabs.update(tab.id!, { active: true })
+		void browser.windows.update(tab.windowId!, { focused: true })
+		return true
+	}
+	if (type === 'normal') TaskSyncRemote.prototype.activateTab = activate
+	if (type === 'popup') TaskSyncRemote.prototype.activateWindow = activate
+})
 
 void backgroundRemote.requestTaskSyncInit()
 

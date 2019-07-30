@@ -52,6 +52,7 @@ icons/menu/viewLogs.svg
 icons/photon-icons.svg
 icons/toolbar-menu/tab.svg
 icons/toolbar-menu/window.svg
+icons/toolbar-menu/sidebar.svg
 Based on [Firefox Photon Icons](http://design.firefox.com/icons/viewer/)
 Licensed under the Mozilla Public License, v. 2.0
 

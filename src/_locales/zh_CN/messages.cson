@@ -34,6 +34,8 @@ openInNewTab:
 	message: '在新标签页中打开'
 openInNewWindow:
 	message: '在新窗口中打开'
+openInSidebar:
+	message: '在侧栏中打开'
 editURL:
 	message: '下载地址：'
 editURLWarning:
@@ -322,3 +324,5 @@ transferTimeout:
 	message: '传输超时：'
 cacheMode:
 	message: '缓存模式：'
+iconClickAction:
+	message: '单击图标时执行操作：'
