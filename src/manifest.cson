@@ -1,5 +1,5 @@
 manifest_version: 2
-applications:
+browser_specific_settings:
 	gecko:
 		id: 'multithreaded-download-manager@qw.linux-2g64.local'
 		strict_min_version: '67.0'
