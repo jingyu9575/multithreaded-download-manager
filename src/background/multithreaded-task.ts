@@ -90,6 +90,30 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.persistChunks()
 	}, 1000)
 
+	private readonly cachedConnectionTimes = new class {
+		private readonly data: { start: number, time: number }[] = Array(16)
+		private position = 0
+
+		push(item: { start: number, time: number }) {
+			this.data[this.position] = item
+			this.position++
+			if (this.position >= this.data.length) this.position = 0
+		}
+
+		average() {
+			const now = performance.now()
+			let total = 0
+			let weights = 0
+			for (const v of this.data) {
+				if (!v) continue
+				const weight = 1 / Math.max(now - v.start, 1)
+				weights += weight
+				total += weight * v.time
+			}
+			return weights ? total / weights : 0 // default to zero connection time
+		}
+	}
+
 	private static remainingSimultaneousTasks() {
 		let n = S.simultaneousTasks
 		if (n === '') return Infinity
@@ -267,6 +291,13 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 					this.data.totalSize - position : undefined,
 				requestSubstituteFilename: isInitial,
 			})
+		connection.info.then(() => {
+			if (connection.lastTransferTime === undefined) return
+			this.cachedConnectionTimes.push({
+				start: connection.startTime,
+				time: connection.lastTransferTime - connection.startTime,
+			})
+		})
 		return connection
 	}
 
@@ -419,12 +450,17 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		for (let i = divisibles.length; i-- > 0 && quota > 0;)
 			++divisibles[i].count, --quota
 
+		let minChunkSize = this.data.minChunkSize * 1024
+		if (S.dynamicMinChunkSize) {
+			minChunkSize = Math.max(minChunkSize, (this.averageSpeed || 0) *
+				(this.cachedConnectionTimes.average() / 1000))
+		}
 		for (const divisible of divisibles) {
 			// avoid too small chunks
 			let spaceSize
 			do {
 				spaceSize = Math.floor(divisible.size / (divisible.count + 1))
-				if (spaceSize > 0 && spaceSize >= this.data.minChunkSize! * 1024) break
+				if (spaceSize > 0 && spaceSize >= minChunkSize) break
 				divisible.count--
 			} while (divisible.count > 0)
 			let { chunk } = divisible

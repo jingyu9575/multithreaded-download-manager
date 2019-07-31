@@ -334,3 +334,5 @@ cacheMode:
 	message: '缓存模式：'
 iconClickAction:
 	message: '单击图标时执行操作：'
+dynamicMinChunkSize:
+	message: '动态最小块长'

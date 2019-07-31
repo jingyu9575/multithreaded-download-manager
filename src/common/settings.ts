@@ -43,6 +43,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	showOptionsInDedicatedTab = false
 
 	rememberLastNetworkOptions = false
+	dynamicMinChunkSize = false
 	connectionTimeout: number | '' = 30 // s
 	transferTimeout: number | '' = 30 // s
 
