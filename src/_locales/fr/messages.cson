@@ -156,8 +156,6 @@ defaultNetworkOptions:
 	message: 'Options de réseau par défaut'
 legacyFilenameDetection:
 	message: 'Détection du nom de fichier pour sites approuvés'
-# legacyFilenameEncoding:
-#	message: ''
 legacyFilenameDetectUTF8:
 	message: 'Détecter UTF-8'
 legacyFilenameDetectURLEncoded:

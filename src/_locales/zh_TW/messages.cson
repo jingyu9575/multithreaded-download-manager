@@ -146,8 +146,6 @@ defaultNetworkOptions:
 	message: '預設網路選項'
 legacyFilenameDetection:
 	message: '舊網站的檔案名稱檢測'
-# legacyFilenameEncoding:
-#	message: '編碼：'
 legacyFilenameDetectUTF8:
 	message: '檢測 UTF-8'
 legacyFilenameDetectURLEncoded:

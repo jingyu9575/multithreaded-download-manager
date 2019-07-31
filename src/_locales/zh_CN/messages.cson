@@ -34,8 +34,6 @@ openInNewTab:
 	message: '在新标签页中打开'
 openInNewWindow:
 	message: '在新窗口中打开'
-openInSidebar:
-	message: '在侧栏中打开'
 editURL:
 	message: '下载地址：'
 editURLWarning:
@@ -58,10 +56,6 @@ download:
 	message: '下载'
 continueInBrowser:
 	message: '在浏览器中继续'
-e_saveFileError:
-	message: '保存失败'
-e_threadStopped:
-	message: '意外终止'
 e_serverError:
 	message: '服务器错误'
 rangesNotSupported:
@@ -116,6 +110,14 @@ lighter:
 	message: '更亮'
 white:
 	message: '白'
+altIcon1:
+	message: '1'
+altIcon2:
+	message: '2'
+altIcon3:
+	message: '3'
+altIcon4:
+	message: '4'
 showOnBadge:
 	message: '在扩展图标上显示：'
 badgeTypeNone:
@@ -154,8 +156,6 @@ defaultNetworkOptions:
 	message: '默认网络选项'
 legacyFilenameDetection:
 	message: '旧网站的文件名检测'
-legacyFilenameEncoding:
-	message: '旧网站文件名编码：'
 legacyFilenameDetectUTF8:
 	message: '检测 UTF-8'
 legacyFilenameDetectURLEncoded:
@@ -184,6 +184,14 @@ unlimited:
 	message: '不限制'
 editFileSize:
 	message: '大小：'
+openInSidebar:
+	message: '在侧栏中打开'
+e_saveFileError:
+	message: '保存失败'
+e_threadStopped:
+	message: '意外终止'
+legacyFilenameEncoding:
+	message: '旧网站文件名编码：'
 address:
 	message: '网址'
 enterAddress:

@@ -34,8 +34,6 @@ openInNewTab:
 	message: 'Open in new tab'
 openInNewWindow:
 	message: 'Open in new window'
-openInSidebar:
-	message: 'Open in sidebar'
 editURL:
 	message: 'Download:'
 editURLWarning:
@@ -58,10 +56,6 @@ download:
 	message: 'Download'
 continueInBrowser:
 	message: 'Continue in browser'
-e_saveFileError:
-	message: 'Failed to save'
-e_threadStopped:
-	message: 'Unexpected stop'
 e_serverError:
 	message: 'Server error'
 rangesNotSupported:
@@ -162,8 +156,6 @@ defaultNetworkOptions:
 	message: 'Default network options'
 legacyFilenameDetection:
 	message: 'Filename detection for legacy websites'
-legacyFilenameEncoding:
-	message: 'Filename encoding for legacy websites:'
 legacyFilenameDetectUTF8:
 	message: 'Detect UTF-8'
 legacyFilenameDetectURLEncoded:
@@ -192,6 +184,14 @@ unlimited:
 	message: 'Unlimited'
 editFileSize:
 	message: 'Size:'
+openInSidebar:
+	message: 'Open in sidebar'
+e_saveFileError:
+	message: 'Failed to save'
+e_threadStopped:
+	message: 'Unexpected stop'
+legacyFilenameEncoding:
+	message: 'Filename encoding for legacy websites:'
 address:
 	message: 'Address'
 enterAddress:

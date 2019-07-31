@@ -156,8 +156,6 @@ defaultNetworkOptions:
 	message: 'Impostazioni di rete predefinite'
 legacyFilenameDetection:
 	message: 'Rilevamento nomi per siti web legacy'
-# legacyFilenameEncoding:
-# 	message: 'Codifica:'
 legacyFilenameDetectUTF8:
 	message: 'Rileva UTF-8'
 legacyFilenameDetectURLEncoded:
