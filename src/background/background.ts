@@ -1,5 +1,6 @@
 import './init.js'
 import './multithreaded-task.js'
+import './browser-task.js'
 import './monitor.js'
 
 import { registerRemoteHandler } from "../util/webext/remote.js";

@@ -78,6 +78,8 @@ export interface TaskSyncBootstrapItem {
 
 export interface MultithreadedTaskData extends TaskData, NetworkOptions { }
 
+export interface BrowserTaskData extends TaskData { }
+
 export interface TaskActionDetail {
 	primary?: boolean
 	shift?: keyof I18nMessages

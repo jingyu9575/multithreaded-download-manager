@@ -213,7 +213,8 @@ class XTaskElement extends HTMLElement {
 	action_start() { void backgroundRemote.callTaskMethod(this.taskId, 'start') }
 	action_pause() { void backgroundRemote.callTaskMethod(this.taskId, 'pause') }
 	action_stop() {
-		if (this.progress.currentSize && !confirm(M.confirmPauseIsStop)) return
+		if (this.progress.currentSize && this.data.type !== 'BrowserTask' &&
+			!confirm(M.confirmPauseIsStop)) return
 		this.action_pause()
 	}
 

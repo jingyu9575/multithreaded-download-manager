@@ -21,6 +21,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	newTaskAtTop = true
 	removeCompletedTasksOnStart = false
 	simultaneousTasks: number | '' = ''
+	manageBrowserDownload = true
 	monitorDownload = false
 	monitorDownloadType = 'askForOptions' as 'downloadDirectly' | 'askForOptions'
 	monitorDownloadMinSize = 1024 // KiB
