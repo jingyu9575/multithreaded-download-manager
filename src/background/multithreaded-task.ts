@@ -91,7 +91,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	}, 1000)
 
 	private readonly cachedConnectionTimes = new class {
-		private readonly data: { start: number, time: number }[] = Array(16)
+		private data: { start: number, time: number }[] = Array(16)
 		private position = 0
 
 		push(item: { start: number, time: number }) {
@@ -112,6 +112,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			}
 			return weights ? total / weights : 0 // default to zero connection time
 		}
+
+		clear() { this.data = Array(this.data.length) }
 	}
 
 	private static remainingSimultaneousTasks() {
@@ -552,6 +554,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		for (const connection of this.connections.keys()) connection.abort()
 		this.siteHandlerInvoker.abortLast()
 		this.checksumSentry = {}
+		this.cachedConnectionTimes.clear()
 
 		let reset = false
 		if (this.firstChunk && this.data.state !== 'completed' &&
