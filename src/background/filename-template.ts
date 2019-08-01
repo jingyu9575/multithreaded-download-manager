@@ -21,7 +21,6 @@ class FilenameTemplateResolver {
 			const obj = new URL(url)
 			this.str = (obj.host.replace(/:/g, '_') +
 				decodeURIComponent(obj.pathname).replace(/[\\\/]*$/, '')) // TODO %2F
-			// TODO decode legacy
 		} catch { throw new FilenameTemplateError('_URL_') }
 	}
 
