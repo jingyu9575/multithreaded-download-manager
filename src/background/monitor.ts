@@ -12,6 +12,7 @@ type BlockingResponse = browser.webRequest.BlockingResponse
 
 const CONTENT_TYPE_EXCLUDES = new Set([
 	'pdf', 'x-xpinstall', 'x-shockwave-flash', 'json', 'xml',
+	'javascript', 'x-javascript', 'ecmascript', 'x-ecmascript',
 ])
 
 function isContentTypeIncluded(type: string) {
