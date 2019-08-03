@@ -1,4 +1,4 @@
-import { mergeInitData } from "../util/class.js";
+import { mergeInitData } from "../util/util.js";
 import { RemoteSettings } from "../util/webext/settings.js";
 
 export const DEFAULT_FILENAME_TEMPLATE = '*name*'

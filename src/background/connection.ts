@@ -1,5 +1,5 @@
 import { CriticalSection } from "../util/promise.js";
-import { concatTypedArray } from "../util/buffer.js";
+import { concatTypedArray } from "../util/util.js";
 import { abortError, ReportedError, isAbortError } from "../util/error.js";
 import { parseContentDisposition } from "./content-disposition.js";
 import { M } from "../util/webext/i18n.js";

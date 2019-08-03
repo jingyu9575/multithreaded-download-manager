@@ -1,5 +1,5 @@
 import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
-import { typedArrayToBuffer, concatTypedArray } from "../util/buffer.js";
+import { typedArrayToBuffer, concatTypedArray } from "../util/util.js";
 import { CriticalSection } from "../util/promise.js";
 import { assert } from "../util/error.js";
 import { isWebExtOOPDisabled } from "./webext-oop.js";

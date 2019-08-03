@@ -1,4 +1,4 @@
-import { mapInsert } from "../map.js";
+import { mapInsert } from "../util.js";
 import { SimpleEventListener } from "../event.js";
 
 export class LocalSettings<T extends object> {
