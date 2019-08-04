@@ -30,7 +30,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	private static storage = SimpleStorage.create("files")
 
 	private constructor(
-		readonly id: IDBValidKey,
+		private readonly mfileName: string,
 		private readonly file: SimpleMutableFile,
 	) { }
 
@@ -40,15 +40,16 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	// [ persistenceData.length - 1, (startPosition, currentSize)...  ]
 	private persistenceData = new Float64Array([0])
 
-	static async create(id: IDBValidKey, isLoaded: boolean) {
+	static async create(id: number, isLoaded: boolean) {
+		const mfileName = `${id}` // backward compatibility
 		const storage = await this.storage
 		let mutableFile = isLoaded ?
-			(await storage.get(id) as IDBMutableFile) : undefined
+			(await storage.get(mfileName) as IDBMutableFile) : undefined
 		if (!mutableFile) {
-			mutableFile = await storage.mutableFile(`chunk-storage-${id}`)
-			await storage.set(id, mutableFile)
+			mutableFile = await storage.mutableFile(`chunk-storage-${mfileName}`)
+			await storage.set(mfileName, mutableFile)
 		}
-		return new this(id, new SimpleMutableFile(mutableFile))
+		return new this(mfileName, new SimpleMutableFile(mutableFile))
 	}
 
 	async load(totalSize: number) {
@@ -62,7 +63,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 			assert(this.persistenceData.length === 1) // cannot be called after writer
 			this.persistenceData = data
 		} catch (error) {
-			console.warn('MutableFileChunkStorage.load', this.id, error)
+			console.warn('MutableFileChunkStorage.load', this.mfileName, error)
 		}
 
 		const result: ChunkStorageLoadResult = []
@@ -107,7 +108,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	}
 
 	// Workaround for disabling webext-oop
-	private get snapshotName() { return `${this.id}-snapshot` }
+	private get snapshotName() { return `${this.mfileName}-snapshot` }
 	
 	async getFile() {
 		if (isWebExtOOPDisabled) {
@@ -122,7 +123,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 
 	async delete() {
 		const storage = await MutableFileChunkStorage.storage
-		void storage.delete(this.id)
+		void storage.delete(this.mfileName)
 		void storage.delete(this.snapshotName)
 		// other methods can still access the unlinked file
 	}
