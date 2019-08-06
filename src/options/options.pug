@@ -92,6 +92,11 @@ append body
 						input(type='number' min='0' max='100' data-key='iconColorAlpha')
 						span %
 				label.input-label
+					span(data-i18n='contextMenuIconColor')
+					select(data-key='contextMenuIconColor')
+						option(value='' data-i18n='default')
+						option(value='white' data-i18n='white')
+				label.input-label
 					span(data-i18n='showOnBadge')
 					select(data-key='badgeType')
 						option(value='none' data-i18n='badgeTypeNone')

@@ -33,6 +33,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	iconColor = 'default'
 	iconColorCode = '#000000'
 	iconColorAlpha = 100
+	contextMenuIconColor = '' as '' | 'white'
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
 	iconClickAction = 'default' as 'default' | 'tab' | 'window' | 'sidebar'

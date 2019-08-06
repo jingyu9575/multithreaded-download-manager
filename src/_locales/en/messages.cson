@@ -336,3 +336,5 @@ iconClickAction:
 	message: 'Action when clicking the icon:'
 dynamicMinChunkSize:
 	message: 'Dynamic minimal chunk size'
+contextMenuIconColor:
+	message: 'Context menu icon:'

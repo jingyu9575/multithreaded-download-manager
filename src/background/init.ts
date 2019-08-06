@@ -47,24 +47,41 @@ async function openPanelIn(position: 'tab' | 'window' | 'sidebar') {
 	}
 }
 
-browser.menus.create({
-	title: M.openInNewTab,
-	contexts: ['browser_action'],
-	icons: { 16: '/icons/toolbar-menu/tab.svg' },
-	onclick: () => openPanelIn('tab')
-})
-browser.menus.create({
-	title: M.openInNewWindow,
-	contexts: ['browser_action'],
-	icons: { 16: '/icons/toolbar-menu/window.svg' },
-	onclick: () => openPanelIn('window')
-})
-browser.menus.create({
-	title: M.openInSidebar,
-	contexts: ['browser_action'],
-	icons: { 16: '/icons/toolbar-menu/sidebar.svg' },
-	onclick: () => openPanelIn('sidebar')
-})
+let contextMenuIds: (string | number)[] = []
+function recreateContextMenus() {
+	for (const id of contextMenuIds) void browser.menus.remove(id)
+	const suffix = S.contextMenuIconColor ? `-${S.contextMenuIconColor}` : ''
+
+	contextMenuIds = [
+		browser.menus.create({
+			title: M.openInNewTab,
+			contexts: ['browser_action'],
+			icons: { 16: `/icons/toolbar-menu${suffix}/tab.svg` },
+			onclick: () => openPanelIn('tab')
+		}),
+		browser.menus.create({
+			title: M.openInNewWindow,
+			contexts: ['browser_action'],
+			icons: { 16: `/icons/toolbar-menu${suffix}/window.svg` },
+			onclick: () => openPanelIn('window')
+		}),
+		browser.menus.create({
+			title: M.openInSidebar,
+			contexts: ['browser_action'],
+			icons: { 16: `/icons/toolbar-menu${suffix}/sidebar.svg` },
+			onclick: () => openPanelIn('sidebar')
+		}),
+		...taskActions.map(([key]) => browser.menus.create({
+			id: key ? taskActionPrefix + key : undefined,
+			title: key ? M[key] : undefined,
+			contexts: ['image', 'link', 'page', 'selection'],
+			documentUrlPatterns: [panelURL],
+			type: key ? 'normal' : 'separator',
+			icons: key ? { 16: `/icons/menu${suffix}/${key}.svg` } : undefined,
+		}))
+	]
+}
+localSettings.listen('contextMenuIconColor', recreateContextMenus)
 
 browser.browserAction.onClicked.addListener(() => {
 	if (S.iconClickAction === 'default') return
@@ -99,17 +116,6 @@ const linkMenuId = browser.menus.create({
 localSettings.listen('addContextMenuToLink', value => {
 	browser.menus.update(linkMenuId, { visible: value })
 })
-
-for (const [key] of taskActions) {
-	browser.menus.create({
-		id: key ? taskActionPrefix + key : undefined,
-		title: key ? M[key] : undefined,
-		contexts: ['image', 'link', 'page', 'selection'],
-		documentUrlPatterns: [panelURL],
-		type: key ? 'normal' : 'separator',
-		icons: key ? { 16: `/icons/menu/${key}.svg` } : undefined,
-	})
-}
 
 Task.updateBadge = async function (suggestedState?: DownloadState) {
 	const state = !(await taskSyncRemote.isAlive()) &&
