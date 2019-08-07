@@ -77,7 +77,7 @@ confirmPauseIsStop:
 confirmDeleteFile:
 	message: 'Eliminare il file scaricato?'
 confirmRemove:
-	message: 'Rimuovere il download non completato?'
+	message: 'Rimuovere il download incompleto?'
 general:
 	message: 'Generale'
 saveFileTo:
@@ -135,7 +135,7 @@ systemDefault:
 parentCenter:
 	message: 'al centro della finestra in uso'
 rememberLast:
-	message: 'ricorda ultima dimensione'
+	message: 'Ricorda ultima dimensione'
 windowSize:
 	message: 'Dimensione finestra dell\'estensione:'
 newTaskAtTop:
@@ -182,3 +182,159 @@ simultaneousTasks:
 	message: 'Attività di download contemporanee:'
 unlimited:
 	message: 'Senza limiti'
+editFileSize:
+	message: 'Dimensione:'
+openInSidebar:
+	message: 'Apri nella sidebar'
+e_saveFileError:
+	message: 'Salvataggio fallito'
+e_threadStopped:
+	message: 'Interruzione imprevista'
+legacyFilenameEncoding:
+	message: 'Codifica nomi per siti legacy:'
+address:
+	message: 'Indirizzo'
+enterAddress:
+	message: 'Inserisci qui la lista degli indirizzi di download'
+selectAddressFromList:
+	message: 'Seleziona l\'indirizzo di download dalla lista.'
+invalidAddress:
+	message: 'L\'indirizzo di download non è valido.'
+copyAddress:
+	message: 'Copia indirizzo'
+filenamePlaceholder:
+	message: 'Inserisci il nome del file, della sottocartella o del template'
+convert:
+	message: 'Converti'
+link:
+	message: 'Link'
+media:
+	message: 'Media'
+openFile:
+	message: 'Apri file'
+openContainingFolder:
+	message: 'Apri cartella di destinazione'
+copyLink:
+	message: 'Copia link di download'
+openReferrer:
+	message: 'Apri pagina sorgente'
+remove:
+	message: 'Rimuovi'
+deleteFile:
+	message: 'Elimina file'
+actionTitleWithShift:
+	message: '$1\nShift: $2'
+text:
+	message: 'Testo'
+pageInaccessibleToExtensions:
+	message: 'Questa pagina non è accessibile dall'estensione.'
+pageHasBeenClosed:
+	message: 'Questa pagina è stata chiusa.'
+network:
+	message: 'Rete'
+advanced:
+	message: 'Avanzate'
+thirdPartyIcons:
+	message: 'Icone di terze parti'
+customColor:
+	message: 'Colore personalizzato'
+default:
+	message: 'Predefinto'
+customCSS:
+	message: 'CSS Personalizzato'
+help:
+	message: 'Aiuto'
+viewLogs:
+	message: 'Mostra log'
+rawData:
+	message: 'Dati non elaborati'
+i_load:
+	message: 'Carica attività $1 dalla sessione precedente'
+i_create:
+	message: 'Crea attività $1'
+i_start:
+	message: 'Avvia $1'
+i_pause:
+	message: 'Pausa'
+i_queue:
+	message: 'Metti in coda'
+i_initialConnectionInfo:
+	message: 'Connessione stabilita. Dimensione totale: $1; Supporto Multi-thread: $2'
+yes:
+	message: 'Sì'
+no:
+	message: 'No'
+i_initialConnectionAborted:
+	message: 'Connessione interrotta'
+i_createConnection:
+	message: 'Create connection at $1'
+i_connectionEnded:
+	message: 'Connessione terminata'
+i_save:
+	message: 'Salva file'
+i_completed:
+	message: 'Download completato'
+logLevel:
+	message: 'Livello log:'
+info:
+	message: 'Info'
+warning:
+	message: 'Avviso'
+error:
+	message: 'Errore'
+editDownload:
+	message: 'Modifica attività di download'
+networkOptions:
+	message: 'Opzioni di rete'
+downloadDirectly:
+	message: 'Scarica direttamente'
+askForOptions:
+	message: 'Chiedi cosa fare'
+close:
+	message: 'Chiudi'
+playSoundOnAllCompleted:
+	message: 'Riproduci suono quando tutti i download vengono completati'
+showNotificationOnAllCompleted:
+	message: 'Mostra notifica quando tutti i download vengono completati'
+allDownloadsCompleted:
+	message: 'Tutti i download sono completati.'
+editChecksum:
+	message: 'Integrità:'
+e_checksumError:
+	message: 'Errore di integrità'
+i_checksum:
+	message: 'Integrità: $1 / $2'
+connectionAPI:
+	message: 'Connection API:'
+i_api:
+	message: 'Connection API: $1'
+connectionAPIUnavailable:
+	message: 'La connection API selezionata non è disponibile.'
+open:
+	message: 'Apri'
+monitorDownloadShowBuiltinActions:
+	message: 'Mostra azioni rapide nella schermata di download'
+configureOpen:
+	message: 'Configura "Apri"'
+configureSave:
+	message: 'Configura "Salva"'
+theme:
+	message: 'Tema:'
+e_canceled:
+	message: 'Annullato'
+e_sizeError:
+	message: 'Errore dimensione'
+e_timeout:
+	message: 'Timeout'
+connectionTimeout:
+	message: 'Timeout connessione:'
+transferTimeout:
+	message: 'Timeout trasferimento:'
+cacheMode:
+	message: 'Modalità cache:'
+iconClickAction:
+	message: 'Azione quando si clicca l\'icona:'
+dynamicMinChunkSize:
+	message: 'Dimensione minima dinamica della parte'
+contextMenuIconColor:
+	message: 'Icona menù contestuale menu icon:'
