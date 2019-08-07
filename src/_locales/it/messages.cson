@@ -227,7 +227,7 @@ actionTitleWithShift:
 text:
 	message: 'Testo'
 pageInaccessibleToExtensions:
-	message: 'Questa pagina non è accessibile dall'estensione.'
+	message: 'Questa pagina non è accessibile dall\'estensione.'
 pageHasBeenClosed:
 	message: 'Questa pagina è stata chiusa.'
 network:
