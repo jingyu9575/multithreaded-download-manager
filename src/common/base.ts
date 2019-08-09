@@ -2,16 +2,28 @@ import { SimpleStorage } from "../util/storage.js";
 import { M } from "../util/webext/i18n.js";
 import { remoteSettings } from "./settings.js";
 
-browser.windows.getCurrent().then(({ id, type }) => {
+browser.windows.getCurrent().then(({ id: thisId, type, left, top, width, height }) => {
 	if (type !== 'popup') return
+	const key = `windowExtents.${location.pathname}`
+
+	let altExtentVars = (left === screenX && top === screenY &&
+		width === outerWidth && height === outerHeight)
+	browser.windows.onRemoved.addListener(id => {
+		// If the tab is detached and the popup window is auto-closed, disable saving
+		if (id === thisId) altExtentVars = false
+	})
+
 	window.addEventListener('beforeunload', () => {
-		const { pathname } = location
-		browser.windows.getCurrent().then(
-			({ id: id1, left, top, width, height }) => {
-				if (id !== id1) return
-				localStorage.setItem(`windowExtents.${pathname}`,
-					JSON.stringify({ left, top, width, height }))
-			})
+		if (altExtentVars) {
+			// Save the extents from alternative variables
+			localStorage.setItem(key, JSON.stringify({
+				left: screenX, top: screenY, width: outerWidth, height: outerHeight
+			}))
+		}
+		browser.windows.getCurrent().then(({ id, left, top, width, height }) => {
+			if (id !== thisId) return
+			localStorage.setItem(key, JSON.stringify({ left, top, width, height }))
+		})
 	})
 })
 
