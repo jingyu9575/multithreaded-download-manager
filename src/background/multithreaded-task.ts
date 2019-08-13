@@ -577,6 +577,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.update({ state: "paused" })
 		MultithreadedTask.startQueuedTasksTimer.startOnce()
 		this.removeAllConnections()
+		this.persistChunks()
 	}
 
 	remove() {
