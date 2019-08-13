@@ -49,7 +49,7 @@ function parseLegacyFilename(value: string) {
 }
 
 export function parseContentDisposition(contentDisposition: string) {
-	const regex = /^\s*filename(\*?)\s*=\s*("[^"]+"?|[^\s;]+)(;?)/i
+	const regex = /^\s*filename(\*?)\s*=\s*("[^"]+"?|(?:[-\w]+'[- \w]+')?[^\s;]+)(;?)/i
 	let filename = ''
 	for (let match: string[] | null,
 		s = contentDisposition.replace(/^\s*[-\w]+\s*(?:;|$)/, '');
