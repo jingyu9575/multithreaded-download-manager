@@ -21,7 +21,7 @@ export interface ChunkStorage {
 	writer(position: number): ChunkStorageWriter
 	persist(totalSize: number | undefined, final: boolean): Promise<void>
 	getFile(): Promise<File> // must call persist(totalSize, true) first
-	reset(): void // clear persistenceData; all writers are invalidated
+	reset(): void // truncate file; clear persistenceData; all writers are invalidated
 	delete(): void // other methods can still be called
 	read(position: number, size: number): Promise<ArrayBuffer>
 }
@@ -35,6 +35,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	) { }
 
 	private readonly persistCriticalSection = new CriticalSection()
+	private persistSentry = {}
 
 	// Written at totalSize for shared files
 	// [ persistenceData.length - 1, (startPosition, currentSize)...  ]
@@ -98,7 +99,9 @@ export class MutableFileChunkStorage implements ChunkStorage {
 
 	persist(totalSize: number | undefined, final: boolean) {
 		if (totalSize === undefined) return Promise.resolve()
+		const sentry = this.persistSentry
 		return this.persistCriticalSection.sync(async () => {
+			if (sentry !== this.persistSentry) return
 			if (final)
 				await this.file.truncate(totalSize)
 			else
@@ -109,7 +112,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 
 	// Workaround for disabling webext-oop
 	private get snapshotName() { return `${this.mfileName}-snapshot` }
-	
+
 	async getFile() {
 		if (isWebExtOOPDisabled) {
 			const storage = await MutableFileChunkStorage.storage
@@ -119,7 +122,11 @@ export class MutableFileChunkStorage implements ChunkStorage {
 		return this.file.getFile()
 	}
 
-	reset() { this.persistenceData = new Float64Array([0]) }
+	reset() {
+		this.persistenceData = new Float64Array([0])
+		this.persistSentry = {}
+		void this.file.truncate(0)
+	}
 
 	async delete() {
 		const storage = await MutableFileChunkStorage.storage

@@ -338,3 +338,7 @@ dynamicMinChunkSize:
 	message: 'Dynamic minimal chunk size'
 contextMenuIconColor:
 	message: 'Context menu icon:'
+i_reset:
+	message: 'Reset task'
+reset:
+	message: 'Reset'

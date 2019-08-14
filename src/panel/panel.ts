@@ -239,7 +239,7 @@ class XTaskElement extends HTMLElement {
 
 	async showOrOpenFile(method: 'show' | 'open') {
 		try {
-			if (this.data.fileAccessId !== undefined) {
+			if (this.data.fileAccessId != undefined) {
 				await browser.downloads[method](this.data.fileAccessId)
 				return
 			}
@@ -252,7 +252,7 @@ class XTaskElement extends HTMLElement {
 		void this.showOrOpenFile('open')
 	}
 	action_openContainingFolder() {
-		if (this.data.fileAccessId === undefined) {
+		if (this.data.fileAccessId == undefined) {
 			void browser.downloads.showDefaultFolder()
 		} else void this.showOrOpenFile('show')
 	}
@@ -276,6 +276,8 @@ class XTaskElement extends HTMLElement {
 		void backgroundRemote.openPopupWindow(url.href)
 	}
 
+	action_reset() { void backgroundRemote.callTaskMethod(this.taskId, 'reset') }
+
 	action_remove() {
 		if (this.data.state !== 'completed' && !confirm(M.confirmRemove)) return
 		void backgroundRemote.callTaskMethod(this.taskId, 'remove')
@@ -284,8 +286,8 @@ class XTaskElement extends HTMLElement {
 	async action_deleteFile() {
 		if (this.data.state === 'completed') {
 			if (!confirm(M.confirmDeleteFile)) return
-			try {
-				await browser.downloads.removeFile(this.data.fileAccessId!)
+			if (this.data.fileAccessId != undefined) try {
+				await browser.downloads.removeFile(this.data.fileAccessId)
 			} catch { }
 		}
 		this.action_remove()

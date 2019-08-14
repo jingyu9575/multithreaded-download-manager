@@ -91,6 +91,7 @@ export abstract class Task<Data extends TaskData = TaskData> {
 	abstract init(isLoaded: boolean): Promise<void>
 	abstract start(): void
 	abstract pause(): void
+	abstract reset(): void
 	protected abstract getProgress(): TaskProgress
 
 	protected update(data: Partial<Data>) {

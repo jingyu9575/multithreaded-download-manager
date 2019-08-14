@@ -22,7 +22,7 @@ export class BackgroundRemote {
 		return (await Task.create(data)).id
 	}
 
-	callTaskMethod(id: number, method: 'start' | 'pause' | 'remove') {
+	callTaskMethod(id: number, method: 'start' | 'pause' | 'reset' | 'remove') {
 		const task = Task.get(id)
 		if (task) task[method]()
 	}

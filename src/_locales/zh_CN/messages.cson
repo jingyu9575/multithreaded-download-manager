@@ -338,3 +338,7 @@ dynamicMinChunkSize:
 	message: '动态最小块长'
 contextMenuIconColor:
 	message: '右键菜单图标：'
+i_reset:
+	message: '重置任务'
+reset:
+	message: '重置'

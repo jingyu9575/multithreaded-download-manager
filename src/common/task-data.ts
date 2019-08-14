@@ -48,7 +48,7 @@ export interface TaskData {
 	state: DownloadState
 	error?: string | null
 	totalSize?: number
-	fileAccessId?: number
+	fileAccessId?: number | null
 	canResume?: boolean
 	creationDate: Date
 	completedDate?: Date
@@ -107,6 +107,9 @@ export const taskActions: TaskActions = [
 	['viewLogs', {}],
 	[undefined, {}],
 	['edit', {}],
+	['reset', {
+		filterStates: ['downloading', 'paused', 'completed', 'failed', 'queued']
+	}],
 	['remove', { shift: 'deleteFile' }],
 	['deleteFile', { filterStates: ['completed'] }],
 ]

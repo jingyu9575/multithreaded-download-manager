@@ -518,7 +518,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				fileAccessId: downloadId, state: 'completed',
 				completedDate: new Date(),
 			})
-			this.chunkStorage!.delete()
+			this.chunkStorage!.reset()
 		} catch (error) {
 			if (!isAbortError(error)) this.fail(error)
 			this.persistChunks()
@@ -580,12 +580,22 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.persistChunks()
 	}
 
+	reset() {
+		if (this.data.state === 'saving') return
+		this.logger.i(M.i_reset)
+		this.update({ state: "paused", fileAccessId: null })
+		this.lastChunk = undefined
+		MultithreadedTask.startQueuedTasksTimer.startOnce()
+		this.removeAllConnections()
+		this.currentSize = 0
+	}
+
 	remove() {
 		if (this.data.state === 'downloading')
 			this.update({ state: "paused" })
 		this.removeAllConnections()
 		if (this.chunkStorage) this.chunkStorage.delete()
-		if (this.data.fileAccessId !== undefined)
+		if (this.data.fileAccessId != undefined)
 			void removeBrowserDownload(this.data.fileAccessId)
 		super.remove()
 		MultithreadedTask.startQueuedTasksTimer.startOnce()
@@ -599,7 +609,6 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		MultithreadedTask.startQueuedTasksTimer.startOnce()
 		this.removeAllConnections()
 	}
-
 }
 Task.registerType(MultithreadedTask)
 
