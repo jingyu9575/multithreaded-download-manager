@@ -276,9 +276,9 @@ class XTaskElement extends HTMLElement {
 		void backgroundRemote.openPopupWindow(url.href)
 	}
 
-	action_reset() { 
+	action_reset() {
 		if (this.progress.currentSize && !confirm(M.confirmReset)) return
-		void backgroundRemote.callTaskMethod(this.taskId, 'reset') 
+		void backgroundRemote.callTaskMethod(this.taskId, 'reset')
 	}
 
 	action_remove() {
@@ -352,6 +352,12 @@ void backgroundRemote.requestTaskSyncInit()
 
 document.getElementById('create')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html')
+})
+
+document.getElementById('clearCompletedTasks')!.addEventListener('click', () => {
+	[...XTaskElement.parent.querySelectorAll('.task') as NodeListOf<XTaskElement>]
+		.filter(t => t.data.state === 'completed')
+		.forEach(t => t.action_remove())
 })
 
 document.querySelector('#options')!.addEventListener('click', async () => {

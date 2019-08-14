@@ -344,3 +344,5 @@ reset:
 	message: '重置'
 confirmReset:
 	message: '重置此下载？'
+clearCompletedTasks:
+	message: '清除已完成任务'

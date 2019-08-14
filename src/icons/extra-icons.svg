@@ -26,5 +26,8 @@
 			<circle r="7" cy="8" cx="8" fill="none" stroke="currentColor" stroke-width="2" />
 			<circle r="7" cy="8" cx="8" clip-path="url(#adjust-clipPath1)" fill="currentColor" stroke="currentColor" stroke-width="2" />
 		</symbol>
+		<symbol id="clear" viewBox="0 0 16 16">
+			<path d="M 1,13 H 11 M 3,8 H 13 M 5,3 H 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+		</symbol>
 	</defs>
 </svg>
