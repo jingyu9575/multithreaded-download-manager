@@ -342,3 +342,5 @@ i_reset:
 	message: 'Reset task'
 reset:
 	message: 'Reset'
+confirmReset:
+	message: 'Reset this download?'

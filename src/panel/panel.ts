@@ -276,7 +276,10 @@ class XTaskElement extends HTMLElement {
 		void backgroundRemote.openPopupWindow(url.href)
 	}
 
-	action_reset() { void backgroundRemote.callTaskMethod(this.taskId, 'reset') }
+	action_reset() { 
+		if (this.progress.currentSize && !confirm(M.confirmReset)) return
+		void backgroundRemote.callTaskMethod(this.taskId, 'reset') 
+	}
 
 	action_remove() {
 		if (this.data.state !== 'completed' && !confirm(M.confirmRemove)) return

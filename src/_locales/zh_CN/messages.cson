@@ -342,3 +342,5 @@ i_reset:
 	message: '重置任务'
 reset:
 	message: '重置'
+confirmReset:
+	message: '重置此下载？'
