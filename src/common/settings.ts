@@ -45,8 +45,8 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 
 	rememberLastNetworkOptions = false
 	dynamicMinChunkSize = false
-	connectionTimeout: number | '' = 30 // s
-	transferTimeout: number | '' = 30 // s
+	connectionTimeout: number | '' = '' // s
+	transferTimeout: number | '' = '' // s
 
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
