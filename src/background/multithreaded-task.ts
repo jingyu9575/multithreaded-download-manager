@@ -144,8 +144,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			if (this.data[key] === undefined)
 				Object.assign(this.data, { [key]: S[key] })
 
-		if (this.data.state !== 'completed')
-			this.chunkStorage = await this.chunkStorageClass.create(this.id, isLoaded)
+		this.chunkStorage = await this.chunkStorageClass.create(this.id, isLoaded)
 
 		if (isLoaded && this.data.totalSize !== undefined) {
 			if (DownloadState.areChunksFinished(this.data.state)) {
@@ -517,6 +516,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			this.update({
 				fileAccessId: downloadId, state: 'completed',
 				completedDate: new Date(),
+				...(this.data.totalSize === undefined ?
+					{ totalSize: this.currentSize } : {})
 			})
 			this.chunkStorage!.reset()
 		} catch (error) {
@@ -583,11 +584,12 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	reset() {
 		if (this.data.state === 'saving') return
 		this.logger.i(M.i_reset)
-		this.update({ state: "paused", fileAccessId: null })
+		this.update({ state: "paused", fileAccessId: null, totalSize: undefined })
 		this.lastChunk = undefined
 		MultithreadedTask.startQueuedTasksTimer.startOnce()
 		this.removeAllConnections()
 		this.currentSize = 0
+		void this.syncProgressAfterWrites(true)
 	}
 
 	remove() {
