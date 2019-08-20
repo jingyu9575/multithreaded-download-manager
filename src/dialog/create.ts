@@ -71,10 +71,16 @@ taskForm.getDataList = () => {
 }
 taskForm.doAfterSubmitting = () => activeURLProvider().doAfterSubmitting()
 
-if (Number(new URL(location.href).searchParams.get('selectedLinks'))) {
+const { searchParams } = new URL(location.href)
+if (Number(searchParams.get('selectedLinks'))) {
 	const linkURLProvider = document.querySelector(
 		'link-url-provider') as ListURLProviderElement
 	linkURLProvider.usePreselectedData = true
 	const page = linkURLProvider.closest('x-page') as XActivatableElement
+	page.active = true
+}
+if (Number(searchParams.get('convert'))) {
+	const page = document.querySelector('convert-url-provider')!
+		.closest('x-page') as XActivatableElement
 	page.active = true
 }

@@ -354,6 +354,10 @@ document.getElementById('create')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html')
 })
 
+document.getElementById('import')!.addEventListener('click', () => {
+	backgroundRemote.openPopupWindow('../dialog/create.html?convert=1')
+})
+
 document.getElementById('clearCompletedTasks')!.addEventListener('click', () => {
 	[...XTaskElement.parent.querySelectorAll('.task') as NodeListOf<XTaskElement>]
 		.filter(t => t.data.state === 'completed')
