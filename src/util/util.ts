@@ -26,16 +26,18 @@ export function typedArrayToBuffer(ta: TypedArray) {
 		ta : ta.slice()).buffer
 }
 
-export function concatTypedArray<T extends TypedArray>(tas: T[]) {
-	if (!tas.length) return undefined
+// may share buffers
+export function concatTypedArray<T extends TypedArray>(list: T[]) {
+	if (!list.length) return undefined
+	if (list.length === 1) return list[0]
 	let length = 0
-	for (const ta of tas) length += ta.length
-	const result = new (tas[0].constructor as new (l: number) => T)(length)
+	for (const a of list) length += a.length
+	const result: T = new (list[0].constructor as any)(length)
 
 	let offset = 0
-	for (const ta of tas) {
-		result.set(ta, offset)
-		offset += ta.length
+	for (const a of list) {
+		result.set(a, offset)
+		offset += a.length
 	}
 	return result
 }
