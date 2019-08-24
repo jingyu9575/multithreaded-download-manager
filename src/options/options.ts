@@ -1,6 +1,8 @@
 import "../common/elements/x-tab.js"
 import { applyI18n, applyI18nAttr } from "../util/webext/i18n.js";
-import { backgroundRemote, getBuiltinActionContentType, removeBrowserDownload } from "../common/common.js";
+import {
+	backgroundRemote, getBuiltinActionContentType, removeBrowserDownload
+} from "../common/common.js";
 import { registerRemoteHandler } from "../util/webext/remote.js";
 import { remoteSettings, Settings } from "../common/settings.js";
 

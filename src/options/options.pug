@@ -137,9 +137,11 @@ append body
 					input(type='checkbox' data-key='showOptionsInDedicatedTab')
 					span(data-i18n='showOptionsInDedicatedTab')
 				hr
-				div
-					a#customCSSButton.dialog-button(data-i18n='customCSSButton'
+				div#custom-css-links
+					a.dialog-button(data-i18n='customCSSButton'
 						href='custom-css.html' target='_blank')
+					a(data-i18n='customCSSSnippets'
+						href=`${repoRoot}wiki/Custom-CSS-snippets` target='_blank')
 			x-page
 				.input-grid
 					label.input-label

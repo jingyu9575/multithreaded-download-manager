@@ -346,3 +346,5 @@ confirmReset:
 	message: '重置此下载？'
 clearCompletedTasks:
 	message: '清除已完成任务'
+customCSSSnippets:
+	message: '代码片段'

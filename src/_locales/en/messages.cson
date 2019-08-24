@@ -346,3 +346,5 @@ confirmReset:
 	message: 'Reset this download?'
 clearCompletedTasks:
 	message: 'Clear completed tasks'
+customCSSSnippets:
+	message: 'Snippets'
