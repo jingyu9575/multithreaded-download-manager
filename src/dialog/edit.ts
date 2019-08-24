@@ -50,6 +50,7 @@ for (const key of ['url', 'referrer', 'filenameTemplate'] as const) {
 	const input = taskForm.querySelector(
 		`[data-key="${CSS.escape(key)}"]`) as HTMLInputElement
 	input.value = searchParams.get(key)!
+	if (key === 'referrer' && !input.checkValidity()) input.value = ''
 }
 
 const totalSizeStr = searchParams.get('totalSize')
