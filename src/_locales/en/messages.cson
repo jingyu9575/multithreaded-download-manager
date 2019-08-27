@@ -348,3 +348,7 @@ clearCompletedTasks:
 	message: 'Clear completed tasks'
 customCSSSnippets:
 	message: 'Snippets'
+andAnotherNTasks:
+	message: '... and another $1 tasks'
+showTooltip:
+	message: 'Show tooltips on the extension icon'

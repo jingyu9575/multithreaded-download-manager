@@ -5,21 +5,10 @@ import {
 	taskActions, TaskActionDetail, taskActionPrefix, MultithreadedTaskData, TaskProgressItem
 } from "../common/task-data.js"
 import { importTemplate } from "../util/dom.js";
-import { formatSize, backgroundRemote } from "../common/common.js";
+import { formatSize, backgroundRemote, formatTimeSpan } from "../common/common.js";
 
 applyI18n()
 applyI18nAttr('title')
-
-function formatTimeSpan(seconds: number) {
-	const value = Math.ceil(seconds)
-	const hval = Math.floor(value / 3600),
-		m = Math.floor((value % 3600) / 60) + '',
-		s = (value % 60) + ''
-	const cap = 10000
-	if (hval >= cap) return `>${cap}h`
-	return hval ? `${hval}:${m.padStart(2, '0')}:${s.padStart(2, '0')}` :
-		`${m}:${s.padStart(2, '0')}`
-}
 
 function formatCompletedDate(date: Date) {
 	const now = new Date()

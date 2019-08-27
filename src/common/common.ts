@@ -43,6 +43,17 @@ export function formatSize(n: number,
 	return sign + (n / base ** exp).toFixed(1) + separator + symbols[exp]
 }
 
+export function formatTimeSpan(seconds: number) {
+	const value = Math.ceil(seconds)
+	const hval = Math.floor(value / 3600),
+		m = Math.floor((value % 3600) / 60) + '',
+		s = (value % 60) + ''
+	const cap = 10000
+	if (hval >= cap) return `>${cap}h`
+	return hval ? `${hval}:${m.padStart(2, '0')}:${s.padStart(2, '0')}` :
+		`${m}:${s.padStart(2, '0')}`
+}
+
 export async function movePlatformSubmitButton(node: Element) {
 	if ((await browser.runtime.getPlatformInfo()).os === 'win')
 		node.parentNode!.insertBefore(node, node.previousElementSibling)

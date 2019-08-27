@@ -6,7 +6,7 @@ import { SimpleStorage } from "../util/storage.js";
 import { Logger } from "./logger.js";
 import { localSettings, S } from "./settings.js";
 import { NETWORK_OPTIONS_KEYS } from "../common/settings.js";
-import { isValidProtocolURL } from "../common/common.js";
+import { isValidProtocolURL, formatTimeSpan } from "../common/common.js";
 import { M } from "../util/webext/i18n.js";
 
 export const taskSyncRemote = remoteProxy<
@@ -92,7 +92,7 @@ export abstract class Task<Data extends TaskData = TaskData> {
 	abstract start(): void
 	abstract pause(): void
 	abstract reset(): void
-	protected abstract getProgress(): TaskProgress
+	protected abstract getProgress(chunks?: [] /* no detail */): TaskProgress
 
 	protected update(data: Partial<Data>) {
 		Object.assign(this.data, data)
@@ -134,7 +134,7 @@ export abstract class Task<Data extends TaskData = TaskData> {
 			v => DownloadState.isProgressing(v.data.state)).length
 	}
 
-	// function defined in settings-init.ts
+	// function defined in init.ts
 	static updateBadge = (_suggestedState?: DownloadState) => { }
 
 	private static allCompletedSoundURL?: Promise<string>
@@ -157,5 +157,32 @@ export abstract class Task<Data extends TaskData = TaskData> {
 				message: M.allDownloadsCompleted,
 			})
 		}
+	}
+
+	static getTooltip() {
+		const MAX_ITEMS = 5
+
+		let list = [...this.list].filter(
+			v => DownloadState.isProgressing(v.data.state))
+		if (!list.length) return null
+		if (!S.newTaskAtTop) list = list.reverse()
+		let result = list.slice(0, MAX_ITEMS).map(t => {
+			const { currentSize, averageSpeed } = t.getProgress([])
+			let percentageText = '--%'
+			let estimatedTime = '--:--'
+			if (t.data.totalSize) {
+				const percentage = currentSize / t.data.totalSize * 100
+				percentageText = percentage.toFixed(percentage === 100 ? 0 : 1) + '%'
+				if (averageSpeed)
+					estimatedTime = formatTimeSpan((t.data.totalSize - currentSize)
+						/ averageSpeed)
+			}
+			return `${percentageText} | ${estimatedTime} | ${t.data.filename ||
+				t.data.filenameTemplate}  `
+		})
+		if (!S.newTaskAtTop) result = result.reverse()
+		if (list.length > MAX_ITEMS)
+			result.push(M('andAnotherNTasks', list.length - MAX_ITEMS))
+		return result.join('\n')
 	}
 }

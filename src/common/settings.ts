@@ -37,6 +37,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	badgeType = 'number' as 'none' | 'number'
 	hideBadgeZero = false
 	iconClickAction = 'default' as 'default' | 'tab' | 'window' | 'sidebar'
+	showTooltip = false
 	windowPosition = 'parentCenter' as 'default' | 'parentCenter' | 'remember'
 	windowSize = 'default' as 'default' | 'remember'
 	addContextMenuToLink = true

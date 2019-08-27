@@ -4,6 +4,7 @@ import { openPopupWindow } from "./open-window.js";
 import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
 import { isValidProtocolURL } from "../common/common.js";
+import { Timer } from "../util/promise.js";
 
 void async function () {
 	const iconColor = S.iconColor
@@ -117,11 +118,29 @@ localSettings.listen('addContextMenuToLink', value => {
 	browser.menus.update(linkMenuId, { visible: value })
 })
 
+let showTooltipTimer = new Timer(() => {
+	browser.browserAction.setTitle({ title: S.showTooltip ? Task.getTooltip() : null })
+})
+function updateTooltip(hasProgressing = !!Task.countProgressing()) {
+	if (S.showTooltip) showTooltipTimer.onTimer()
+	if (S.showTooltip && hasProgressing)
+		showTooltipTimer.start(2000)
+	else
+		showTooltipTimer.stop()
+}
+localSettings.listen('showTooltip', value => {
+	if (!value) showTooltipTimer.onTimer()
+	updateTooltip()
+}, 'skip' /* called in updateBadge */)
+
 Task.updateBadge = async function (suggestedState?: DownloadState) {
 	const state = !(await taskSyncRemote.isAlive()) &&
 		(suggestedState === 'completed' || suggestedState === 'failed') ?
 		suggestedState : undefined
 	const n = Task.countProgressing()
+
+	updateTooltip(!!n)
+
 	if (S.badgeType === 'none' || !(state || n) ||
 		(state === 'completed' && !n && S.hideBadgeZero)) {
 		await browser.browserAction.setBadgeText({ text: '' })
