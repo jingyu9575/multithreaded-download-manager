@@ -54,8 +54,9 @@ export function formatTimeSpan(seconds: number) {
 		`${m}:${s.padStart(2, '0')}`
 }
 
-export async function movePlatformSubmitButton(node: Element) {
-	if ((await browser.runtime.getPlatformInfo()).os === 'win')
+export async function movePlatformSubmitButton(...nodes: Element[]) {
+	if ((await browser.runtime.getPlatformInfo()).os !== 'win') return
+	for (const node of nodes)
 		node.parentNode!.insertBefore(node, node.previousElementSibling)
 }
 

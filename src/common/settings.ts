@@ -40,6 +40,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	showTooltip = false
 	windowPosition = 'parentCenter' as 'default' | 'parentCenter' | 'remember'
 	windowSize = 'default' as 'default' | 'remember'
+	showAddPaused = false
 	addContextMenuToLink = true
 	addContextMenuToLinkType = 'downloadDirectly' as 'downloadDirectly' | 'askForOptions'
 	showOptionsInDedicatedTab = false

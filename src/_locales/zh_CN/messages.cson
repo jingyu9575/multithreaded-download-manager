@@ -352,3 +352,7 @@ andAnotherNTasks:
 	message: '…… 还有 $1 个任务'
 showTooltip:
 	message: '在扩展图标上显示工具提示'
+addPaused:
+	message: '添加暂停'
+showAddPaused:
+	message: '新建任务时显示“添加暂停”'

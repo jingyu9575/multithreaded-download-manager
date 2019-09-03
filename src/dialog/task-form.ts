@@ -1,10 +1,12 @@
-import { MultithreadedTaskData, TaskData } from "../common/task-data.js";
+import { MultithreadedTaskData, TaskData, DownloadState } from "../common/task-data.js";
 import { backgroundRemote, closeWindow, movePlatformSubmitButton } from "../common/common.js";
 import {
 	remoteSettings, NetworkOptions, NETWORK_OPTIONS_KEYS, Settings
 } from "../common/settings.js";
 
 export class TaskFormElement extends HTMLFormElement {
+	private submittedTaskState?: DownloadState
+
 	init() {
 		const networkOptions = this.querySelector(
 			'.network-options') as HTMLDetailsElement
@@ -14,8 +16,18 @@ export class TaskFormElement extends HTMLFormElement {
 			localStorage.setItem(collapsedKey, `${Number(!networkOptions.open)}`)
 		})
 
-		void movePlatformSubmitButton(this.querySelector('.submit')!)
+		const submitButton = this.querySelector('.submit') as HTMLButtonElement
+		const addPausedButton = this.querySelector('.add-paused') as HTMLButtonElement
+		void movePlatformSubmitButton(addPausedButton, submitButton, submitButton)
 
+		for (const button of [submitButton, addPausedButton]) {
+			button.addEventListener('click', () => {
+				this.submittedTaskState = button.dataset.taskState as any
+			})
+		}
+
+		remoteSettings.get('showAddPaused').then(v => addPausedButton.hidden = !v)
+		
 		this.addEventListener('submit', event => {
 			event.preventDefault()
 			const dataList = this.getDataList()
@@ -32,6 +44,8 @@ export class TaskFormElement extends HTMLFormElement {
 				!(ft.endsWith('/') || ft.endsWith('\\')))
 				ft += '/'
 			formObj.filenameTemplate = ft
+
+			if (this.submittedTaskState) formObj.state = this.submittedTaskState
 
 			this.submitData(dataList, formObj)
 			this.doAfterSubmitting()
