@@ -195,7 +195,7 @@ legacyFilenameEncoding:
 address:
 	message: 'Address'
 enterAddress:
-	message: 'Enter download address list'
+	message: 'Enter download address list.\nBatch descriptors are supported, e.g. [1:10:2]'
 selectAddressFromList:
 	message: 'Select download address from the list.'
 invalidAddress:

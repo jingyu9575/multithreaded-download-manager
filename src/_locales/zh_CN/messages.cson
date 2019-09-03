@@ -195,7 +195,7 @@ legacyFilenameEncoding:
 address:
 	message: '网址'
 enterAddress:
-	message: '输入下载地址列表'
+	message: '输入下载地址列表。\n支持批量描述符，例如 [1:10:2]'
 selectAddressFromList:
 	message: '请从列表中选择下载地址。'
 invalidAddress:

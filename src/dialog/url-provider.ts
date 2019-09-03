@@ -12,14 +12,73 @@ export abstract class URLProviderElement extends HTMLElement {
 	doAfterSubmitting() { }
 }
 
-function textToURLs(text: string) {
-	const lines = text.split(/[\r\n]/g).filter(v => v.trim())
-	try {
-		const urls = lines.map(v => new URL(v))
-		if (urls.length && urls.every(url => isValidProtocol(url.protocol)))
-			return urls
-	} catch { }
-	return []
+class BatchDescriptor {
+	private static readonly singleCharType = {
+		parse(value: string) {
+			return { number: value.charCodeAt(0), width: 0 }
+		},
+		convert(n: number, _width: number) {
+			return String.fromCharCode(n)
+		},
+	}
+
+	private static readonly itemTypes = [{
+		regex: /^-?\d+$/,
+		parse: (value: string) => ({
+			number: Number.parseInt(value, 10),
+			width: value.startsWith('-0') ? value.length - 1 :
+				value.startsWith('0') ? value.length : 0,
+		}),
+		convert(n: number, width: number) {
+			return (n < 0 ? '-' : '') + `${Math.abs(n)}`.padStart(width, '0')
+		},
+	}, {
+		...BatchDescriptor.singleCharType, regex: /^[a-z]$/
+	}, {
+		...BatchDescriptor.singleCharType, regex: /^[A-Z]$/
+	},]
+
+	private parseItem(value: string) {
+		for (const type of BatchDescriptor.itemTypes) {
+			if (!type.regex.test(value)) continue
+			try {
+				return { ...type.parse(value), type }
+			} catch (error) { console.log(error) }
+		}
+		return undefined
+	}
+
+	expand(line: string, firstOnly = false) {
+		const match = /\[(-?\w+):(-?\w+)(?::-?(\d+))?\]/.exec(line)
+		if (!match) return [line]
+		const start = this.parseItem(match[1]), end = this.parseItem(match[2])
+		if (!start || !end || start.type !== end.type) return [line]
+		const forward = start.number <= end.number
+		const step = match[3] ? Number.parseInt(match[3]) : 1 // always positive
+		if (step === 0) return [line]
+
+		const prefix = line.slice(0, match.index)
+		const suffixes = this.expand(line.slice(match.index + match[0].length))
+		const width = Math.max(start.width, end.width)
+
+		let result: string[] = []
+		for (let i = start.number;
+			forward ? i <= end.number : i >= end.number;
+			forward ? i += step : i -= step) {
+			const processed = prefix + start.type.convert(i, width)
+			result = result.concat(suffixes.map(suffix => processed + suffix))
+			if (firstOnly) break
+		}
+		return result
+	}
+}
+const batchDescriptor = new BatchDescriptor()
+
+function convertTextToURLs(text: string, expandBatch: boolean) {
+	const lines = text.split(/[\r\n]/g).map(v => v.trim()).filter(v => v)
+	const urls = lines.flatMap(s => batchDescriptor.expand(s, !expandBatch))
+	if (!urls.every(url => isValidProtocolURL(url))) return []
+	return expandBatch ? urls : lines
 }
 
 customElements.define('address-url-provider', class extends URLProviderElement {
@@ -29,8 +88,8 @@ customElements.define('address-url-provider', class extends URLProviderElement {
 		super.init()
 		this.addressInput = this.querySelector('.address-input') as HTMLTextAreaElement
 		navigator.clipboard!.readText().then(clipText => {
-			this.addressInput.value = textToURLs(clipText)
-				.map(url => url.href + '\n').join('')
+			this.addressInput.value = convertTextToURLs(clipText, false)
+				.map(url => url + '\n').join('')
 		})
 		this.addressInput.addEventListener('input', () => {
 			this.addressInput.setCustomValidity('')
@@ -58,12 +117,12 @@ customElements.define('address-url-provider', class extends URLProviderElement {
 	update(_tabId: number) { }
 
 	get() {
-		const result = textToURLs(this.addressInput.value)
+		const result = convertTextToURLs(this.addressInput.value, true)
 		if (!result.length) {
 			this.addressInput.setCustomValidity(M.invalidAddress)
 			this.addressInput.reportValidity()
 		}
-		return result.map(url => ({ url: url.href }))
+		return result.map(url => ({ url }))
 	}
 })
 

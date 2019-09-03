@@ -195,7 +195,7 @@ legacyFilenameEncoding:
 address:
 	message: 'Indirizzo'
 enterAddress:
-	message: 'Inserisci qui la lista degli indirizzi di download'
+	message: 'Inserisci qui la lista degli indirizzi di download.\nBatch descriptors are supported, e.g. [1:10:2]'
 selectAddressFromList:
 	message: 'Seleziona l\'indirizzo di download dalla lista.'
 invalidAddress:
