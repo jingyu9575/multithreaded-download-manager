@@ -356,3 +356,5 @@ addPaused:
 	message: 'Add paused'
 showAddPaused:
 	message: 'Show "add paused" when creating tasks'
+openWindowIncognito:
+	message: 'Open extension windows in Private Browsing mode'

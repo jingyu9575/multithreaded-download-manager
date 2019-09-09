@@ -58,6 +58,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	connectionAPI: '' | 'Streams' | 'StreamFilter' = ''
 	cacheMode: '' | RequestCache = ''
 	monitorDownloadShowBuiltinActions = false
+	openWindowIncognito = false
 	logLevel = 'warning' as LogLevel
 
 	removeAfterImport = true

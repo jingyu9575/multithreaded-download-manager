@@ -36,7 +36,10 @@ export async function openPopupWindow(url: string) {
 	if (isWebExtOOPDisabled) height++
 
 	const { id, width: newWidth, height: newHeight, left: newLeft, top: newTop, tabs } =
-		(await browser.windows.create({ url, type: 'popup', width, height, left, top }))!
+		(await browser.windows.create({
+			url, type: 'popup', width, height, left, top,
+			incognito: S.openWindowIncognito || undefined,
+		}))!
 	if (newWidth !== width || newHeight !== height) // privacy.resistFingerprinting
 		await browser.windows.update(id!, { width, height })
 	if (newLeft !== left || newTop !== top)
