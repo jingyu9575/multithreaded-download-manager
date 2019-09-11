@@ -11,7 +11,7 @@ type OnHeadersReceivedDetails = Parameters<Parameters<
 type BlockingResponse = browser.webRequest.BlockingResponse
 
 const CONTENT_TYPE_EXCLUDES = new Set([
-	'pdf', 'x-xpinstall', 'x-shockwave-flash', 'json', 'xml',
+	'x-xpinstall', 'x-shockwave-flash', 'json', 'xml',
 	'javascript', 'x-javascript', 'ecmascript', 'x-ecmascript',
 ])
 
@@ -22,6 +22,7 @@ function isContentTypeIncluded(type: string) {
 	type = type.slice(PREFIX.length)
 	const plus = type.lastIndexOf('+')
 	if (plus !== -1) type = type.slice(plus + 1)
+	if (type === 'pdf' && !S.monitorPDFFiles) return false
 	return !CONTENT_TYPE_EXCLUDES.has(type)
 }
 

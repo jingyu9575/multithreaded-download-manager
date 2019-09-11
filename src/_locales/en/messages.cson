@@ -358,3 +358,5 @@ showAddPaused:
 	message: 'Show "add paused" when creating tasks'
 openWindowIncognito:
 	message: 'Open extension windows in Private Browsing mode'
+monitorPDFFiles:
+	message: 'Enable prompt for PDF files'

@@ -26,6 +26,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	monitorDownloadMinSize = 1024 // KiB
 	autoCloseBlankTab = true
 	monitorLinksWithoutRange = false
+	monitorPDFFiles = false
 	playSoundOnAllCompleted = false
 	showNotificationOnAllCompleted = false
 
