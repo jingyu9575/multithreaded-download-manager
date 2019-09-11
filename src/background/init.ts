@@ -5,6 +5,7 @@ import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
 import { isValidProtocolURL } from "../common/common.js";
 import { Timer } from "../util/promise.js";
+import silenceSound from '../sounds/silence.ogg.js'
 
 void async function () {
 	const iconColor = S.iconColor
@@ -133,6 +134,21 @@ localSettings.listen('showTooltip', value => {
 	updateTooltip()
 }, 'skip' /* called in updateBadge */)
 
+let wakeLockAudio: HTMLAudioElement | undefined
+function updateWakeLock(hasProgressing = !!Task.countProgressing()) {
+	if (S.inhibitSleep && hasProgressing) {
+		if (!wakeLockAudio) {
+			wakeLockAudio = new Audio(silenceSound)
+			wakeLockAudio.loop = true
+		}
+		wakeLockAudio.play()
+	} else {
+		if (wakeLockAudio) wakeLockAudio.pause()
+	}
+}
+localSettings.listen('inhibitSleep', () => updateWakeLock(),
+	'skip' /* called in updateBadge */)
+
 Task.updateBadge = async function (suggestedState?: DownloadState) {
 	const state = !(await taskSyncRemote.isAlive()) &&
 		(suggestedState === 'completed' || suggestedState === 'failed') ?
@@ -140,6 +156,7 @@ Task.updateBadge = async function (suggestedState?: DownloadState) {
 	const n = Task.countProgressing()
 
 	updateTooltip(!!n)
+	updateWakeLock(!!n)
 
 	if (S.badgeType === 'none' || !(state || n) ||
 		(state === 'completed' && !n && S.hideBadgeZero)) {

@@ -29,6 +29,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	monitorPDFFiles = false
 	playSoundOnAllCompleted = false
 	showNotificationOnAllCompleted = false
+	inhibitSleep = false
 
 	theme = '' as '' | 'dark'
 	iconColor = 'default'

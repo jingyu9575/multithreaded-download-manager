@@ -37,6 +37,10 @@ sounds/completed.ogg
 ["complete_sound.wav" by JustVic](https://freesound.org/people/JustVic/sounds/430800/)
 Public domain (CC0 License).
 
+sounds/silence.ogg.ts
+["Silence.ogg" by Mopper](https://commons.wikimedia.org/wiki/File:Silence.ogg)
+Public domain (CC0 License).
+
 
 
 icons/extra-icons-mpl.svg

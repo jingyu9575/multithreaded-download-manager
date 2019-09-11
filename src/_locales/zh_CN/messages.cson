@@ -360,3 +360,5 @@ openWindowIncognito:
 	message: '使用隐私浏览模式打开扩展窗口'
 monitorPDFFiles:
 	message: '允许提示 PDF 文件'
+inhibitSleep:
+	message: '下载时阻止系统自动睡眠'

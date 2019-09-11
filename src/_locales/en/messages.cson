@@ -360,3 +360,5 @@ openWindowIncognito:
 	message: 'Open extension windows in Private Browsing mode'
 monitorPDFFiles:
 	message: 'Enable prompt for PDF files'
+inhibitSleep:
+	message: 'Inhibit system sleep when downloading'
