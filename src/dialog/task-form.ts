@@ -27,7 +27,7 @@ export class TaskFormElement extends HTMLFormElement {
 		}
 
 		remoteSettings.get('showAddPaused').then(v => addPausedButton.hidden = !v)
-		
+
 		this.addEventListener('submit', event => {
 			event.preventDefault()
 			const dataList = this.getDataList()
@@ -70,6 +70,12 @@ export class TaskFormElement extends HTMLFormElement {
 			if (urlInputEventFlag) return
 			urlInputEventFlag = true
 			this.querySelector('.file-size-span')!.classList.add('obsolete')
+		})
+
+		const checksumInput = this.querySelector(
+			'[data-key="checksum"]') as HTMLInputElement
+		checksumInput.addEventListener('change', () => {
+			checksumInput.value = checksumInput.value.replace(/\s/g, '')
 		})
 	}
 
