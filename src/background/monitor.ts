@@ -39,11 +39,25 @@ type HttpHeader = browser.webRequest.HttpHeaders[number]
 const cachedMarker = 'x-multithreaded-download-manager-cached-marker-' +
 	cryptoRandomString()
 
+const redirectedPostRequests = new Map</*requestId*/ string, /*timeStamp*/ number>()
+
 function monitorDownloadListener({
-	requestId, method, url, originUrl, responseHeaders, statusCode, tabId, type
+	requestId, method, url, originUrl, responseHeaders, statusCode, tabId, type,
+	timeStamp,
 }: OnHeadersReceivedDetails): BlockingResponse | Promise<BlockingResponse> {
+	if (statusCode >= 301 && statusCode <= 303 && method.toLowerCase() !== 'get') {
+		// request is redirected with GET, but still shows as POST in the next callback
+		redirectedPostRequests.set(requestId, timeStamp)
+		// remove old records
+		const minTimeStamp = timeStamp - 3600 * 1000
+		for (const [key, time] of redirectedPostRequests)
+			if (time < minTimeStamp) redirectedPostRequests.delete(key)
+		return {}
+	}
+
 	if (!(statusCode >= 200 && statusCode < 300)) return {}
-	if (method.toLowerCase() !== 'get') return {}
+	if (method.toLowerCase() !== 'get' &&
+		!redirectedPostRequests.delete(requestId)) return {}
 
 	let contentTypeIncluded = false, acceptRanges = false
 	let contentLength: number | undefined
