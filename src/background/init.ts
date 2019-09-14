@@ -5,7 +5,7 @@ import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
 import { isValidProtocolURL } from "../common/common.js";
 import { Timer } from "../util/promise.js";
-import silenceSound from '../sounds/silence.ogg.js'
+import smallBeepOGV from '../sounds/small-beep.ogv.js'
 
 void async function () {
 	const iconColor = S.iconColor
@@ -138,7 +138,8 @@ let wakeLockAudio: HTMLAudioElement | undefined
 function updateWakeLock(hasProgressing = !!Task.countProgressing()) {
 	if (S.inhibitSleep && hasProgressing) {
 		if (!wakeLockAudio) {
-			wakeLockAudio = new Audio(silenceSound)
+			wakeLockAudio = new Audio(smallBeepOGV)
+			wakeLockAudio.volume = Number.MIN_VALUE
 			wakeLockAudio.loop = true
 		}
 		wakeLockAudio.play()
