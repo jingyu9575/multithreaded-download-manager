@@ -39,7 +39,7 @@ type HttpHeader = browser.webRequest.HttpHeaders[number]
 const cachedMarker = 'x-multithreaded-download-manager-cached-marker-' +
 	cryptoRandomString()
 
-const redirectedPostRequests = new Map</*requestId*/ string, /*timeStamp*/ number>()
+const redirectedPostRequests: { requestId: string, timeStamp: number }[] = []
 
 function monitorDownloadListener({
 	requestId, method, url, originUrl, responseHeaders, statusCode, tabId, type,
@@ -47,17 +47,21 @@ function monitorDownloadListener({
 }: OnHeadersReceivedDetails): BlockingResponse | Promise<BlockingResponse> {
 	if (statusCode >= 301 && statusCode <= 303 && method.toLowerCase() !== 'get') {
 		// request is redirected with GET, but still shows as POST in the next callback
-		redirectedPostRequests.set(requestId, timeStamp)
+		if (redirectedPostRequests.find(v => v.requestId === requestId)) return {}
+		redirectedPostRequests.push({ requestId, timeStamp })
 		// remove old records
-		const minTimeStamp = timeStamp - 3600 * 1000
-		for (const [key, time] of redirectedPostRequests)
-			if (time < minTimeStamp) redirectedPostRequests.delete(key)
+		const minTimeStamp = timeStamp - 90 * 1000
+		const i = redirectedPostRequests.findIndex(v => v.timeStamp > minTimeStamp)
+		redirectedPostRequests.splice(0, i)
 		return {}
 	}
 
 	if (!(statusCode >= 200 && statusCode < 300)) return {}
-	if (method.toLowerCase() !== 'get' &&
-		!redirectedPostRequests.delete(requestId)) return {}
+	if (method.toLowerCase() !== 'get') {
+		const i = redirectedPostRequests.findIndex(v => v.requestId === requestId)
+		if (i === -1) return {}
+		redirectedPostRequests.splice(i, 1)
+	}
 
 	let contentTypeIncluded = false, acceptRanges = false
 	let contentLength: number | undefined
