@@ -40,6 +40,7 @@ export class TaskFormElement extends HTMLFormElement {
 					(formObj as any)[input.dataset.key!] = input.value
 
 			let ft = (formObj.filenameTemplate || '').trim()
+			if (!ft) ft = this.getDefaultFilenameTemplate()
 			if (dataList.length > 1 && ft && !ft.match(/\*[\w.]+\*/) &&
 				!(ft.endsWith('/') || ft.endsWith('\\')))
 				ft += '/'
@@ -113,6 +114,8 @@ export class TaskFormElement extends HTMLFormElement {
 	}
 
 	getDataList = (): Partial<TaskData>[] => [{}]
+
+	getDefaultFilenameTemplate = () => '' // *text* for convert-url-provider
 
 	submitData = (dataList: Partial<TaskData>[], formObj: Partial<TaskData>) => {
 		let inum = 1

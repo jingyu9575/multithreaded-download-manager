@@ -6,6 +6,7 @@ import { Timer } from "../util/promise.js";
 import { remoteSettings } from "../common/settings.js";
 
 export abstract class URLProviderElement extends HTMLElement {
+	defaultFilenameTemplate?: string
 	init() { this.classList.add('url-provider') }
 	abstract update(tabId: number): void
 	abstract get(): Partial<TaskData>[]
@@ -297,7 +298,7 @@ customElements.define('convert-url-provider', class extends ListURLProviderEleme
 
 	init() {
 		super.init()
-
+		this.defaultFilenameTemplate = '*text*'
 		this.removeAfterImport = this.querySelector(
 			'.convert-remove-after-import') as HTMLInputElement
 		remoteSettings.get('removeAfterImport').then(v => {

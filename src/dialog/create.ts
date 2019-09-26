@@ -69,6 +69,8 @@ taskForm.getDataList = () => {
 	const referrer = referrerSelect.selectedOptions[0].dataset['url']
 	return activeURLProvider().get().map(d => ({ referrer, ...d }))
 }
+taskForm.getDefaultFilenameTemplate =
+	() => activeURLProvider().defaultFilenameTemplate || ''
 taskForm.doAfterSubmitting = () => activeURLProvider().doAfterSubmitting()
 
 const { searchParams } = new URL(location.href)
