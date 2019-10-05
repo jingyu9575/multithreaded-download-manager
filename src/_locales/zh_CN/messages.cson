@@ -362,3 +362,5 @@ monitorPDFFiles:
 	message: '允许提示 PDF 文件'
 inhibitSleep:
 	message: '下载时阻止系统自动睡眠'
+cascadeBuiltinTask:
+	message: '删除任务时删除对应内建下载项'

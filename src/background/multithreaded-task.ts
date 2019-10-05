@@ -597,7 +597,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			this.update({ state: "paused" })
 		this.removeAllConnections()
 		if (this.chunkStorage) this.chunkStorage.delete()
-		if (this.data.fileAccessId != undefined)
+		if (this.data.fileAccessId != undefined && S.cascadeBuiltinTask)
 			void removeBrowserDownload(this.data.fileAccessId)
 		super.remove()
 		MultithreadedTask.startQueuedTasksTimer.startOnce()

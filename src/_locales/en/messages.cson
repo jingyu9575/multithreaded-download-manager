@@ -362,3 +362,5 @@ monitorPDFFiles:
 	message: 'Enable prompt for PDF files'
 inhibitSleep:
 	message: 'Inhibit system sleep when downloading'
+cascadeBuiltinTask:
+	message: 'Remove the built-in download item when removing a task'
