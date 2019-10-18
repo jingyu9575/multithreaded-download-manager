@@ -172,7 +172,7 @@ Task.updateBadge = async function (suggestedState?: DownloadState) {
 localSettings.listen('badgeType', () => void Task.updateBadge(), 'skip')
 localSettings.listen('hideBadgeZero', () => void Task.updateBadge())
 
-const originalIconSVG = fetch('/icons/icon.svg').then(r => r.text())
+const originalIconSVG = fetch('/icons/icon-current-color.svg').then(r => r.text())
 	.then(s => new DOMParser().parseFromString(s, 'image/svg+xml')
 		.documentElement as Element)
 
