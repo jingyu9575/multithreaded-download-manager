@@ -4,10 +4,10 @@ browser_specific_settings:
 		id: 'multithreaded-download-manager@qw.linux-2g64.local'
 		strict_min_version: '67.0'
 name: '__MSG_extensionName__'
-version: '2.3b'
+version: '2.2'
 description: '__MSG_extensionDescription__'
 icons:
-	'48': 'icons/icon-border.svg'
+	'48': 'icons/icon.svg'
 permissions: [
 	'storage'
 	'unlimitedStorage'
