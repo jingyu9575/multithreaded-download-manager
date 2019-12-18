@@ -58,6 +58,7 @@ async function build(s) {
 	const builder = BUILDERS[ext]
 	if (!builder) {
 		await mkdirs(d)
+		await new Promise(r => setTimeout(r, 1))
 		await fs.copyFile(s, d)
 		return
 	} else if (builder.cmd) {
