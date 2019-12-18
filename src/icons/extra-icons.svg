@@ -29,5 +29,10 @@
 		<symbol id="clear" viewBox="0 0 16 16">
 			<path d="M 1,13 H 11 M 3,8 H 13 M 5,3 H 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
 		</symbol>
+		<symbol id="clear-failed" viewBox="0 0 16 16">
+			<path d="M 1,13 H 7 M 3,8 H 13 M 5,3 H 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+			<path d="M 15,15 11,11 M 15,11 11,15" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+			<path d="M 4,13 H 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="round" />
+		</symbol>
 	</defs>
 </svg>

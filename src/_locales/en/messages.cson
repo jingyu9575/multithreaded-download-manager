@@ -366,3 +366,5 @@ cascadeBuiltinTask:
 	message: 'Remove the built-in download item when removing a task'
 removeFailedTasksOnStart:
 	message: 'Remove failed tasks on browser start'
+clearFailedTasks:
+	message: 'Clear failed tasks'

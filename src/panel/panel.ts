@@ -353,6 +353,13 @@ document.getElementById('clearCompletedTasks')!.addEventListener('click', () => 
 		.forEach(t => t.action_remove())
 })
 
+document.getElementById('clearFailedTasks')!.addEventListener('click', () => {
+	const tasks = () => [...XTaskElement.parent.querySelectorAll(
+		'.task') as NodeListOf<XTaskElement>].filter(t => t.data.state === 'failed')
+	if (!tasks().length || !confirm(M.confirmRemove)) return
+	tasks().forEach(t => backgroundRemote.callTaskMethod(t.taskId, 'remove'))
+})
+
 document.querySelector('#options')!.addEventListener('click', async () => {
 	backgroundRemote.openOptions()
 	if (!await browser.tabs.getCurrent()) window.close() // close browserAction popup
