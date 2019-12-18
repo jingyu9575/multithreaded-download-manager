@@ -21,10 +21,7 @@
 				"reveal": "never",
 				"focus": false,
 				"panel": "shared"
-			},
-			"problemMatcher": [
-				"$tsc"
-			]
+			}
 		},
 		{
 			"label": "Build",
