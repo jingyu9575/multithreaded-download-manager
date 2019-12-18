@@ -364,3 +364,5 @@ inhibitSleep:
 	message: '下载时阻止系统自动睡眠'
 cascadeBuiltinTask:
 	message: '删除任务时删除对应内建下载项'
+removeFailedTasksOnStart:
+	message: '浏览器启动时清除已失败的任务'

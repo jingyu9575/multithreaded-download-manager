@@ -20,6 +20,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	saveFileTo = 'systemDefault' as 'systemDefault' | 'downloadFolder' | 'alwaysAsk'
 	newTaskAtTop = true
 	removeCompletedTasksOnStart = false
+	removeFailedTasksOnStart = false
 	cascadeBuiltinTask = true
 	simultaneousTasks: number | '' = ''
 	monitorDownload = false

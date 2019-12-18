@@ -45,6 +45,8 @@ export abstract class Task<Data extends TaskData = TaskData> {
 				const task = await Task.create(data, id)
 				if (data.state === 'completed' && S.removeCompletedTasksOnStart)
 					task.remove()
+				if (data.state === 'failed' && S.removeFailedTasksOnStart)
+					task.remove()
 			} catch (error) { console.error(error) }
 		}
 	})()
