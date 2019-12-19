@@ -1,0 +1,370 @@
+extensionName:
+	message: 'Multithread DM'
+extensionDescription:
+	message: 'Менеджер загрузок с поддержкой многопоточности.'
+pause:
+	message: 'Пауза'
+stop:
+	message: 'Стоп'
+start:
+	message: 'Старт'
+openFileButton:
+	message: 'Открыть файл \nShift: Открыть содержащую папку'
+edit:
+	message: 'Изменить'
+copyLinkButton:
+	message: 'Копировать ссылку загрузки\nShift: Открыть реферер'
+deleted:
+	message: 'Удален'
+removeButton:
+	message: 'Убрать \nShift: Удалить файл'
+preallocating:
+	message: 'Распределение'
+emptyTasks:
+	message: 'Нет задач загрузки.'
+noStorageAccess:
+	message: 'Не удается получить доступ к внутренней памяти.'
+createDownload:
+	message: 'Создать задачу загрузки'
+importDownload:
+	message: 'Импорт задач из встроенного списка загрузки'
+options:
+	message: 'Настройки'
+openInNewTab:
+	message: 'Открыть в новой вкладке'
+openInNewWindow:
+	message: 'Открыть в новом окне'
+editURL:
+	message: 'Загрузить:'
+editURLWarning:
+	message: 'Внимание: при изменении загрузки одноименные файлы будут перезаписаны.'
+editFilename:
+	message: 'Имя файла:'
+editReferrer:
+	message: 'Реферер:'
+maxThreads:
+	message: 'Потоков:'
+minChunkSize:
+	message: 'Минимальный блок:'
+maxRetries:
+	message: 'Попыток:'
+OK:
+	message: 'OK'
+cancel:
+	message: 'Отмена'
+download:
+	message: 'Загрузка'
+continueInBrowser:
+	message: 'Продолжить в браузере'
+e_serverError:
+	message: 'Ошибка сервера'
+rangesNotSupported:
+	message: 'Сервер не поддерживает многопоточные загрузки ($1)'
+e_networkError:
+	message: 'Ошибка сети'
+e_unknownError:
+	message: 'Неизвестная ошибка'
+showCompleted:
+	message: 'Показать завершенные загрузки'
+removeAfterImport:
+	message: 'Удалить исходные элементы после импорта'
+downloadWith:
+	message: 'Открыть в $1'
+unsupportedURL:
+	message: 'Неподдерживаемый адрес: $1'
+confirmPauseIsStop:
+	message: 'Эта загрузка не может быть возобновлена. Прервать?'
+confirmDeleteFile:
+	message: 'Удалить загруженный файл?'
+confirmRemove:
+	message: 'Удалить текущую незавершенную загрузку?'
+general:
+	message: 'Основное'
+saveFileTo:
+	message: 'Сохранить файлы в:'
+downloadFolder:
+	message: 'Папка загрузки'
+alwaysAsk:
+	message: 'Всегда спрашивать'
+skipFirstSavingAttempt:
+	message: 'Первая попытка сохранения неудачна и должна быть пропущена'
+workaroundBlankPopup:
+	message: 'Fix the problem with blank extension windows'
+readMore:
+	message: 'Читать дальше'
+interface:
+	message: 'Интерфейс'
+iconColor:
+	message: 'Значок панели:'
+systemDefaultAfterRestart:
+	message: 'По умолчанию (нужна перезагрузка)'
+dark:
+	message: 'Темная 1'
+darker:
+	message: 'Темная 2'
+black:
+	message: 'Черная'
+light:
+	message: 'Светлая 1'
+lighter:
+	message: 'Светлая 2'
+white:
+	message: 'Белая'
+altIcon1:
+	message: 'Цветная 1'
+altIcon2:
+	message: 'Цветная 2'
+altIcon3:
+	message: 'Цветная 3'
+altIcon4:
+	message: 'Цветная 4'
+showOnBadge:
+	message: 'Показать в бейдже значка:'
+badgeTypeNone:
+	message: 'Ничего'
+badgeTypeNumber:
+	message: 'Количество загрузок'
+hideBadgeZero:
+	message: 'Скрыть бейдж после завершения всех загрузок'
+addContextMenuToLink:
+	message: 'Пункт контекстного меню для ссылок:'
+windowPosition:
+	message: 'Позиция окна загрузок:'
+systemDefault:
+	message: 'По умолчанию'
+parentCenter:
+	message: 'Центр текущего окна'
+rememberLast:
+	message: 'Запоминать значение'
+windowSize:
+	message: 'Размер окна загрузок:'
+newTaskAtTop:
+	message: 'Новые задачи вверху списка'
+removeCompletedTasksOnStart:
+	message: 'Удалить завершенные задачи при запуске браузера'
+showOptionsInDedicatedTab:
+	message: 'Настройки в отдельной вкладке (если вызов из раширения)'
+monitorDownload:
+	message: 'Отслеживание загрузок'
+monitorDownloadDesc:
+	message: 'Автоматический запрос загрузки:'
+monitorDownloadMinSize:
+	message: 'Отключить для файлов меньше:'
+autoCloseBlankTab:
+	message: 'Автозакрытие пустых вкладок при загрузке'
+defaultNetworkOptions:
+	message: 'Параметры сети по умолчанию'
+legacyFilenameDetection:
+	message: 'Обнаружение имен файлов устаревших веб-сайтов'
+legacyFilenameDetectUTF8:
+	message: 'Обнаружение UTF-8'
+legacyFilenameDetectURLEncoded:
+	message: 'Обнаружение процентного кодирования (%20)'
+legacyFilenameDetectNonStandardURLEncoded:
+	message: 'Обнаружение нестандартного процентного кодирования'
+license3rdParty:
+	message: 'Уведомления об авторском праве третьих сторон'
+customCSSButton:
+	message: 'Пользовательский CSS...'
+customCSSDesc:
+	message: 'Пользовательский CSS. Это полностью изменит интерфейс, поэтому не используйте без присмотра взрослых.'
+save:
+	message: 'Сохранить'
+byteSymbol:
+	message: 'B'
+useSiteHandlers:
+	message: 'Переопределения для определенных веб-сайтов'
+monitorLinksWithoutRange:
+	message: 'Запрос для ссылок без поддержки многопоточности'
+linkWithoutRangeWarning:
+	message: 'Эта загрузка не поддерживает многопоточность или возобновление.'
+simultaneousTasks:
+	message: 'Одновременных загрузок:'
+unlimited:
+	message: 'Неограниченно'
+editFileSize:
+	message: 'Размер:'
+openInSidebar:
+	message: 'Открыть в боковой панели'
+e_saveFileError:
+	message: 'Не удалось сохранить'
+e_threadStopped:
+	message: 'Неожиданная остановка'
+legacyFilenameEncoding:
+	message: 'Кодировка имен на устаревших сайтах:'
+address:
+	message: 'Адрес'
+enterAddress:
+	message: 'Введите список адресов загрузки.\nПакетные дескрипторы поддерживаются, типа [1:10:2]'
+selectAddressFromList:
+	message: 'Выберите адрес загрузки из списка.'
+invalidAddress:
+	message: 'Недопустимый адрес загрузки.'
+copyAddress:
+	message: 'Копировать адрес'
+filenamePlaceholder:
+	message: 'Введите имя файла, подпапки или шаблон имени файла'
+convert:
+	message: 'Преобразование'
+link:
+	message: 'Ссылки'
+media:
+	message: 'Медиа-элементы'
+openFile:
+	message: 'Открыть файл'
+openContainingFolder:
+	message: 'Открыть содержащую папку'
+copyLink:
+	message: 'Копировать ссылку загрузки'
+openReferrer:
+	message: 'Открыть реферер'
+remove:
+	message: 'Убрать'
+deleteFile:
+	message: 'Удалить файл'
+actionTitleWithShift:
+	message: '$1\nShift: $2'
+text:
+	message: 'Текст'
+pageInaccessibleToExtensions:
+	message: 'Эта страница недоступна для расширений.'
+pageHasBeenClosed:
+	message: 'Эта страница была закрыта.'
+network:
+	message: 'Сеть'
+advanced:
+	message: 'Дополнительно'
+thirdPartyIcons:
+	message: 'Другие иконки'
+customColor:
+	message: 'Свой цвет'
+default:
+	message: 'По умолчанию'
+customCSS:
+	message: 'Пользовательский CSS'
+help:
+	message: 'Справка'
+viewLogs:
+	message: 'Показать лог'
+rawData:
+	message: 'Raw'
+i_load:
+	message: 'Задача загрузки $1 из предыдущей сессии'
+i_create:
+	message: 'Создание задачи $1'
+i_start:
+	message: 'Начало загрузки $1'
+i_pause:
+	message: 'Пауза задачи'
+i_queue:
+	message: 'Очередь задачи'
+i_initialConnectionInfo:
+	message: 'Начальное соединение установлено. Общий размер: $1; Многопоточность: $2'
+yes:
+	message: 'Да'
+no:
+	message: 'Нет'
+i_initialConnectionAborted:
+	message: 'Начальное соединение прервано'
+i_createConnection:
+	message: 'Соединение создано в $1'
+i_connectionEnded:
+	message: 'Соединение завершено'
+i_save:
+	message: 'Сохранение файла'
+i_completed:
+	message: 'Загрузка завершена'
+logLevel:
+	message: 'Детализация лога:'
+info:
+	message: 'Информация'
+warning:
+	message: 'Предупреждения'
+error:
+	message: 'Ошибки'
+editDownload:
+	message: 'Изменить задачу загрузки'
+networkOptions:
+	message: 'Параметры сети'
+downloadDirectly:
+	message: 'Загрузить напрямую'
+askForOptions:
+	message: 'Запрос вариантов'
+close:
+	message: 'Закрыть'
+playSoundOnAllCompleted:
+	message: 'Сигнал после завершения всех загрузок'
+showNotificationOnAllCompleted:
+	message: 'Показывать уведомление, когда все загрузки завершены'
+allDownloadsCompleted:
+	message: 'Все загрузки завершены.'
+editChecksum:
+	message: 'Хеш:'
+e_checksumError:
+	message: 'Ошибка хеша'
+i_checksum:
+	message: 'Хеш: $1 / $2'
+connectionAPI:
+	message: 'API подключения:'
+i_api:
+	message: 'API подключения: $1'
+connectionAPIUnavailable:
+	message: 'Выбранный API подключения недоступен.'
+open:
+	message: 'Открыть'
+monitorDownloadShowBuiltinActions:
+	message: 'Показывать быстрые действия для встроенной загрузки в запросе'
+configureOpen:
+	message: 'Настройки "Открыть"'
+configureSave:
+	message: 'Настройки "Сохранить"'
+theme:
+	message: 'Тема:'
+e_canceled:
+	message: 'Отменен'
+e_sizeError:
+	message: 'Ошибка размера'
+e_timeout:
+	message: 'Тайм-аут'
+connectionTimeout:
+	message: 'Тайм-аут соединения:'
+transferTimeout:
+	message: 'Тайм-аут передачи:'
+cacheMode:
+	message: 'Режим кэширования:'
+iconClickAction:
+	message: 'Действие при нажатии на значок:'
+dynamicMinChunkSize:
+	message: 'Динамический размер блока'
+contextMenuIconColor:
+	message: 'Значок контекстного меню:'
+i_reset:
+	message: 'Сброс задачи'
+reset:
+	message: 'Сброс'
+confirmReset:
+	message: 'Сбросить эту загрузку?'
+clearCompletedTasks:
+	message: 'Очистить завершенные задачи'
+customCSSSnippets:
+	message: 'Примеры кода'
+andAnotherNTasks:
+	message: '... и еще $1 задач'
+showTooltip:
+	message: 'Показывать подсказки на значке в панели'
+addPaused:
+	message: 'Добавить на паузе'
+showAddPaused:
+	message: 'Показывать "добавить на паузе" при создании задач'
+openWindowIncognito:
+	message: 'Открывать окна расширения в режиме приватного просмотра'
+monitorPDFFiles:
+	message: 'Запрос для PDF-файлов'
+inhibitSleep:
+	message: 'Подавлять сон системы при загрузках'
+cascadeBuiltinTask:
+	message: 'Удалить встроенный элемент загрузки при удалении задачи'
+removeFailedTasksOnStart:
+	message: 'Удалить невыполненные задачи на старте браузера'
+clearFailedTasks:
+	message: 'Очистить невыполненные задачи'
