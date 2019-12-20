@@ -63,6 +63,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	cacheMode: '' | RequestCache = ''
 	monitorDownloadShowBuiltinActions = false
 	openWindowIncognito = false
+	dialogAlwaysOnTop = false
 	logLevel = 'warning' as LogLevel
 
 	removeAfterImport = true

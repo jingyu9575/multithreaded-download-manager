@@ -1,6 +1,6 @@
 import { M } from "../util/webext/i18n.js";
 import { DownloadState, taskActions, taskActionPrefix, TaskData } from "../common/task-data.js";
-import { openPopupWindow } from "./open-window.js";
+import { openPopupWindow, updateDialogAlwaysOnTopHandler } from "./open-window.js";
 import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
 import { isValidProtocolURL } from "../common/common.js";
@@ -242,3 +242,5 @@ try { browser.theme.onUpdated.addListener(updateIconColor) } catch { }
 localSettings.listen('iconColor', () => void updateIconColor(), 'skip')
 localSettings.listen('iconColorCode', () => void updateIconColor(), 'skip')
 localSettings.listen('iconColorAlpha', () => void updateIconColor())
+
+localSettings.listen('dialogAlwaysOnTop', updateDialogAlwaysOnTopHandler)

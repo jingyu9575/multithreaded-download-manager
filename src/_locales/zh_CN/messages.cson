@@ -368,3 +368,5 @@ removeFailedTasksOnStart:
 	message: '浏览器启动时清除已失败的任务'
 clearFailedTasks:
 	message: '清除已失败任务'
+dialogAlwaysOnTop:
+	message: '保持扩展对话框在浏览器窗口前方'

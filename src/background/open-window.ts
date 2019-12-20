@@ -8,6 +8,9 @@ const windowSizes: Record<string, [number, number]> = {
 	'/panel/panel.html': [500, 350],
 }
 
+const dialogWindowIds = new Set<number>()
+let lastDialogWindowId: number | undefined
+
 export async function openPopupWindow(url: string) {
 	if (!browser.windows /* Android */) {
 		await browser.tabs.create({ url, active: true })
@@ -35,11 +38,15 @@ export async function openPopupWindow(url: string) {
 	// Bug 1402110 unlikely to be fixed (window is blank without webext-oop)
 	if (isWebExtOOPDisabled) height++
 
-	const { id, width: newWidth, height: newHeight, left: newLeft, top: newTop, tabs } =
-		(await browser.windows.create({
+	const { id, width: newWidth, height: newHeight, left: newLeft, top: newTop,
+		tabs, focused } = (await browser.windows.create({
 			url, type: 'popup', width, height, left, top,
 			incognito: S.openWindowIncognito || undefined,
 		}))!
+	if (pathname.startsWith('/dialog/')) {
+		dialogWindowIds.add(id!)
+		if (focused) lastDialogWindowId = id
+	}
 	if (newWidth !== width || newHeight !== height) // privacy.resistFingerprinting
 		await browser.windows.update(id!, { width, height })
 	if (newLeft !== left || newTop !== top)
@@ -50,6 +57,34 @@ export async function openPopupWindow(url: string) {
 			code: `window.postMessage({type: 'workaroundBlankPopup',
 				height: ${Number(--height)}}, '*')`
 		}).catch(() => { })
+}
+
+browser.windows.onRemoved.addListener(id => {
+	dialogWindowIds.delete(id)
+	if (lastDialogWindowId === id) lastDialogWindowId = undefined
+})
+
+async function dialogAlwaysOnTopHandler(windowId: number) {
+	if (dialogWindowIds.has(windowId)) {
+		lastDialogWindowId = windowId
+		return
+	}
+	if (lastDialogWindowId === undefined) return
+	if ((await browser.windows.get(windowId)).type !== 'normal') return
+	try {
+		if ((await browser.windows.get(lastDialogWindowId)).state === 'minimized')
+			return
+		void browser.windows.update(lastDialogWindowId, { focused: true })
+	} catch { }
+}
+
+export function updateDialogAlwaysOnTopHandler() {
+	if (S.dialogAlwaysOnTop) {
+		browser.windows.onFocusChanged.addListener(dialogAlwaysOnTopHandler)
+	} else {
+		browser.windows.onFocusChanged.removeListener(dialogAlwaysOnTopHandler)
+		lastDialogWindowId = undefined
+	}
 }
 
 export async function openOptions() {

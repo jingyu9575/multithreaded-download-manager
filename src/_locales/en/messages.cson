@@ -368,3 +368,5 @@ removeFailedTasksOnStart:
 	message: 'Remove failed tasks on browser start'
 clearFailedTasks:
 	message: 'Clear failed tasks'
+dialogAlwaysOnTop:
+	message: 'Make extension dialogs always on top of browser windows'
