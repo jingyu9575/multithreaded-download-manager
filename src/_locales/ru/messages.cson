@@ -43,11 +43,11 @@ editFilename:
 editReferrer:
 	message: 'Реферер:'
 maxThreads:
-	message: 'Потоков:'
+	message: 'Количество потоков:'
 minChunkSize:
 	message: 'Минимальный блок:'
 maxRetries:
-	message: 'Попыток:'
+	message: 'Количество попыток:'
 OK:
 	message: 'OK'
 cancel:
@@ -89,7 +89,7 @@ alwaysAsk:
 skipFirstSavingAttempt:
 	message: 'Первая попытка сохранения неудачна и должна быть пропущена'
 workaroundBlankPopup:
-	message: 'Fix the problem with blank extension windows'
+	message: 'Исправить проблему с пустыми окнами расширения'
 readMore:
 	message: 'Читать дальше'
 interface:
@@ -99,25 +99,25 @@ iconColor:
 systemDefaultAfterRestart:
 	message: 'По умолчанию (нужна перезагрузка)'
 dark:
-	message: 'Темная 1'
+	message: 'Темный 1'
 darker:
-	message: 'Темная 2'
+	message: 'Темный 2'
 black:
-	message: 'Черная'
+	message: 'Черный'
 light:
-	message: 'Светлая 1'
+	message: 'Светлый 1'
 lighter:
-	message: 'Светлая 2'
+	message: 'Светлый 2'
 white:
-	message: 'Белая'
+	message: 'Белый'
 altIcon1:
-	message: 'Цветная 1'
+	message: 'Цветной 1'
 altIcon2:
-	message: 'Цветная 2'
+	message: 'Цветной 2'
 altIcon3:
-	message: 'Цветная 3'
+	message: 'Цветной 3'
 altIcon4:
-	message: 'Цветная 4'
+	message: 'Цветной 4'
 showOnBadge:
 	message: 'Показать в бейдже значка:'
 badgeTypeNone:
@@ -151,7 +151,7 @@ monitorDownloadDesc:
 monitorDownloadMinSize:
 	message: 'Отключить для файлов меньше:'
 autoCloseBlankTab:
-	message: 'Автозакрытие пустых вкладок при загрузке'
+	message: 'Автозакрытие пустых вкладок создаваемых при загрузке'
 defaultNetworkOptions:
 	message: 'Параметры сети по умолчанию'
 legacyFilenameDetection:
@@ -363,8 +363,10 @@ monitorPDFFiles:
 inhibitSleep:
 	message: 'Подавлять сон системы при загрузках'
 cascadeBuiltinTask:
-	message: 'Удалить встроенный элемент загрузки при удалении задачи'
+	message: 'Удалить загрузку из браузера при удалении задачи'
 removeFailedTasksOnStart:
-	message: 'Удалить невыполненные задачи на старте браузера'
+	message: 'Удалить невыполненные задачи при запуске браузера'
 clearFailedTasks:
 	message: 'Очистить невыполненные задачи'
+dialogAlwaysOnTop:
+	message: 'Диалоги расширения всегда поверх окон браузера'
