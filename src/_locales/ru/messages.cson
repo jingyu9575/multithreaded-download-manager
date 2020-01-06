@@ -35,7 +35,7 @@ openInNewTab:
 openInNewWindow:
 	message: 'Открыть в новом окне'
 editURL:
-	message: 'Загрузить:'
+	message: 'Загрузка:'
 editURLWarning:
 	message: 'Внимание: при изменении загрузки одноименные файлы будут перезаписаны.'
 editFilename:
@@ -53,9 +53,9 @@ OK:
 cancel:
 	message: 'Отмена'
 download:
-	message: 'Загрузка'
+	message: 'Загрузить'
 continueInBrowser:
-	message: 'Продолжить в браузере'
+	message: 'В браузер'
 e_serverError:
 	message: 'Ошибка сервера'
 rangesNotSupported:
@@ -69,7 +69,7 @@ showCompleted:
 removeAfterImport:
 	message: 'Удалить исходные элементы после импорта'
 downloadWith:
-	message: 'Открыть в $1'
+	message: 'Загрузить в $1'
 unsupportedURL:
 	message: 'Неподдерживаемый адрес: $1'
 confirmPauseIsStop:
@@ -147,7 +147,7 @@ showOptionsInDedicatedTab:
 monitorDownload:
 	message: 'Отслеживание загрузок'
 monitorDownloadDesc:
-	message: 'Автоматический запрос загрузки:'
+	message: 'При старте стандартной загрузки:'
 monitorDownloadMinSize:
 	message: 'Отключить для файлов меньше:'
 autoCloseBlankTab:
@@ -313,7 +313,7 @@ connectionAPIUnavailable:
 open:
 	message: 'Открыть'
 monitorDownloadShowBuiltinActions:
-	message: 'Показывать быстрые действия для встроенной загрузки в запросе'
+	message: 'Показывать быстрые действия в запросе встроенной загрузки'
 configureOpen:
 	message: 'Настройки "Открыть"'
 configureSave:
@@ -353,9 +353,9 @@ andAnotherNTasks:
 showTooltip:
 	message: 'Показывать подсказки на значке в панели'
 addPaused:
-	message: 'Добавить на паузе'
+	message: 'На паузу'
 showAddPaused:
-	message: 'Показывать "добавить на паузе" при создании задач'
+	message: 'Показывать "На паузу" при создании задач'
 openWindowIncognito:
 	message: 'Открывать окна расширения в режиме приватного просмотра'
 monitorPDFFiles:
