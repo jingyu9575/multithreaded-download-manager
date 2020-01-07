@@ -29,6 +29,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	autoCloseBlankTab = true
 	monitorLinksWithoutRange = false
 	monitorPDFFiles = false
+	monitorAudioFiles = false
 	playSoundOnAllCompleted = false
 	showNotificationOnAllCompleted = false
 	inhibitSleep = false
