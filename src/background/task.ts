@@ -1,6 +1,8 @@
-import { DownloadState, TaskData, TaskProgress, MultithreadedTaskData } from "../common/task-data.js";
+import {
+	DownloadState, TaskData, TaskProgress, MultithreadedTaskData
+} from "../common/task-data.js";
 import { remoteProxy } from "../util/webext/remote.js";
-import { resolveFilenameTemplate } from "./filename-template.js";
+import { resolveFilenameTemplate, filenameRequirementsInitialized } from "./filename-template.js";
 import { AssertionError } from "../util/error.js";
 import { SimpleStorage } from "../util/storage.js";
 import { Logger } from "./logger.js";
@@ -22,6 +24,7 @@ export abstract class Task<Data extends TaskData = TaskData> {
 
 	static readonly initialization = (async () => {
 		await localSettings.initialization
+		await filenameRequirementsInitialized
 
 		Object.assign(Task, { storage: await SimpleStorage.create('tasks') })
 		Task.storage.get('') // test if storage is accessible

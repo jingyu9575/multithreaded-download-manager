@@ -10,6 +10,10 @@ function decodePathname(pathname: string) {
 	return pathname.split(/([\\/])/).map(parseURLEncodedFilename).join('')
 }
 
+let isWindowsOS = true
+export const filenameRequirementsInitialized =
+	browser.runtime.getPlatformInfo().then(({ os }) => { isWindowsOS = os === 'win' })
+
 class FilenameTemplateResolver {
 	private data!: TaskData
 	private str = ''
@@ -29,7 +33,7 @@ class FilenameTemplateResolver {
 		let ft = this.data.filenameTemplate || ''
 		if (!ft || ft.endsWith('/') || ft.endsWith('\\'))
 			ft += S.filenameTemplate || DEFAULT_FILENAME_TEMPLATE
-		return ft.replace(/\*([\w.]*)\*/g, (_, e: string) => {
+		let name = ft.replace(/\*([\w.]*)\*/g, (_, e: string) => {
 			try {
 				if (!e) return '*'
 				this.putURL(this.data.url)
@@ -46,7 +50,30 @@ class FilenameTemplateResolver {
 				if (e instanceof FilenameTemplateError) return e.message
 				return '_ERROR_'
 			}
-		}) || '_DOWNLOAD_'
+		})
+		name = this.fixOSFilename(name)
+		return name || '_DOWNLOAD_'
+	}
+
+	private fixOSFilename(name: string) {
+		name = name.replace(/[\x00-\x1F\x7F-\x9F]/g, ' ')
+		if (isWindowsOS)
+			name = name.replace(/[:*"?<>|]/g, c => `-_'_()_`[':*"?<>|'.indexOf(c)])
+		const result: string[] = []
+		for (const component of name.split(/[\\/]/)) {
+			let s = component.trim()
+			if (s === '' || s === '.') continue
+			if (s === '..') {
+				result.pop()
+				continue
+			}
+			if (isWindowsOS) s = s.replace(
+				/^\s*(?:CON|PRN|AUX|NUL|COM\d|LPT\d|CONIN\$|CONOUT\$)(?=\s*(?:\.|$))/i,
+				'$&_')
+			s = s.replace(/^\./, '_').replace(/\.$/, '_') // enforced by Firefox
+			result.push(s)
+		}
+		return result.length ? result.join('/') : 'Download'
 	}
 
 	protected expr_name() {
