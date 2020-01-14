@@ -27,6 +27,7 @@ function isContentTypeIncluded(type: string) {
 	return !CONTENT_TYPE_EXCLUDES.has(type)
 }
 
+// Note: do not use another browser.runtime.onConnect in background page
 const portListeners = new Map<string, (port: browser.runtime.Port) => void>()
 browser.runtime.onConnect.addListener(async port => {
 	const listener = portListeners.get(port.name)
