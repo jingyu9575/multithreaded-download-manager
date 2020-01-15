@@ -370,7 +370,7 @@ clearFailedTasks:
 	message: '清除已失败任务'
 dialogAlwaysOnTop:
 	message: '保持扩展对话框在浏览器窗口前方'
-monitorAudioFiles:
-	message: '允许提示音频文件'
 panelWindowAlwaysOnTop:
 	message: '保持扩展主窗口在浏览器窗口前方'
+monitorAudioFiles:
+	message: '允许提示音频文件'
