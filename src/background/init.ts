@@ -243,4 +243,5 @@ localSettings.listen('iconColor', () => void updateIconColor(), 'skip')
 localSettings.listen('iconColorCode', () => void updateIconColor(), 'skip')
 localSettings.listen('iconColorAlpha', () => void updateIconColor())
 
-localSettings.listen('dialogAlwaysOnTop', updateDialogAlwaysOnTopHandler)
+localSettings.listen('dialogAlwaysOnTop', updateDialogAlwaysOnTopHandler, 'skip')
+localSettings.listen('panelWindowAlwaysOnTop', updateDialogAlwaysOnTopHandler)

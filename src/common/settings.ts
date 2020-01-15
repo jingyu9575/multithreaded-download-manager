@@ -65,6 +65,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	monitorDownloadShowBuiltinActions = false
 	openWindowIncognito = false
 	dialogAlwaysOnTop = false
+	panelWindowAlwaysOnTop = false
 	logLevel = 'warning' as LogLevel
 
 	removeAfterImport = true

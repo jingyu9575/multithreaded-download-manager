@@ -370,5 +370,7 @@ clearFailedTasks:
 	message: 'Clear failed tasks'
 dialogAlwaysOnTop:
 	message: 'Make extension dialogs always on top of browser windows'
+panelWindowAlwaysOnTop:
+	message: 'Make extension main window always on top of browser windows'
 monitorAudioFiles:
 	message: 'Enable prompt for audio files'

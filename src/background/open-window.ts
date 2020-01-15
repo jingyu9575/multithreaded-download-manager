@@ -8,8 +8,19 @@ const windowSizes: Record<string, [number, number]> = {
 	'/panel/panel.html': [500, 350],
 }
 
-const dialogWindowIds = new Set<number>()
+const dialogWindowIds = new Map<number, /*pathname*/string>()
 let lastDialogWindowId: number | undefined
+
+function trySetLastDialogWindowId(id: number) {
+	const pathname = dialogWindowIds.get(id)
+	if (!pathname) return false
+	if (S.dialogAlwaysOnTop && pathname.startsWith('/dialog/') ||
+		S.panelWindowAlwaysOnTop && pathname.startsWith('/panel/')) {
+		lastDialogWindowId = id
+		return true
+	}
+	return false
+}
 
 export async function openPopupWindow(url: string) {
 	if (!browser.windows /* Android */) {
@@ -43,10 +54,8 @@ export async function openPopupWindow(url: string) {
 			url, type: 'popup', width, height, left, top,
 			incognito: S.openWindowIncognito || undefined,
 		}))!
-	if (pathname.startsWith('/dialog/')) {
-		dialogWindowIds.add(id!)
-		if (focused) lastDialogWindowId = id
-	}
+	dialogWindowIds.set(id!, pathname)
+	if (focused) trySetLastDialogWindowId(id!)
 	if (newWidth !== width || newHeight !== height) // privacy.resistFingerprinting
 		await browser.windows.update(id!, { width, height })
 	if (newLeft !== left || newTop !== top)
@@ -65,10 +74,7 @@ browser.windows.onRemoved.addListener(id => {
 })
 
 async function dialogAlwaysOnTopHandler(windowId: number) {
-	if (dialogWindowIds.has(windowId)) {
-		lastDialogWindowId = windowId
-		return
-	}
+	if (trySetLastDialogWindowId(windowId)) return
 	if (lastDialogWindowId === undefined) return
 	if ((await browser.windows.get(windowId)).type !== 'normal') return
 	try {
@@ -79,12 +85,12 @@ async function dialogAlwaysOnTopHandler(windowId: number) {
 }
 
 export function updateDialogAlwaysOnTopHandler() {
-	if (S.dialogAlwaysOnTop) {
+	if (S.dialogAlwaysOnTop || S.panelWindowAlwaysOnTop) {
 		browser.windows.onFocusChanged.addListener(dialogAlwaysOnTopHandler)
 	} else {
 		browser.windows.onFocusChanged.removeListener(dialogAlwaysOnTopHandler)
-		lastDialogWindowId = undefined
 	}
+	lastDialogWindowId = undefined
 }
 
 export async function openOptions() {
