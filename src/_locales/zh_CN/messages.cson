@@ -374,3 +374,5 @@ panelWindowAlwaysOnTop:
 	message: '保持扩展主窗口在浏览器窗口前方'
 monitorAudioFiles:
 	message: '允许提示音频文件'
+monitorVideoFiles:
+	message: '允许提示视频文件'

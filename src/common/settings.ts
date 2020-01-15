@@ -30,6 +30,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	monitorLinksWithoutRange = false
 	monitorPDFFiles = false
 	monitorAudioFiles = false
+	monitorVideoFiles = false
 	playSoundOnAllCompleted = false
 	showNotificationOnAllCompleted = false
 	inhibitSleep = false

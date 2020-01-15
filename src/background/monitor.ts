@@ -18,6 +18,7 @@ const CONTENT_TYPE_EXCLUDES = new Set([
 function isContentTypeIncluded(type: string) {
 	type = type.toLowerCase()
 	if (S.monitorAudioFiles && type.startsWith('audio/')) return true
+	if (S.monitorVideoFiles && type.startsWith('video/')) return true
 	const PREFIX = 'application/'
 	if (!type.startsWith(PREFIX)) return false
 	type = type.slice(PREFIX.length)

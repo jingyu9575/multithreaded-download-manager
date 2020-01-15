@@ -374,3 +374,5 @@ panelWindowAlwaysOnTop:
 	message: 'Make extension main window always on top of browser windows'
 monitorAudioFiles:
 	message: 'Enable prompt for audio files'
+monitorVideoFiles:
+	message: 'Enable prompt for video files'
