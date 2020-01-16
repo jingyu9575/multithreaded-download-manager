@@ -403,12 +403,12 @@ document.getElementById('import')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html?convert=1')
 })
 
-document.getElementById('startSelected')!.addEventListener('click', () => {
+document.getElementById('start-selected')!.addEventListener('click', () => {
 	for (const t of XTaskElement.getSelected())
 		backgroundRemote.callTaskMethod(t.taskId, 'start')
 })
 
-document.getElementById('pauseSelected')!.addEventListener('click', () => {
+document.getElementById('pause-selected')!.addEventListener('click', () => {
 	const tasks = XTaskElement.getSelected()
 	if (tasks.some(t => t.isActionShown(taskActionsObject['stop'])
 		&& t.progress.currentSize))
@@ -417,7 +417,7 @@ document.getElementById('pauseSelected')!.addEventListener('click', () => {
 	for (const t of tasks) backgroundRemote.callTaskMethod(t.taskId, 'pause')
 })
 
-document.getElementById('removeSelected')!.addEventListener('click', () => {
+document.getElementById('remove-selected')!.addEventListener('click', () => {
 	const tasks = XTaskElement.getSelected()
 	if (tasks.some(t => t.data.state !== 'completed'))
 		if (!confirm(M.confirmRemove))
@@ -425,12 +425,12 @@ document.getElementById('removeSelected')!.addEventListener('click', () => {
 	for (const t of tasks) backgroundRemote.callTaskMethod(t.taskId, 'remove')
 })
 
-document.getElementById('clearCompletedTasks')!.addEventListener('click', () => {
+document.getElementById('clear-completed-tasks')!.addEventListener('click', () => {
 	XTaskElement.getAll().filter(t => t.data.state === 'completed')
 		.forEach(t => t.action_remove())
 })
 
-document.getElementById('clearFailedTasks')!.addEventListener('click', () => {
+document.getElementById('clear-failed-tasks')!.addEventListener('click', () => {
 	const tasks = () => XTaskElement.getAll().filter(t => t.data.state === 'failed')
 	if (!tasks().length || !confirm(M.confirmRemove)) return
 	tasks().forEach(t => backgroundRemote.callTaskMethod(t.taskId, 'remove'))
