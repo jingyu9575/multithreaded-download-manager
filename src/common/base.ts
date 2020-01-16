@@ -54,6 +54,13 @@ void async function () {
 	}
 }()
 
+remoteSettings.get('iconColor').then(iconColor => {
+	if (iconColor.startsWith('alt-')) {
+		const link = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+		link.setAttribute('href', `/icons/alt/${iconColor}.svg`)
+	}
+})
+
 const domContentLoaded = new Promise(resolve =>
 	document.addEventListener("DOMContentLoaded", resolve))
 
