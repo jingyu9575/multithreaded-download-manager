@@ -358,8 +358,8 @@ showAddPaused:
 	message: 'Show "add paused" when creating tasks'
 openWindowIncognito:
 	message: 'Open extension windows in Private Browsing mode'
-monitorPDFFiles:
-	message: 'Enable prompt for PDF files'
+# monitorPDFFiles:
+# 	message: 'Enable prompt for PDF files'
 inhibitSleep:
 	message: 'Inhibit system sleep when downloading'
 cascadeBuiltinTask:
@@ -372,11 +372,15 @@ dialogAlwaysOnTop:
 	message: 'Make extension dialogs always on top of browser windows'
 panelWindowAlwaysOnTop:
 	message: 'Make extension main window always on top of browser windows'
-monitorAudioFiles:
-	message: 'Enable prompt for audio files'
-monitorVideoFiles:
-	message: 'Enable prompt for video files'
 selectAll:
 	message: 'Select all'
 shortenTabTitle:
 	message: 'Shorten extension tab title to:'
+monitorFileTypes:
+	message: 'Enable prompt for:'
+PDF:
+	message: 'PDF'
+audio:
+	message: 'Audio'
+video:
+	message: 'Video'

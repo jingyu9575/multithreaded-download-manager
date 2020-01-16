@@ -358,8 +358,8 @@ showAddPaused:
 	message: '新建任务时显示“添加暂停”'
 openWindowIncognito:
 	message: '使用隐私浏览模式打开扩展窗口'
-monitorPDFFiles:
-	message: '允许提示 PDF 文件'
+# monitorPDFFiles:
+# 	message: '允许提示 PDF 文件'
 inhibitSleep:
 	message: '下载时阻止系统自动睡眠'
 cascadeBuiltinTask:
@@ -372,11 +372,15 @@ dialogAlwaysOnTop:
 	message: '保持扩展对话框在浏览器窗口前方'
 panelWindowAlwaysOnTop:
 	message: '保持扩展主窗口在浏览器窗口前方'
-monitorAudioFiles:
-	message: '允许提示音频文件'
-monitorVideoFiles:
-	message: '允许提示视频文件'
 selectAll:
 	message: '全选'
 shortenTabTitle:
 	message: '将扩展标签页标题缩短为：'
+monitorFileTypes:
+	message: '允许提示：'
+PDF:
+	message: 'PDF'
+audio:
+	message: '音频'
+video:
+	message: '视频'
