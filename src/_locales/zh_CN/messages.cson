@@ -378,3 +378,5 @@ monitorVideoFiles:
 	message: '允许提示视频文件'
 selectAll:
 	message: '全选'
+shortenTabTitle:
+	message: '将扩展标签页标题缩短为：'

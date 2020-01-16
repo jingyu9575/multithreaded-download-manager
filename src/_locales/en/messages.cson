@@ -378,3 +378,5 @@ monitorVideoFiles:
 	message: 'Enable prompt for video files'
 selectAll:
 	message: 'Select all'
+shortenTabTitle:
+	message: 'Shorten extension tab title to:'

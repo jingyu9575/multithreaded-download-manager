@@ -31,10 +31,15 @@ document.documentElement.dataset.path = location.pathname
 	.toLowerCase().replace(/^\//, '').replace(/\.html$/i, '')
 
 const subtitle = document.body.dataset.subtitle as keyof I18nMessages
-document.title = subtitle ? `${M[subtitle]} - ${M.extensionName}` : M.extensionName
+function updateDocumentTitle(suffix = M.extensionName) {
+	document.title = subtitle ? `${M[subtitle]} - ${suffix}` : suffix
+}
+updateDocumentTitle()
 
 void async function () {
-	const theme = await remoteSettings.get('theme')
+	const { theme, iconColor, shortenTabTitle } = await remoteSettings.load([
+		'theme', 'iconColor', 'shortenTabTitle',
+	])
 	document.documentElement.dataset.theme = theme
 	if (theme) {
 		const node = document.createElement('link')
@@ -52,14 +57,14 @@ void async function () {
 			document.head.appendChild(node)
 		}
 	}
-}()
 
-remoteSettings.get('iconColor').then(iconColor => {
 	if (iconColor.startsWith('alt-')) {
 		const link = document.querySelector('link[rel="icon"]') as HTMLLinkElement
 		link.setAttribute('href', `/icons/alt/${iconColor}.svg`)
 	}
-})
+
+	if (shortenTabTitle) updateDocumentTitle(shortenTabTitle)
+}()
 
 const domContentLoaded = new Promise(resolve =>
 	document.addEventListener("DOMContentLoaded", resolve))
