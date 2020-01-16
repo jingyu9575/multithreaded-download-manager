@@ -1,6 +1,7 @@
 import { SimpleStorage } from "../util/storage.js";
 import { M } from "../util/webext/i18n.js";
 import { remoteSettings } from "./settings.js";
+import { remoteProxy } from "../util/webext/remote.js";
 
 browser.windows.getCurrent().then(({ id: thisId, type, left, top, width, height }) => {
 	if (type !== 'popup') return
@@ -49,8 +50,13 @@ void async function () {
 	}
 
 	if (document.body.dataset.disableCustomCss === undefined) {
-		const storage = await SimpleStorage.create('etc')
-		const css = await storage.get('customCSS')
+		let css: unknown
+		try {
+			css = await (await SimpleStorage.create('etc')).get('customCSS')
+		} catch {
+			css = await remoteProxy<import('../background/background')
+				.BackgroundRemote>('BackgroundRemote').customCSS()
+		}
 		if (css) {
 			const node = document.createElement('style')
 			node.textContent = String(css)
