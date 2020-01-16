@@ -74,6 +74,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	// taskOrder: number[] = [] // unused
 
 	filenameTemplate = DEFAULT_FILENAME_TEMPLATE
+	enableTaskSelection = true
 }
 
 export const remoteSettings = new RemoteSettings(new Settings)

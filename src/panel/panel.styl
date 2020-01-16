@@ -29,6 +29,9 @@ body
 	padding: 0.4em 0.5em
 	border-bottom: 1px solid lightgray
 
+	&.selected
+		background-color: #e8f2ff
+
 .task-row
 	display: flex
 	align-items: center
@@ -147,6 +150,12 @@ tool-button(size)
 	& > button
 		tool-button(16px)
 		padding: 6px
+
+		&[disabled]
+			color: #aaa
+
+:root:not(.enable-selection) #toolbar .selection-tool
+	display: none
 
 .warning-bar, .error-bar
 	padding: 4px 6px

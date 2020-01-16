@@ -6,6 +6,7 @@ import {
 } from "../common/task-data.js"
 import { importTemplate } from "../util/dom.js";
 import { formatSize, backgroundRemote, formatTimeSpan } from "../common/common.js";
+import { remoteSettings } from "../common/settings.js";
 
 applyI18n()
 applyI18nAttr('title')
@@ -40,10 +41,34 @@ const taskActionsObject = Object.fromEntries(
 
 class XTaskElement extends HTMLElement {
 	static readonly parent = document.getElementById('tasks')! as HTMLElement
-
+	private static enableTaskSelection = false
+	private static selectionStart: XTaskElement | undefined
+	private static selectionToolButtons = [...document.querySelectorAll(
+		'#toolbar .selection-tool')] as HTMLButtonElement[]
 	static get(taskId: number) {
 		return document.getElementById('x-task-' + taskId) as XTaskElement | null
 	}
+
+	static getAll() {
+		return [...this.parent.querySelectorAll('.task') as NodeListOf<XTaskElement>]
+	}
+	static getSelected() {
+		return [...this.parent.querySelectorAll(
+			'.task.selected') as NodeListOf<XTaskElement>]
+	}
+
+	private static updateSelectionToolButtons() {
+		const hasSelected = !!this.parent.querySelector('.task.selected')
+		for (const btn of this.selectionToolButtons)
+			btn.disabled = !hasSelected
+	}
+
+	protected static initialization = (async () => {
+		XTaskElement.enableTaskSelection = await remoteSettings.get("enableTaskSelection")
+		document.documentElement.classList.toggle(
+			'enable-selection', XTaskElement.enableTaskSelection)
+		XTaskElement.updateSelectionToolButtons()
+	})()
 
 	constructor(readonly taskId: number) { super() }
 
@@ -71,15 +96,46 @@ class XTaskElement extends HTMLElement {
 				M('actionTitleWithShift', M[action], M[shiftAction]) : M[action]
 		}
 
-		this.addEventListener('click', ({ target, shiftKey }) => {
+		this.addEventListener('click', ({ target, shiftKey, ctrlKey }) => {
 			const actionButton = (target as HTMLElement).closest(
 				'.task-action') as HTMLButtonElement | null
-			if (!actionButton) return
-			const action = actionButton.dataset.action
-			if (action) this.callAction(action, shiftKey)
+			if (actionButton) {
+				const action = actionButton.dataset.action
+				if (action) this.callAction(action, shiftKey)
+			} else if (XTaskElement.enableTaskSelection) {
+				if (shiftKey && XTaskElement.selectionStart) {
+					if (!ctrlKey) for (const v of XTaskElement.getSelected())
+						v.classList.remove('selected')
+					const allTasks = XTaskElement.getAll()
+					const start = allTasks.indexOf(XTaskElement.selectionStart)
+					const end = allTasks.indexOf(this)
+					for (let i = Math.max(Math.min(start, end), 0);
+						i <= Math.max(start, end); ++i)
+						allTasks[i].classList.add('selected')
+				} else {
+					if (ctrlKey) {
+						this.classList.toggle('selected')
+					} else {
+						const selected = XTaskElement.getSelected()
+						for (const v of selected) v.classList.remove('selected')
+						if (!(selected.length === 1 && selected[0] === this))
+							this.classList.add('selected')
+					}
+					XTaskElement.selectionStart = this
+				}
+				XTaskElement.updateSelectionToolButtons()
+			}
 		})
 
 		return this
+	}
+
+	remove() { // specifically called in TaskSyncRemote.remove
+		super.remove()
+		if (XTaskElement.selectionStart === this)
+			XTaskElement.selectionStart = undefined
+		if (this.classList.contains('selected'))
+			XTaskElement.updateSelectionToolButtons()
 	}
 
 	readonly data: Readonly<TaskData> = {} as TaskData
@@ -347,15 +403,35 @@ document.getElementById('import')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html?convert=1')
 })
 
+document.getElementById('startSelected')!.addEventListener('click', () => {
+	for (const t of XTaskElement.getSelected())
+		backgroundRemote.callTaskMethod(t.taskId, 'start')
+})
+
+document.getElementById('pauseSelected')!.addEventListener('click', () => {
+	const tasks = XTaskElement.getSelected()
+	if (tasks.some(t => t.isActionShown(taskActionsObject['stop'])
+		&& t.progress.currentSize))
+		if (!confirm(M.confirmPauseIsStop))
+			return
+	for (const t of tasks) backgroundRemote.callTaskMethod(t.taskId, 'pause')
+})
+
+document.getElementById('removeSelected')!.addEventListener('click', () => {
+	const tasks = XTaskElement.getSelected()
+	if (tasks.some(t => t.data.state !== 'completed'))
+		if (!confirm(M.confirmRemove))
+			return
+	for (const t of tasks) backgroundRemote.callTaskMethod(t.taskId, 'remove')
+})
+
 document.getElementById('clearCompletedTasks')!.addEventListener('click', () => {
-	[...XTaskElement.parent.querySelectorAll('.task') as NodeListOf<XTaskElement>]
-		.filter(t => t.data.state === 'completed')
+	XTaskElement.getAll().filter(t => t.data.state === 'completed')
 		.forEach(t => t.action_remove())
 })
 
 document.getElementById('clearFailedTasks')!.addEventListener('click', () => {
-	const tasks = () => [...XTaskElement.parent.querySelectorAll(
-		'.task') as NodeListOf<XTaskElement>].filter(t => t.data.state === 'failed')
+	const tasks = () => XTaskElement.getAll().filter(t => t.data.state === 'failed')
 	if (!tasks().length || !confirm(M.confirmRemove)) return
 	tasks().forEach(t => backgroundRemote.callTaskMethod(t.taskId, 'remove'))
 })
