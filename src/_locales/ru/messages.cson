@@ -370,3 +370,17 @@ clearFailedTasks:
 	message: 'Очистить невыполненные задачи'
 dialogAlwaysOnTop:
 	message: 'Диалоги расширения всегда поверх окон браузера'
+panelWindowAlwaysOnTop:
+	message: 'Главное окно расширения всегда поверх окон браузера'
+selectAll:
+	message: 'Выбрать все'
+shortenTabTitle:
+	message: 'Сократить заголовок вкладки расширения до:'
+monitorFileTypes:
+	message: 'Включить запрос для:'
+PDF:
+	message: 'PDF'
+audio:
+	message: 'Аудио'
+video:
+	message: 'Видео'
