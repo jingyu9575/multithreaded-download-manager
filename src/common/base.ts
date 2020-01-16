@@ -37,6 +37,11 @@ function updateDocumentTitle(suffix = M.extensionName) {
 }
 updateDocumentTitle()
 
+const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+const originalFavicon = favicon.href
+let faviconCache = localStorage.getItem('faviconCache')
+if (faviconCache) favicon.setAttribute('href', faviconCache)
+
 void async function () {
 	const { theme, iconColor, shortenTabTitle } = await remoteSettings.load([
 		'theme', 'iconColor', 'shortenTabTitle',
@@ -65,8 +70,13 @@ void async function () {
 	}
 
 	if (iconColor.startsWith('alt-')) {
-		const link = document.querySelector('link[rel="icon"]') as HTMLLinkElement
-		link.setAttribute('href', `/icons/alt/${iconColor}.svg`)
+		faviconCache = `/icons/alt/${iconColor}.svg`
+		favicon.setAttribute('href', faviconCache)
+		localStorage.setItem('faviconCache', faviconCache)
+	} else if (faviconCache) {
+		faviconCache = null
+		favicon.setAttribute('href', originalFavicon)
+		localStorage.removeItem('faviconCache')
 	}
 
 	if (shortenTabTitle) updateDocumentTitle(shortenTabTitle)
