@@ -63,6 +63,12 @@ class XTaskElement extends HTMLElement {
 			btn.disabled = !hasSelected
 	}
 
+	static toggleSelectAll() {
+		const willSelect = !!this.parent.querySelector('.task:not(.selected)')
+		for (const t of this.getAll()) t.classList.toggle('selected', willSelect)
+		this.updateSelectionToolButtons()
+	}
+
 	protected static initialization = (async () => {
 		XTaskElement.enableTaskSelection = await remoteSettings.get("enableTaskSelection")
 		document.documentElement.classList.toggle(
@@ -103,6 +109,10 @@ class XTaskElement extends HTMLElement {
 				const action = actionButton.dataset.action
 				if (action) this.callAction(action, shiftKey)
 			} else if (XTaskElement.enableTaskSelection) {
+				// make sure selectionStart is valid (should not run)
+				if (XTaskElement.selectionStart &&
+					XTaskElement.selectionStart.parentNode !== XTaskElement.parent)
+					XTaskElement.selectionStart = undefined
 				if (shiftKey && XTaskElement.selectionStart) {
 					if (!ctrlKey) for (const v of XTaskElement.getSelected())
 						v.classList.remove('selected')
@@ -401,6 +411,10 @@ document.getElementById('create')!.addEventListener('click', () => {
 
 document.getElementById('import')!.addEventListener('click', () => {
 	backgroundRemote.openPopupWindow('../dialog/create.html?convert=1')
+})
+
+document.getElementById('select-all')!.addEventListener('click', () => {
+	XTaskElement.toggleSelectAll()
 })
 
 document.getElementById('start-selected')!.addEventListener('click', () => {

@@ -154,8 +154,9 @@ tool-button(size)
 		&[disabled]
 			color: #aaa
 
-:root:not(.enable-selection) #toolbar .selection-tool
-	display: none
+	:root:not(.enable-selection) &
+		.if-enable-selection, .selection-tool
+			display: none
 
 .warning-bar, .error-bar
 	padding: 4px 6px

@@ -376,3 +376,5 @@ monitorAudioFiles:
 	message: 'Enable prompt for audio files'
 monitorVideoFiles:
 	message: 'Enable prompt for video files'
+selectAll:
+	message: 'Select all'
