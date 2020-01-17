@@ -10,9 +10,9 @@ function decodePathname(pathname: string) {
 	return pathname.split(/([\\/])/).map(parseURLEncodedFilename).join('')
 }
 
-let isWindowsOS = true
+let platformOS: browser.runtime.PlatformOs = 'win'
 export const filenameRequirementsInitialized =
-	browser.runtime.getPlatformInfo().then(({ os }) => { isWindowsOS = os === 'win' })
+	browser.runtime.getPlatformInfo().then(({ os }) => { platformOS = os })
 
 class FilenameTemplateResolver {
 	private data!: TaskData
@@ -57,8 +57,13 @@ class FilenameTemplateResolver {
 
 	private fixOSFilename(name: string) {
 		name = name.replace(/[\x00-\x1F\x7F-\x9F]/g, ' ')
-		if (isWindowsOS)
+		if (platformOS === 'win')
 			name = name.replace(/[:*"?<>|]/g, c => `-_'_()_`[':*"?<>|'.indexOf(c)])
+		else if (platformOS === 'android')
+			name = name.replace(/[:*"?<>|;,+=\[\]]/g,
+				c => `-_'_()_  --()`[':*"?<>|;,+=[]'.indexOf(c)])
+		else
+			name = name.replace(/:/g, '-')
 		const result: string[] = []
 		for (const component of name.split(/[\\/]/)) {
 			let s = component.trim()
@@ -67,7 +72,7 @@ class FilenameTemplateResolver {
 				result.pop()
 				continue
 			}
-			if (isWindowsOS) s = s.replace(
+			if (platformOS === 'win') s = s.replace(
 				/^\s*(?:CON|PRN|AUX|NUL|COM\d|LPT\d|CONIN\$|CONOUT\$)(?=\s*(?:\.|$))/i,
 				'$&_')
 			s = s.replace(/^\./, '_').replace(/\.$/, '_') // enforced by Firefox
