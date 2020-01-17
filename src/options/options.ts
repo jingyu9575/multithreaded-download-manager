@@ -1,10 +1,11 @@
 import "../common/elements/x-tab.js"
 import { applyI18n, applyI18nAttr } from "../util/webext/i18n.js";
 import {
-	backgroundRemote, getBuiltinActionContentType, removeBrowserDownload
+	backgroundRemote, getBuiltinActionContentType, removeBrowserDownload, isValidProtocolURL
 } from "../common/common.js";
 import { registerRemoteHandler } from "../util/webext/remote.js";
 import { remoteSettings, Settings } from "../common/settings.js";
+import { importTemplate } from "../util/dom.js";
 
 applyI18n()
 applyI18nAttr('label')
@@ -95,4 +96,76 @@ browser.downloads.onChanged.addListener(async ({ id, state }) => {
 			void removeBrowserDownload(id)
 		}
 	}
+})
+
+const autoImportContainer = document.getElementById('auto-import-container')!
+
+class AutoImportExtItemElement extends HTMLElement {
+	static readonly tagName = 'auto-import-ext-item'
+	static readonly parent = document.getElementById('auto-import-ext-list')!
+
+	static get(id: string) {
+		return this.parent.querySelector(
+			`${this.tagName}[data-id="${CSS.escape(id)}"]`
+		) as AutoImportExtItemElement | null
+	}
+
+	private checkbox!: HTMLInputElement
+
+	init(id: string, checked: boolean) {
+		this.append(importTemplate('auto-import-ext-item-template'))
+		this.dataset.id = id
+		this.checkbox = this.querySelector('input')!
+		this.checkbox.checked = checked
+		this.checkbox.addEventListener('change', () => {
+			const autoImportExtList = ([...AutoImportExtItemElement
+				.parent.getElementsByTagName(this.tagName)] as this[])
+				.filter(v => v.checkbox.checked)
+				.map(v => ({ id: v.dataset.id!, name: v.name }))
+			void remoteSettings.set({ autoImportExtList })
+		})
+	}
+
+	private _name = ''
+	get name() { return this._name }
+	set name(value: string) {
+		this.querySelector('span')!.textContent = this._name = value
+	}
+}
+customElements.define(AutoImportExtItemElement.tagName, AutoImportExtItemElement)
+
+function addAutoImportExtItem(id: string, name: string, initChecked: boolean) {
+	let item = AutoImportExtItemElement.get(id)
+	if (item) { item.name = name; return }
+	item = new AutoImportExtItemElement()
+	item.init(id, initChecked)
+	item.name = name
+	AutoImportExtItemElement.parent.append(item)
+}
+
+function tryAddAutoImportExtItem(download: browser.downloads.DownloadItem) {
+	if (!isValidProtocolURL(download.url)) return
+	const id = download.byExtensionId
+	if (!id || id === browser.runtime.id) return
+	addAutoImportExtItem(id, download.byExtensionName || '', false)
+}
+
+document.getElementById('open-auto-import')!.addEventListener('click', async () => {
+	AutoImportExtItemElement.parent.innerHTML = ''
+	for (const v of await remoteSettings.get('autoImportExtList'))
+		addAutoImportExtItem(v.id, v.name, true)
+	for (const download of await browser.downloads.search({}))
+		tryAddAutoImportExtItem(download)
+	autoImportContainer.hidden = false
+})
+autoImportContainer.addEventListener('click', event => {
+	if (event.target !== autoImportContainer) return
+	autoImportContainer.hidden = true
+})
+document.getElementById('close-auto-import')!.addEventListener('click', () => {
+	autoImportContainer.hidden = true
+})
+
+browser.downloads.onCreated.addListener(download => {
+	if (!autoImportContainer.hidden) tryAddAutoImportExtItem(download)
 })

@@ -384,3 +384,7 @@ audio:
 	message: 'Audio'
 video:
 	message: 'Video'
+autoImportExtension:
+	message: 'Automatically import from other extensions'
+autoImportExtensionDesc:
+	message: 'To add an extension here, initiate a download in that extension.'

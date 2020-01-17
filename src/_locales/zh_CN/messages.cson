@@ -384,3 +384,7 @@ audio:
 	message: '音频'
 video:
 	message: '视频'
+autoImportExtension:
+	message: '自动从其他扩展导入'
+autoImportExtensionDesc:
+	message: '若要添加一个扩展，请使用该扩展开始一项下载。'

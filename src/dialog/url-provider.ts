@@ -1,4 +1,4 @@
-import { isValidProtocol, removeBrowserDownload, isValidProtocolURL } from "../common/common.js";
+import { removeBrowserDownload, isValidProtocolURL } from "../common/common.js";
 import { M, applyI18n } from "../util/webext/i18n.js";
 import { importTemplate } from "../util/dom.js";
 import { TaskData } from "../common/task-data.js";

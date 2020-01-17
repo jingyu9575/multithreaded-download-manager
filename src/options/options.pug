@@ -73,6 +73,9 @@ append body
 					label.contents-label
 						input(type='checkbox' data-key='monitorVideoFiles')
 						span(data-i18n='video')
+				div
+					button#open-auto-import.dialog-button(type='button' 
+							data-i18n='autoImportExtension')
 				hr
 				span.input-label
 					label.contents-label
@@ -269,4 +272,18 @@ append body
 						option(value='error' data-i18n='error')
 				hr
 				a(target="_blank" href="/lib/LICENSE-3RD-PARTY.txt" data-i18n="license3rdParty")
+	
+	#auto-import-container(hidden)
+		#auto-import
+			#auto-import-header
+				button#close-auto-import.dialog-button(type='button')
+					svg.icon: use(href='../icons/photon-icons.svg#arrowhead-left')
+				b(data-i18n='autoImportExtension')
+			#auto-import-ext-list
+			#auto-import-ext-desc(data-i18n='autoImportExtensionDesc')
+			
+	template#auto-import-ext-item-template
+		label.input-label
+			input(type='checkbox')
+			span
 	script(type='module' src='options.js')

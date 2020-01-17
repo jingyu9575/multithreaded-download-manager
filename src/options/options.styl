@@ -53,3 +53,53 @@ hr
 
 #custom-css-links :not(:last-child)
 	margin-right: 1ch
+
+#auto-import-container
+	position: fixed
+	z-index: 11
+	left: 0
+	top: 0
+	width: 100%
+	height: 100%
+	background-color: rgba(0, 0, 0, 0.4)
+	display: flex
+	align-items: center
+	justify-content: center
+
+#auto-import
+	width: 80%
+	height: 80%
+	background: #f9f9fa
+	box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5)
+	display: flex
+	flex-direction: column
+
+#auto-import-header
+	display: flex
+	align-items: center
+	padding: 8px
+	border-bottom: 1px solid lightgray
+
+#close-auto-import
+	padding: 6px
+	min-width: unset
+	margin-right: 2ch
+
+	.icon
+		width: 1em
+		height: 1em
+
+#auto-import-ext-list
+	background: white
+	flex: 1
+	border-bottom: 1px solid lightgray
+	overflow: auto
+	display: flex
+	flex-direction: column
+	padding: 4px
+
+#auto-import-ext-desc
+	padding: 6px
+
+auto-import-ext-item
+	margin-bottom: 4px
