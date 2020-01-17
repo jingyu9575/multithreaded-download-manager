@@ -3,7 +3,7 @@ import { DownloadState, taskActions, taskActionPrefix, TaskData } from "../commo
 import { openPopupWindow, updateDialogAlwaysOnTopHandler } from "./open-window.js";
 import { Task, taskSyncRemote } from "./task.js";
 import { S, localSettings } from "./settings.js";
-import { isValidProtocolURL } from "../common/common.js";
+import { isValidProtocolURL, removeBrowserDownload } from "../common/common.js";
 import { Timer } from "../util/promise.js";
 import smallBeepOGV from '../sounds/small-beep.ogv.js'
 
@@ -245,3 +245,25 @@ localSettings.listen('iconColorAlpha', () => void updateIconColor())
 
 localSettings.listen('dialogAlwaysOnTop', updateDialogAlwaysOnTopHandler, 'skip')
 localSettings.listen('panelWindowAlwaysOnTop', updateDialogAlwaysOnTopHandler)
+
+let autoImportExtSet = new Set<string>()
+function autoImportExtHandler(download: browser.downloads.DownloadItem) {
+	if (!isValidProtocolURL(download.url)) return
+	if (!download.byExtensionId ||
+		!autoImportExtSet.has(download.byExtensionId)) return
+	void removeBrowserDownload(download.id)
+	void Task.create({
+		...TaskData.default(),
+		url: download.url,
+		referrer: download.referrer,
+		filenameTemplate: "*text*",
+		text: download.filename.replace(/[\\\/]*$/, '').replace(/.*[\\\/]/, ''),
+	})
+}
+localSettings.listen('autoImportExtList', list => {
+	autoImportExtSet = new Set((list || []).map(v => v.id))
+	if (autoImportExtSet.size)
+		browser.downloads.onCreated.addListener(autoImportExtHandler)
+	else
+		browser.downloads.onCreated.removeListener(autoImportExtHandler)
+})
