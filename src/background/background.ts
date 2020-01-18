@@ -9,6 +9,7 @@ import { Task } from "./task.js";
 import { openPopupWindow, openOptions } from "./open-window.js";
 import { SimpleMutableFile, SimpleStorage } from "../util/storage.js";
 import { MultithreadedTask } from './multithreaded-task.js';
+import { getCustomCSS } from '../common/get-custom-css.js';
 
 export class BackgroundRemote {
 	isWebExtOOPDisabled() { return isWebExtOOPDisabled }
@@ -57,8 +58,6 @@ export class BackgroundRemote {
 
 	playAllCompletedSound() { Task.playAllCompletedSound() }
 
-	async customCSS() {
-		return await (await SimpleStorage.create('etc')).get('customCSS')
-	}
+	getCustomCSS() { return getCustomCSS() }
 }
 registerRemoteHandler(new BackgroundRemote)

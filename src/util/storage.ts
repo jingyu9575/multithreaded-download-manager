@@ -86,6 +86,12 @@ export class SimpleStorage {
 		return SimpleStorage.request(this.objectStore('readwrite').delete(key))
 	}
 
+	clear() {
+		return SimpleStorage.request(this.objectStore('readwrite').clear())
+	}
+
+	close() { this.database.close() }
+
 	mutableFile(filename: string, type = 'application/octet-stream') {
 		return SimpleStorage.request(this.database.createMutableFile(filename, type))
 	}
