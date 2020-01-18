@@ -78,7 +78,7 @@ export class SimpleStorage {
 			store.openCursor(key)) as IDBCursorWithValue
 		if (cursor) return cursor.value as T
 		const value = fn()
-		await store.add(value, key)
+		await SimpleStorage.request(store.add(value, key))
 		return value
 	}
 
