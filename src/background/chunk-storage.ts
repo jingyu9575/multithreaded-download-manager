@@ -29,7 +29,7 @@ export interface ChunkStorage {
 export class MutableFileChunkStorage implements ChunkStorage {
 	private static storage = SimpleStorage.create("files")
 	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
-	private static tempStorage?: Promise<SimpleStorage>
+	private static tempStorage = SimpleStorage.create(`files-temp-storage`)
 
 	private constructor(
 		private readonly mfileName: string,
@@ -117,9 +117,6 @@ export class MutableFileChunkStorage implements ChunkStorage {
 
 	async getFile() {
 		if (this.file.requiresTempStorage) {
-			if (!MutableFileChunkStorage.tempStorage)
-				MutableFileChunkStorage.tempStorage =
-					SimpleStorage.create(`files-temp-storage`)
 			return this.file.getFileWithTempStorage(
 				await MutableFileChunkStorage.tempStorage, this.mfileName)
 		}
@@ -141,9 +138,8 @@ export class MutableFileChunkStorage implements ChunkStorage {
 		const storage = await MutableFileChunkStorage.storage
 		void storage.delete(this.mfileName)
 		void storage.delete(this.snapshotName)
-		if (MutableFileChunkStorage.tempStorage)
-			MutableFileChunkStorage.tempStorage.then(ts =>
-				SimpleMutableFile.cleanupTempStorage(ts, this.mfileName))
+		const tempStorage = await MutableFileChunkStorage.tempStorage
+		SimpleMutableFile.cleanupTempStorage(tempStorage, this.mfileName)
 		// other methods can still access the unlinked file
 	}
 
