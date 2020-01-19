@@ -3,7 +3,6 @@ browser_specific_settings:
 	gecko:
 		id: 'multithreaded-download-manager@qw.linux-2g64.local'
 		strict_min_version: '67.0'
-		strict_max_version: '73.*'
 name: '__MSG_extensionName__'
 version: '2.9'
 description: '__MSG_extensionDescription__'

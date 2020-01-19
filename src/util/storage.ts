@@ -135,4 +135,25 @@ export class SimpleMutableFile {
 	getFile() {
 		return SimpleStorage.request(this.mutableFile.getFile())
 	}
+
+	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
+	get requiresTempStorage() { return !this.mutableFile.getFile }
+
+	async getFileWithTempStorage(tempStorage: SimpleStorage, prefix: string) {
+		const SLICE_SIZE = 1024 * 1024 * 128
+		const handle = this.open()
+		const size = (await SimpleStorage.request(handle.getMetadata())).size
+		const blobs: Blob[] = []
+		for (let p = 0; p < size; p += SLICE_SIZE) {
+			const key = [prefix, p]
+			await tempStorage.set(key, new Blob([await this.read(SLICE_SIZE, p)]))
+			blobs.push(await tempStorage.get(key))
+		}
+		return new File(blobs, this.mutableFile.name,
+			{ type: this.mutableFile.type })
+	}
+
+	static cleanupTempStorage(tempStorage: SimpleStorage, prefix: string) {
+		return tempStorage.delete(IDBKeyRange.bound([prefix], [prefix, []]))
+	}
 }

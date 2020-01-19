@@ -20,4 +20,5 @@ interface IDBFileHandle {
 	flush(): IDBRequest<void>
 	abort(): IDBRequest<void>
 	readAsArrayBuffer(size: number): IDBRequest<ArrayBuffer>
+	getMetadata(): IDBRequest<{ size: number, lastModified: unknown }>
 }
