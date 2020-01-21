@@ -7,7 +7,7 @@ import { registerRemoteHandler } from "../util/webext/remote.js";
 import { MultithreadedTaskData, TaskData } from "../common/task-data.js";
 import { Task } from "./task.js";
 import { openPopupWindow, openOptions } from "./open-window.js";
-import { SimpleMutableFile, SimpleStorage } from "../util/storage.js";
+import { SimpleMutableFile } from "../util/storage.js";
 import { MultithreadedTask } from './multithreaded-task.js';
 import { getCustomCSS } from '../common/get-custom-css.js';
 
