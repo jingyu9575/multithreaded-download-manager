@@ -1,14 +1,16 @@
-import { DownloadState, MultithreadedTaskData, TaskProgressItems } from "../common/task-data.js";
 import {
-	ChunkStorage, ChunkStorageClass, ChunkStorageWriter, MutableFileChunkStorage
+	DownloadState, MultithreadedTaskData, TaskProgressItems
+} from "../common/task-data.js";
+import {
+	ChunkStorage, MutableFileChunkStorage
 } from "./chunk-storage.js";
 import {
 	Connection, ConnectionClass, StreamsConnection, StreamFilterConnection
 } from "./connection.js";
 import { Task } from "./task.js";
-import { assert, unreachable, ReportedError, isAbortError, abortError } from "../util/error.js";
+import { assert, ReportedError, isAbortError, abortError } from "../util/error.js";
 import { setImmediate } from "../util/set-immediate.js"
-import { Timer, CriticalSection } from "../util/promise.js";
+import { Timer } from "../util/promise.js";
 import { browserDownloadResult } from "./browser-download.js";
 import { removeBrowserDownload } from "../common/common.js";
 import { M } from "../util/webext/i18n.js";
@@ -20,7 +22,7 @@ import { Sha1 } from "../lib/asmcrypto.js/hash/sha1/sha1.js";
 import { Sha256 } from "../lib/asmcrypto.js/hash/sha256/sha256.js";
 
 export class MultithreadedTask extends Task<MultithreadedTaskData> {
-	private readonly chunkStorageClass: ChunkStorageClass = MutableFileChunkStorage
+	private readonly chunkStorageClass: ChunkStorage.Class = MutableFileChunkStorage
 	private readonly connectionClass: ConnectionClass = (() => {
 		const result = MultithreadedTask.getPreferredConnectionClass()
 		return result.isAvailable ? result : StreamFilterConnection
@@ -148,23 +150,22 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 		if (isLoaded && this.data.totalSize !== undefined) {
 			if (DownloadState.areChunksFinished(this.data.state)) {
-				this.firstChunk = new Chunk(undefined, 0, unreachable)
+				this.firstChunk = new Chunk(undefined,
+					new ChunkStorage.DummyWriter(0, this.data.totalSize))
 				this.lastChunk = new Chunk(this.firstChunk,
-					this.data.totalSize, unreachable)
-				this.firstChunk.initCurrentSize(this.data.totalSize)
+					new ChunkStorage.DummyWriter(this.data.totalSize))
 				this.currentSize = this.data.totalSize
 			} else if (this.data.canResume) {
 				let chunk: Chunk | undefined = undefined
 				this.currentSize = 0
-				for (const v of (await this.chunkStorage!.load(this.data.totalSize))
+				for (const w of (await this.chunkStorage!.load(this.data.totalSize))
 					.sort((v0, v1) => v0.startPosition - v1.startPosition)) {
-					chunk = new Chunk(chunk, v.startPosition, v.writer)
+					chunk = new Chunk(chunk, w)
 					if (!this.firstChunk) this.firstChunk = chunk
-					chunk.initCurrentSize(v.currentSize)
 					this.currentSize += chunk.currentSize
 				}
-				if (chunk) this.lastChunk = new Chunk(
-					chunk, this.data.totalSize, unreachable)
+				if (chunk) this.lastChunk = new Chunk(chunk,
+					new ChunkStorage.DummyWriter(this.data.totalSize))
 			}
 		}
 		if (DownloadState.isProgressing(this.data.state) &&
@@ -232,10 +233,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			// Check if the task is aborted
 			if (this.initialConnection !== conn) return
 
-			this.firstChunk = new Chunk(undefined, 0, this.chunkStorage!.writer(0))
+			this.firstChunk = new Chunk(undefined, this.chunkStorage!.writer(0))
 			const { totalSize } = info
-			this.lastChunk = new Chunk(this.firstChunk,
-				totalSize !== undefined ? totalSize : Infinity, unreachable)
+			this.lastChunk = new Chunk(this.firstChunk, new ChunkStorage.DummyWriter(
+				totalSize !== undefined ? totalSize : Infinity))
 
 			const newData: Partial<MultithreadedTaskData> = {
 				totalSize, url: info.finalURL,
@@ -288,10 +289,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				referrer: this.data.referrer,
 				cache: S.cacheMode || 'no-store',
 			}), () => { this.onConnectionComplete(connection) }, {
-				expectedSize: this.data.totalSize !== undefined ?
-					this.data.totalSize - position : undefined,
-				requestSubstituteFilename: isInitial,
-			})
+			expectedSize: this.data.totalSize !== undefined ?
+				this.data.totalSize - position : undefined,
+			requestSubstituteFilename: isInitial,
+		})
 		connection.info.then(() => {
 			if (connection.lastTransferTime === undefined) return
 			this.cachedConnectionTimes.push({
@@ -303,11 +304,11 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	}
 
 	private setChunkConnection(chunk: Chunk, connection = this.createConnection(
-		chunk.startPosition + chunk.currentSize, false)) {
+		chunk.writer.startPosition + chunk.currentSize, false)) {
 		this.connections.set(connection, chunk)
 	}
 
-	private async pipeConnectionToChunk(connection: Connection, checkNow?: number) {
+	private pipeConnectionToChunk(connection: Connection, checkNow?: number) {
 		const chunk = this.connections.get(connection)
 		if (!chunk) return true
 
@@ -334,28 +335,26 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 		chunk.currentSize += writtenData.byteLength
 		this.currentSize += writtenData.byteLength
-		const writeSentry = chunk.writeSentry
 		this.updatedChunks.add(chunk)
-		await chunk.writeCriticalSection.sync(async () => {
+		chunk.writePromise = chunk.writePromise.then(async () => {
 			try {
-				if (writeSentry !== chunk.writeSentry) return
-				await chunk.write(writtenData, chunk.startPosition + chunk.writtenSize)
-				if (writeSentry !== chunk.writeSentry) return
-				chunk.writtenSize += writtenData.byteLength
+				await chunk.writer.write(writtenData)
 			} catch (error) {
-				// invalidate all pending writes
-				chunk.writeSentry = {}
-				this.currentSize += chunk.writtenSize - chunk.currentSize
-				chunk.currentSize = chunk.writtenSize
+				// new writes will run after this.fail removes all connections
+				chunk.writePromise = Promise.resolve()
+				this.currentSize += chunk.writer.writtenSize - chunk.currentSize
+				chunk.currentSize = chunk.writer.writtenSize
 				this.fail(error)
+				// invalidate pending writes
+				throw error
 			}
 		})
-		return false
+		return chunk.writePromise.then(() => false, () => false)
 	}
 
 	protected getProgress(chunks = [...this.getChunks()]) {
 		const items: TaskProgressItems = {}
-		for (const { startPosition, currentSize, writtenSize } of chunks)
+		for (const { currentSize, writer: { startPosition, writtenSize } } of chunks)
 			items[startPosition] = { currentSize, writtenSize }
 		const { currentSize, averageSpeed, currentWarnings } = this
 		const currentThreads = this.connections.size
@@ -376,15 +375,15 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		this.logger.i(M.i_connectionEnded, error)
 		const chunk0 = this.connections.get(connection)
 		if (!chunk0) return
-		const lastWrittenSize = chunk0.writtenSize
+		const lastWrittenSize = chunk0.writer.writtenSize
 
 		if (!error) do {
 			// wait for stop event if prepare() returns void
 			await (connection.prepare() || new Promise(setImmediate))
 		} while (!await this.pipeConnectionToChunk(connection))
-		if (chunk0.writtenSize === lastWrittenSize)
+		if (chunk0.writer.writtenSize === lastWrittenSize)
 			// no additional data are written; need to wait for the last write
-			await chunk0.writeCriticalSection.sync(() => { })
+			await chunk0.writePromise.catch(() => { })
 		this.persistChunks()
 
 		const chunk = this.connections.get(connection)
@@ -468,7 +467,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			let position = chunk.currentPosition
 			for (let i = 0; i < divisible.count; i++) {
 				position += spaceSize
-				chunk = new Chunk(chunk, position, this.chunkStorage!.writer(position))
+				chunk = new Chunk(chunk, this.chunkStorage!.writer(position))
 				this.setChunkConnection(chunk)
 			}
 		}
@@ -476,7 +475,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 	async syncProgressAfterWrites(reset = false) {
 		await Promise.all([...this.getChunks()].map(
-			c => c.writeCriticalSection.sync(() => { })))
+			c => c.writePromise.catch(() => { })))
 		this.syncProgress({ reset, ...this.getProgress() })
 	}
 
@@ -617,31 +616,28 @@ Task.registerType(MultithreadedTask)
 class Chunk {
 	constructor(
 		public prev: Chunk | undefined,
-		readonly startPosition: number,
-		readonly write: ChunkStorageWriter,
+		readonly writer: ChunkStorage.Writer,
 	) {
 		if (prev) {
 			this.next = prev.next
 			prev.next = this
-			assert(startPosition > prev.startPosition)
-			assert(!this.next || startPosition <= this.next.startPosition)
+			assert(writer.startPosition > prev.writer.startPosition)
+			assert(!this.next ||
+				writer.startPosition <= this.next.writer.startPosition)
 		} else {
-			assert(startPosition === 0)
+			assert(writer.startPosition === 0)
 		}
+		this.currentSize = this.writer.writtenSize
 	}
 
 	next?: Chunk
-
-	currentSize = 0
-	writtenSize = 0
-	readonly writeCriticalSection = new CriticalSection()
-	writeSentry = {}
-
-	initCurrentSize(size: number) { this.currentSize = this.writtenSize = size }
+	currentSize: number
+	writePromise = Promise.resolve()
 
 	get totalSize() {
-		return this.next!.startPosition - this.startPosition // Infinity if unknown
+		return this.next!.writer.startPosition -
+			this.writer.startPosition // Infinity if unknown
 	}
 	get remainingSize() { return this.totalSize - this.currentSize }
-	get currentPosition() { return this.startPosition + this.currentSize }
+	get currentPosition() { return this.writer.startPosition + this.currentSize }
 }

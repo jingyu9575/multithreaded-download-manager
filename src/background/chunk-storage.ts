@@ -1,29 +1,37 @@
 import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/util.js";
 import { CriticalSection } from "../util/promise.js";
-import { assert } from "../util/error.js";
+import { assert, unreachable } from "../util/error.js";
 import { isWebExtOOPDisabled } from "./webext-oop.js";
 
-export interface ChunkStorageClass {
-	create(id: IDBValidKey, isLoaded: boolean): Promise<ChunkStorage>
-}
-
-export type ChunkStorageWriter = (data: Uint8Array, position: number) => Promise<void>
-
-interface ChunkStorageLoadResult {
-	startPosition: number
-	currentSize: number
-	writer: ChunkStorageWriter
-}
-
 export interface ChunkStorage {
-	load(totalSize: number): Promise<ChunkStorageLoadResult[]>
-	writer(position: number): ChunkStorageWriter
+	load(totalSize: number): Promise<ChunkStorage.Writer[]>
+	writer(startPosition: number): ChunkStorage.Writer
 	persist(totalSize: number | undefined, final: boolean): Promise<void>
 	getFile(): Promise<File> // must call persist(totalSize, true) first
 	reset(): void // truncate file; clear persistenceData; all writers are invalidated
 	delete(): void // other methods can still be called
 	read(position: number, size: number): Promise<ArrayBuffer>
+}
+
+export namespace ChunkStorage {
+	export interface Class {
+		create(id: IDBValidKey, isLoaded: boolean): Promise<ChunkStorage>
+	}
+
+	export interface Writer {
+		readonly startPosition: number
+		readonly writtenSize: number
+		write(data: Uint8Array): Promise<void> // NOT thread safe
+	}
+
+	export class DummyWriter implements Writer {
+		constructor(
+			readonly startPosition: number,
+			readonly writtenSize = 0,
+		) { }
+		write(): never { unreachable() }
+	}
 }
 
 export class MutableFileChunkStorage implements ChunkStorage {
@@ -69,34 +77,42 @@ export class MutableFileChunkStorage implements ChunkStorage {
 			console.warn('MutableFileChunkStorage.load', this.mfileName, error)
 		}
 
-		const result: ChunkStorageLoadResult[] = []
-		for (let i = 1; i < this.persistenceData.length; i += 2) {
-			const startPosition = this.persistenceData[i]
-			result.push({
-				startPosition,
-				currentSize: this.persistenceData[i + 1],
-				writer: this.writer(startPosition, i)
-			})
-		}
+		const result: ChunkStorage.Writer[] = []
+		for (let i = 1; i < this.persistenceData.length; i += 2)
+			result.push(new MutableFileChunkStorage.Writer(this, i))
 		return result
 	}
 
-	writer(position: number, persistenceIndex?: number) {
-		if (persistenceIndex === undefined) {
-			persistenceIndex = this.persistenceData.length
-			this.persistenceData = concatTypedArray([
-				this.persistenceData, new Float64Array([position, 0])
-			])!
-			this.persistenceData[0] += 2
+	static Writer = class implements ChunkStorage.Writer {
+		constructor(
+			private readonly parent: MutableFileChunkStorage,
+			persistenceIndex: number,
+		) {
+			this.startPosition = this.parent.persistenceData[persistenceIndex]
+			this.writtenSizeIndex = persistenceIndex + 1
+			this.writtenSize = this.parent.persistenceData[this.writtenSizeIndex]
 		}
-		const currentSizeIndex = persistenceIndex + 1
-		return async (data: Uint8Array, writePosition: number) => {
+
+		readonly startPosition: number
+		private readonly writtenSizeIndex: number
+		writtenSize: number
+
+		async write(data: Uint8Array) {
 			if (!data.length) return
-			await this.file.write(
-				typedArrayToBuffer(data) as ArrayBuffer, writePosition)
-			this.persistenceData[currentSizeIndex] =
-				writePosition + data.byteLength - position
+			await this.parent.file.write(typedArrayToBuffer(data) as ArrayBuffer,
+				this.startPosition + this.writtenSize)
+			this.writtenSize += data.length
+			this.parent.persistenceData[this.writtenSizeIndex] = this.writtenSize
 		}
+	}
+
+	writer(startPosition: number) {
+		const persistenceIndex = this.persistenceData.length
+		this.persistenceData = concatTypedArray([
+			this.persistenceData, new Float64Array([startPosition, 0])
+		])!
+		this.persistenceData[0] += 2
+		return new MutableFileChunkStorage.Writer(this, persistenceIndex)
 	}
 
 	persist(totalSize: number | undefined, final: boolean) {
