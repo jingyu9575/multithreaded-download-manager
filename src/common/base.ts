@@ -55,9 +55,9 @@ void async function () {
 	}
 
 	if (document.body.dataset.disableCustomCss === undefined) {
-		let css: unknown
+		let css: string
 		try {
-			css = getCustomCSS()
+			css = await getCustomCSS()
 		} catch {
 			css = await remoteProxy<import('../background/background')
 				.BackgroundRemote>('BackgroundRemote').getCustomCSS()
