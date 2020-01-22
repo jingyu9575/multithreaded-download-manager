@@ -10,14 +10,14 @@ export interface ChunkStorageClass {
 
 export type ChunkStorageWriter = (data: Uint8Array, position: number) => Promise<void>
 
-type ChunkStorageLoadResult = {
+interface ChunkStorageLoadResult {
 	startPosition: number
 	currentSize: number
 	writer: ChunkStorageWriter
-}[]
+}
 
 export interface ChunkStorage {
-	load(totalSize: number): Promise<ChunkStorageLoadResult>
+	load(totalSize: number): Promise<ChunkStorageLoadResult[]>
 	writer(position: number): ChunkStorageWriter
 	persist(totalSize: number | undefined, final: boolean): Promise<void>
 	getFile(): Promise<File> // must call persist(totalSize, true) first
@@ -69,7 +69,7 @@ export class MutableFileChunkStorage implements ChunkStorage {
 			console.warn('MutableFileChunkStorage.load', this.mfileName, error)
 		}
 
-		const result: ChunkStorageLoadResult = []
+		const result: ChunkStorageLoadResult[] = []
 		for (let i = 1; i < this.persistenceData.length; i += 2) {
 			const startPosition = this.persistenceData[i]
 			result.push({
