@@ -76,7 +76,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 		if (this.data.state !== 'downloading') return
 		const now = performance.now()
-		const promises = connections.map(c => void this.pipeConnectionToChunk(c, now))
+		const promises = connections.map(c => this.pipeConnectionToChunk(c, now))
 		if (!this.updatedChunks.size) return
 
 		const chunks = [...this.updatedChunks]
