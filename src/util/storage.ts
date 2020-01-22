@@ -9,6 +9,14 @@ export function idbRequest<T>(r: IDBRequest<T>) {
 	})
 }
 
+export function idbTransaction(r: IDBTransaction) {
+	return new Promise<void>((resolve, reject) => {
+		r.addEventListener('complete', () => resolve())
+		r.addEventListener('error', () => reject(r.error))
+		r.addEventListener('abort', () => reject(abortError()))
+	})
+}
+
 export class SimpleStorage {
 	private database!: IDBDatabase
 
@@ -175,12 +183,15 @@ export class MultiStoreDatabase<S extends readonly string[]> {
 	transaction(
 		mode: 'readonly' | 'readwrite' = 'readwrite',
 		objectStoreNames: S[number][] = this.database.objectStoreNames as any,
-	): { [name in S[number]]: IDBObjectStore } {
-		const tr = this.database.transaction(
+	): {
+		transaction: IDBTransaction,
+		stores: { [name in S[number]]: IDBObjectStore },
+	} {
+		const transation = this.database.transaction(
 			this.database.objectStoreNames as any, mode)
 		const stores: any = {}
 		for (const name of objectStoreNames)
-			stores[name] = tr.objectStore(name)
-		return stores
+			stores[name] = transation.objectStore(name)
+		return { transaction: transation, stores }
 	}
 }
