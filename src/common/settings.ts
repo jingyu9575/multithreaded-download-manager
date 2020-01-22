@@ -57,6 +57,8 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	connectionTimeout: number | '' = '' // s
 	transferTimeout: number | '' = '' // s
 
+	segmentSize = 1024 ** 1
+
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
 	legacyFilenameDetectURLEncoded = true

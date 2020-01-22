@@ -1,8 +1,12 @@
-import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
+import '../util/polyfills.js';
+import {
+	SimpleStorage, SimpleMutableFile, MultiStoreDatabase, idbRequest, idbTransaction
+} from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/util.js";
 import { CriticalSection } from "../util/promise.js";
-import { assert, unreachable } from "../util/error.js";
+import { assert, unreachable, abortError } from "../util/error.js";
 import { isWebExtOOPDisabled } from "./webext-oop.js";
+import { S } from "./settings.js";
 
 export interface ChunkStorage {
 	load(totalSize: number): Promise<ChunkStorage.Writer[]>
@@ -10,7 +14,7 @@ export interface ChunkStorage {
 	persist(totalSize: number | undefined, final: boolean): Promise<void>
 	getFile(): Promise<File> // must call persist(totalSize, true) first
 	reset(): void // truncate file; clear persistenceData; all writers are invalidated
-	delete(): void // other methods can still be called
+	delete(): void | Promise<void> // other methods can still be called
 	read(position: number, size: number): Promise<ArrayBuffer>
 }
 
@@ -22,7 +26,8 @@ export namespace ChunkStorage {
 	export interface Writer {
 		readonly startPosition: number
 		readonly writtenSize: number
-		write(data: Uint8Array): Promise<void> // NOT thread safe
+		write(data: Uint8Array): Promise<void> // NOT thread safe; CANNOT reorder
+		flush(): Promise<void> // NOT thread safe
 	}
 
 	export class DummyWriter implements Writer {
@@ -31,6 +36,7 @@ export namespace ChunkStorage {
 			readonly writtenSize = 0,
 		) { }
 		write(): never { unreachable() }
+		flush(): never { unreachable() }
 	}
 }
 
@@ -104,6 +110,8 @@ export class MutableFileChunkStorage implements ChunkStorage {
 			this.writtenSize += data.length
 			this.parent.persistenceData[this.writtenSizeIndex] = this.writtenSize
 		}
+
+		async flush() { }
 	}
 
 	writer(startPosition: number) {
@@ -160,4 +168,144 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	}
 
 	read(position: number, size: number) { return this.file.read(size, position) }
+}
+
+const SegmentsDatabaseStores = ['data', 'recovery'] as const
+type SegmentsDatabase = MultiStoreDatabase<typeof SegmentsDatabaseStores>
+
+export class SegmentedFileChunkStorage implements ChunkStorage {
+	private static database = MultiStoreDatabase.create('segments', 1,
+		SegmentsDatabaseStores)
+
+	private constructor(
+		private readonly database: SegmentsDatabase,
+		private readonly id: number,
+	) { }
+
+	deleted = false
+
+	static async create(id: number, isLoaded: boolean) {
+		const database = await this.database
+		if (!isLoaded) await this.delete(database, id)
+		return new this(database, id)
+	}
+
+	static delete(database: SegmentsDatabase, id: number) {
+		const { transaction, stores } = database.transaction()
+		const keyRange = IDBKeyRange.bound([id], [id, []])
+		stores.data.delete(keyRange)
+		stores.recovery.delete(keyRange)
+		return idbTransaction(transaction)
+	}
+
+	load(totalSize: number): Promise<ChunkStorage.Writer[]> {
+		throw new Error("Method not implemented.");
+	}
+
+	static Writer = class implements ChunkStorage.Writer {
+		constructor(
+			private readonly parent: SegmentedFileChunkStorage,
+			readonly startPosition: number,
+		) {
+			this.bufferPosition = this.startPosition
+		}
+
+		private bufferPosition: number
+		private readonly buffer = new Uint8Array(S.segmentSize)
+		private offset = 0
+		writtenSize = 0
+
+		async write(data: Uint8Array) {
+			if (this.parent.deleted) return
+
+			const n = Math.min(data.length, this.buffer.length - this.offset)
+			this.buffer.set(n === data.length ? data : data.subarray(0, n),
+				this.offset)
+			if (this.offset + n !== this.buffer.length) {
+				assert(n === data.length)
+				this.offset += n
+				this.writtenSize += data.length
+				return
+			}
+
+			const { transaction, stores } =
+				this.parent.database.transaction('readwrite', ['data'])
+			stores.data.add(new Blob([this.buffer]),
+				[this.parent.id, this.bufferPosition])
+
+			const remainingData = data.subarray(n)
+			if (remainingData.length < this.buffer.length) {
+				await idbTransaction(transaction)
+				this.bufferPosition += this.buffer.length
+				this.buffer.set(remainingData)
+				this.offset = remainingData.length
+				this.writtenSize += data.length
+				return
+			}
+
+			stores.data.add(new Blob([remainingData]),
+				[this.parent.id, this.bufferPosition + this.buffer.length])
+			await idbTransaction(transaction)
+			this.bufferPosition += this.buffer.length + remainingData.length
+			this.offset = 0
+			this.writtenSize += data.length
+		}
+
+		async flush() {
+			if (!this.offset) return
+			const { transaction, stores } =
+				this.parent.database.transaction('readwrite', ['data'])
+			stores.data.add(new Blob([this.buffer.subarray(0, this.offset)]),
+				[this.parent.id, this.bufferPosition])
+			await idbTransaction(transaction)
+			this.bufferPosition += this.offset
+			this.offset = 0
+		}
+	}
+
+	writer(startPosition: number): ChunkStorage.Writer {
+		return new SegmentedFileChunkStorage.Writer(this, startPosition)
+	}
+
+	async persist(totalSize: number | undefined, final: boolean) {
+
+	}
+
+	async getFile(): Promise<File> {
+		const { stores } = this.database.transaction('readonly', ['data'])
+		const keyRange = IDBKeyRange.bound([this.id], [this.id, []])
+		const request = stores.data.openCursor(keyRange)
+
+		const blobs: Blob[] = []
+		let nextPosition = 0
+
+		await new Promise((resolve, reject) => {
+			request.addEventListener('error', () => reject(request.error))
+			request.addEventListener('abort', () => reject(abortError()))
+			request.addEventListener('success', () => {
+				const cursor = request.result
+				if (cursor) {
+					const [, startPosition] = cursor.primaryKey as [number, number]
+					assert(startPosition === nextPosition)
+					blobs.push(cursor.value)
+					nextPosition += (cursor.value as Blob).size
+					cursor.continue()
+				} else resolve()
+			})
+		})
+		return new File(blobs, "file")
+	}
+
+	async reset() {
+		throw new Error("Method not implemented.");
+	}
+
+	delete() {
+		this.deleted = true
+		return SegmentedFileChunkStorage.delete(this.database, this.id)
+	}
+
+	read(position: number, size: number): Promise<ArrayBuffer> {
+		throw new Error("Method not implemented.");
+	}
 }
