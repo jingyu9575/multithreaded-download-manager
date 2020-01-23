@@ -19,7 +19,7 @@ export abstract class ChunkStorage {
 	abstract getFile(): Promise<File> // must call persist(totalSize, true) first
 	abstract reset(): void // all writers are invalidated
 	abstract delete(): void | Promise<void> // other methods can still be called
-	abstract read(position: number, size: number): Promise<ArrayBuffer>
+	abstract readSlices(totalSize: number): AsyncIterable<ArrayBuffer>
 	readonly onError = new SimpleEventListener<[Error]>()
 	readonly needFlush: boolean = false
 }
@@ -150,7 +150,11 @@ export class MutableFileChunkStorage extends ChunkStorage {
 		// other methods can still access the unlinked file
 	}
 
-	read(position: number, size: number) { return this.file.read(size, position) }
+	async* readSlices(totalSize: number) {
+		const SLICE_SIZE = 1024 * 1024 * 16
+		for (let position = 0; position < totalSize; position += SLICE_SIZE)
+			yield await this.file.read(SLICE_SIZE, position)
+	}
 }
 
 export namespace MutableFileChunkStorage {
@@ -184,6 +188,8 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 	readonly needFlush: boolean = true
 	flushSentry = {}
 
+	private get keyRange() { return IDBKeyRange.bound([this.id], [this.id, []]) }
+
 	async init(isLoaded: boolean) {
 		this.storage = await SegmentedFileChunkStorage.storagePromise
 		if (!isLoaded) await this.reset()
@@ -203,8 +209,8 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		const blobs: Blob[] = []
 		let nextPosition = 0
 
-		const range = IDBKeyRange.bound([this.id], [this.id, []])
-		for await (const cursor of this.storage.entries(range, 'readonly')) {
+		for await (const cursor of
+			this.storage.entries(this.keyRange, 'readonly')) {
 			const [, startPosition] = cursor.primaryKey as [number, number]
 			assert(startPosition === nextPosition)
 			blobs.push(cursor.value)
@@ -215,13 +221,17 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 	reset() {
 		this.flushSentry = {}
-		return this.storage.delete(IDBKeyRange.bound([this.id], [this.id, []]))
+		return this.storage.delete(this.keyRange)
 	}
 
 	delete() { return this.reset() }
 
-	read(position: number, size: number): Promise<ArrayBuffer> {
-		throw new Error("Method not implemented.");
+	async* readSlices() {
+		const blobs: Blob[] = []
+		for await (const cursor of
+			this.storage.entries(this.keyRange, 'readonly'))
+			blobs.push(cursor.value as Blob)
+		for (const blob of blobs) yield await blob.arrayBuffer()
 	}
 }
 

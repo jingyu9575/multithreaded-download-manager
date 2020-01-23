@@ -526,12 +526,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		if (!checksum) return
 
 		const hash = new (checksum.length === 64 ? Sha256 : Sha1)
-		const SLICE_SIZE = 1024 * 1024 * 16
 		const sentry = this.checksumSentry = {}
-		for (let p = 0; p < this.currentSize; p += SLICE_SIZE) {
+		for await (const v of this.chunkStorage.readSlices(this.currentSize)) {
 			if (this.checksumSentry !== sentry) throw abortError()
-			hash.process(new Uint8Array(
-				await this.chunkStorage.read(p, SLICE_SIZE)))
+			hash.process(new Uint8Array(v))
 		}
 		hash.finish()
 
