@@ -105,10 +105,11 @@ export class MutableFileChunkStorage implements ChunkStorage {
 
 		async write(data: Uint8Array) {
 			if (!data.length) return
+			const { persistenceData } = this.parent
 			await this.parent.file.write(typedArrayToBuffer(data) as ArrayBuffer,
 				this.startPosition + this.writtenSize)
 			this.writtenSize += data.length
-			this.parent.persistenceData[this.writtenSizeIndex] = this.writtenSize
+			persistenceData[this.writtenSizeIndex] = this.writtenSize
 		}
 
 		async flush() { }
