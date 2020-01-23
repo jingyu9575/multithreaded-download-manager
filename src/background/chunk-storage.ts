@@ -192,15 +192,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 	async init(isLoaded: boolean) {
 		this.database = await SegmentedFileChunkStorage.database
-		if (!isLoaded)
-			await SegmentedFileChunkStorage.delete(this.database, this.id)
-	}
-
-	static delete(database: SegmentsDatabase, id: number) {
-		const { transaction, stores } = database.transaction()
-		const keyRange = IDBKeyRange.bound([id], [id, []])
-		stores.data.delete(keyRange)
-		return idbTransaction(transaction)
+		if (!isLoaded) await this.reset()
 	}
 
 	load(totalSize: number): Promise<ChunkStorageWriter[]> {
@@ -238,14 +230,15 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		return new File(blobs, "file")
 	}
 
-	async reset() {
-		throw new Error("Method not implemented.");
+	reset() {
+		this.flushSentry = {}
+		const { transaction, stores } = this.database.transaction()
+		const keyRange = IDBKeyRange.bound([this.id], [this.id, []])
+		stores.data.delete(keyRange)
+		return idbTransaction(transaction)
 	}
 
-	delete() {
-		this.flushSentry = {}
-		return SegmentedFileChunkStorage.delete(this.database, this.id)
-	}
+	delete() { return this.reset() }
 
 	read(position: number, size: number): Promise<ArrayBuffer> {
 		throw new Error("Method not implemented.");
