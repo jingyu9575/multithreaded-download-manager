@@ -183,7 +183,7 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 		private readonly id: number,
 	) { }
 
-	deleted = false
+	flushSentry = {}
 
 	static async create(id: number, isLoaded: boolean) {
 		const database = await this.database
@@ -209,11 +209,13 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 			readonly startPosition: number,
 		) {
 			this.bufferPosition = this.startPosition
+			this.flushSentry = this.parent.flushSentry
 		}
 
 		writtenSize = 0
 		private bufferPosition: number
 		private bufferData: Uint8Array[] = []
+		private readonly flushSentry: {}
 
 		async write(data: Uint8Array) {
 			if (!data.length) return
@@ -222,7 +224,7 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 		}
 
 		async flush() {
-			if (this.parent.deleted) return
+			if (this.flushSentry !== this.parent.flushSentry) return
 			if (!this.bufferData.length) return
 			const data = concatTypedArray(this.bufferData)!
 			const { transaction, stores } =
@@ -272,7 +274,7 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 	}
 
 	delete() {
-		this.deleted = true
+		this.flushSentry = {}
 		return SegmentedFileChunkStorage.delete(this.database, this.id)
 	}
 
