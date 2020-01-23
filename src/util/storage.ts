@@ -17,6 +17,25 @@ export function idbTransaction(r: IDBTransaction) {
 	})
 }
 
+export async function* idbCursorRequest<T extends IDBCursor>(
+	r: IDBRequest<T | null>
+) {
+	let resolve: () => void
+	let reject: (reason?: any) => void
+	r.addEventListener('error', () => reject(r.error))
+	r.addEventListener('abort', () => reject(abortError()))
+	r.addEventListener('success', () => resolve())
+	for (; ;) {
+		await new Promise<void>((newResolve, newReject) => {
+			resolve = newResolve; reject = newReject
+		})
+		const cursor = r.result
+		if (!cursor) break
+		yield cursor
+		cursor.continue()
+	}
+}
+
 export class SimpleStorage {
 	private database!: IDBDatabase
 
@@ -73,6 +92,10 @@ export class SimpleStorage {
 
 	keys() {
 		return idbRequest(this.objectStore('readonly').getAllKeys())
+	}
+
+	entries(range: IDBKeyRange, mode: 'readonly' | 'readwrite') {
+		return idbCursorRequest(this.objectStore(mode).openCursor(range))
 	}
 
 	set(key: IDBValidKey, value: unknown) {

@@ -1,7 +1,5 @@
 import '../util/polyfills.js';
-import {
-	SimpleStorage, SimpleMutableFile, MultiStoreDatabase, idbRequest, idbTransaction
-} from "../util/storage.js";
+import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/util.js";
 import { CriticalSection } from "../util/promise.js";
 import { assert, unreachable, abortError } from "../util/error.js";
@@ -179,19 +177,15 @@ export namespace MutableFileChunkStorage {
 	}
 }
 
-const SegmentsDatabaseStores = ['data'] as const
-type SegmentsDatabase = MultiStoreDatabase<typeof SegmentsDatabaseStores>
-
 export class SegmentedFileChunkStorage extends ChunkStorage {
-	private static database = MultiStoreDatabase.create('segments', 1,
-		SegmentsDatabaseStores)
-	database!: SegmentsDatabase
+	private static storagePromise = SimpleStorage.create("segments")
+	storage!: SimpleStorage
 
 	readonly needFlush: boolean = true
 	flushSentry = {}
 
 	async init(isLoaded: boolean) {
-		this.database = await SegmentedFileChunkStorage.database
+		this.storage = await SegmentedFileChunkStorage.storagePromise
 		if (!isLoaded) await this.reset()
 	}
 
@@ -206,36 +200,22 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 	async persist() { /* do nothing */ }
 
 	async getFile(): Promise<File> {
-		const { stores } = this.database.transaction('readonly')
-		const keyRange = IDBKeyRange.bound([this.id], [this.id, []])
-		const request = stores.data.openCursor(keyRange)
-
 		const blobs: Blob[] = []
 		let nextPosition = 0
 
-		await new Promise((resolve, reject) => {
-			request.addEventListener('error', () => reject(request.error))
-			request.addEventListener('abort', () => reject(abortError()))
-			request.addEventListener('success', () => {
-				const cursor = request.result
-				if (cursor) {
-					const [, startPosition] = cursor.primaryKey as [number, number]
-					assert(startPosition === nextPosition)
-					blobs.push(cursor.value)
-					nextPosition += (cursor.value as Blob).size
-					cursor.continue()
-				} else resolve()
-			})
-		})
+		const range = IDBKeyRange.bound([this.id], [this.id, []])
+		for await (const cursor of this.storage.entries(range, 'readonly')) {
+			const [, startPosition] = cursor.primaryKey as [number, number]
+			assert(startPosition === nextPosition)
+			blobs.push(cursor.value)
+			nextPosition += (cursor.value as Blob).size
+		}
 		return new File(blobs, "file")
 	}
 
 	reset() {
 		this.flushSentry = {}
-		const { transaction, stores } = this.database.transaction()
-		const keyRange = IDBKeyRange.bound([this.id], [this.id, []])
-		stores.data.delete(keyRange)
-		return idbTransaction(transaction)
+		return this.storage.delete(IDBKeyRange.bound([this.id], [this.id, []]))
 	}
 
 	delete() { return this.reset() }
@@ -270,10 +250,8 @@ export namespace SegmentedFileChunkStorage {
 			if (this.flushSentry !== this.parent.flushSentry) return
 			if (!this.bufferData.length) return
 			const data = concatTypedArray(this.bufferData)!
-			const { transaction, stores } =
-				this.parent.database.transaction('readwrite')
-			stores.data.add(new Blob([data]), [this.parent.id, this.bufferPosition])
-			await idbTransaction(transaction)
+			await this.parent.storage.set(
+				[this.parent.id, this.bufferPosition], new Blob([data]))
 			this.bufferPosition += data.length
 			this.bufferData = []
 		}
