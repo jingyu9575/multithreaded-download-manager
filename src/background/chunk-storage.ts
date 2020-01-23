@@ -179,7 +179,7 @@ export namespace MutableFileChunkStorage {
 	}
 }
 
-const SegmentsDatabaseStores = ['data', 'recovery'] as const
+const SegmentsDatabaseStores = ['data'] as const
 type SegmentsDatabase = MultiStoreDatabase<typeof SegmentsDatabaseStores>
 
 export class SegmentedFileChunkStorage extends ChunkStorage {
@@ -200,7 +200,6 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		const { transaction, stores } = database.transaction()
 		const keyRange = IDBKeyRange.bound([id], [id, []])
 		stores.data.delete(keyRange)
-		stores.recovery.delete(keyRange)
 		return idbTransaction(transaction)
 	}
 
@@ -215,7 +214,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 	async persist() { /* do nothing */ }
 
 	async getFile(): Promise<File> {
-		const { stores } = this.database.transaction('readonly', ['data'])
+		const { stores } = this.database.transaction('readonly')
 		const keyRange = IDBKeyRange.bound([this.id], [this.id, []])
 		const request = stores.data.openCursor(keyRange)
 
@@ -279,7 +278,7 @@ export namespace SegmentedFileChunkStorage {
 			if (!this.bufferData.length) return
 			const data = concatTypedArray(this.bufferData)!
 			const { transaction, stores } =
-				this.parent.database.transaction('readwrite', ['data'])
+				this.parent.database.transaction('readwrite')
 			stores.data.add(new Blob([data]), [this.parent.id, this.bufferPosition])
 			await idbTransaction(transaction)
 			this.bufferPosition += data.length
