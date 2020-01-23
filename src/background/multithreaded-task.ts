@@ -52,6 +52,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	private currentSize = 0
 	private startTime?: number
 	private startSize = 0
+	private nextFlushTime = Number.MAX_SAFE_INTEGER
 
 	private readonly siteHandlerInvoker = new SiteHandlerInvoker()
 	private checksumSentry = {}
@@ -89,6 +90,11 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 		await Promise.all(promises)
 
+		if (now > this.nextFlushTime) {
+			for (const chunk of this.connections.values())
+				void chunk.writer.flush()
+			this.updateNextFlushTime(now)
+		}
 		this.persistChunks()
 	}, 1000)
 
@@ -160,7 +166,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			} else if (this.data.canResume) {
 				let chunk: Chunk | undefined = undefined
 				this.currentSize = 0
-				for (const w of (await this.chunkStorage!.load(this.data.totalSize))
+				for (const w of (await this.chunkStorage.load(this.data.totalSize))
 					.sort((v0, v1) => v0.startPosition - v1.startPosition)) {
 					chunk = new Chunk(chunk, w)
 					if (!this.firstChunk) this.firstChunk = chunk
@@ -185,6 +191,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		for (let chunk = this.firstChunk;
 			chunk !== this.lastChunk; chunk = chunk!.next)
 			yield chunk!
+	}
+
+	private updateNextFlushTime(now = performance.now()) {
+		this.nextFlushTime = now + S.segmentsWriteInterval * 1000 - 100
 	}
 
 	async start() {
@@ -260,6 +270,10 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 
 		this.adjustThreads()
+		if (this.chunkStorage!.needFlush)
+			this.updateNextFlushTime()
+		else
+			this.nextFlushTime = Number.MAX_SAFE_INTEGER
 		this.timer.start()
 	}
 

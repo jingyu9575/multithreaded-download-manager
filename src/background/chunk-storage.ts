@@ -23,6 +23,7 @@ export abstract class ChunkStorage {
 	abstract delete(): void | Promise<void> // other methods can still be called
 	abstract read(position: number, size: number): Promise<ArrayBuffer>
 	readonly onError = new SimpleEventListener<[Error]>()
+	readonly needFlush: boolean = false
 }
 
 export class ChunkStorageWriter {
@@ -186,6 +187,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		SegmentsDatabaseStores)
 	database!: SegmentsDatabase
 
+	readonly needFlush: boolean = true
 	flushSentry = {}
 
 	async init(isLoaded: boolean) {
@@ -210,9 +212,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		return new SegmentedFileChunkStorage.Writer(this, startPosition)
 	}
 
-	async persist(totalSize: number | undefined, final: boolean) {
-
-	}
+	async persist() { /* do nothing */ }
 
 	async getFile(): Promise<File> {
 		const { stores } = this.database.transaction('readonly', ['data'])

@@ -56,6 +56,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	dynamicMinChunkSize = false
 	connectionTimeout: number | '' = '' // s
 	transferTimeout: number | '' = '' // s
+	segmentsWriteInterval = 5 // s
 
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
