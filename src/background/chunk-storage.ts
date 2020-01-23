@@ -189,17 +189,33 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 	flushSentry = {}
 
 	private get keyRange() { return IDBKeyRange.bound([this.id], [this.id, []]) }
+	private getEntries() { return this.storage.entries(this.keyRange, 'readonly') }
 
 	async init(isLoaded: boolean) {
 		this.storage = await SegmentedFileChunkStorage.storagePromise
 		if (!isLoaded) await this.reset()
 	}
 
-	load(totalSize: number): Promise<ChunkStorageWriter[]> {
-		throw new Error("Method not implemented.");
+	async load() {
+		const result: ChunkStorageWriter[] = []
+		let startPosition = 0
+		let bufferPosition = 0
+		for await (const cursor of this.getEntries()) {
+			const [, position] = cursor.primaryKey as [number, number]
+			if (position !== bufferPosition) {
+				assert(position > bufferPosition)
+				result.push(new SegmentedFileChunkStorage.Writer(
+					this, startPosition, bufferPosition - startPosition))
+				startPosition = bufferPosition = position
+			}
+			bufferPosition += (cursor.value as Blob).size
+		}
+		result.push(new SegmentedFileChunkStorage.Writer(
+			this, startPosition, bufferPosition - startPosition))
+		return result
 	}
 
-	writer(startPosition: number) {
+	writer(startPosition: number): ChunkStorageWriter {
 		return new SegmentedFileChunkStorage.Writer(this, startPosition)
 	}
 
@@ -207,14 +223,13 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 	async getFile(): Promise<File> {
 		const blobs: Blob[] = []
-		let nextPosition = 0
+		let bufferPosition = 0
 
-		for await (const cursor of
-			this.storage.entries(this.keyRange, 'readonly')) {
-			const [, startPosition] = cursor.primaryKey as [number, number]
-			assert(startPosition === nextPosition)
+		for await (const cursor of this.getEntries()) {
+			const [, position] = cursor.primaryKey as [number, number]
+			assert(position === bufferPosition)
 			blobs.push(cursor.value)
-			nextPosition += (cursor.value as Blob).size
+			bufferPosition += (cursor.value as Blob).size
 		}
 		return new File(blobs, "file")
 	}
@@ -228,8 +243,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 	async* readSlices() {
 		const blobs: Blob[] = []
-		for await (const cursor of
-			this.storage.entries(this.keyRange, 'readonly'))
+		for await (const cursor of this.getEntries())
 			blobs.push(cursor.value as Blob)
 		for (const blob of blobs) yield await blob.arrayBuffer()
 	}
@@ -237,18 +251,10 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 export namespace SegmentedFileChunkStorage {
 	export class Writer extends ChunkStorageWriter {
-		constructor(
-			protected readonly parent: SegmentedFileChunkStorage,
-			startPosition: number,
-		) {
-			super(parent, startPosition, 0)
-			this.bufferPosition = this.startPosition
-			this.flushSentry = this.parent.flushSentry
-		}
-
-		private bufferPosition: number
+		protected readonly parent!: SegmentedFileChunkStorage
 		private bufferData: Uint8Array[] = []
-		private readonly flushSentry: {}
+		private bufferPosition = this.startPosition + this.writtenSize
+		private readonly flushSentry = this.parent.flushSentry
 
 		protected async doWrite(data: Uint8Array) {
 			if (!data.length) return
