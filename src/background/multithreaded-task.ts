@@ -47,7 +47,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	private readonly connections = new Map<Connection, Chunk>()
 	private currentMaxThreads = 1
 	private currentWarnings = 0
-	private chunkStorage?: ChunkStorage
+	private chunkStorage!: ChunkStorage
 
 	private currentSize = 0
 	private startTime?: number
@@ -245,7 +245,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			// Check if the task is aborted
 			if (this.initialConnection !== conn) return
 
-			this.firstChunk = new Chunk(undefined, this.chunkStorage!.writer(0))
+			this.firstChunk = new Chunk(undefined, this.chunkStorage.writer(0))
 			const { totalSize } = info
 			this.lastChunk = new Chunk(this.firstChunk, new ChunkStorageWriter(undefined,
 				totalSize !== undefined ? totalSize : Infinity))
@@ -270,7 +270,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 
 		this.adjustThreads()
-		if (this.chunkStorage!.needFlush)
+		if (this.chunkStorage.needFlush)
 			this.updateNextFlushTime()
 		else
 			this.nextFlushTime = Number.MAX_SAFE_INTEGER
@@ -280,7 +280,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	private persistChunks() {
 		if (DownloadState.areChunksFinished(this.data.state)) return
 		if (!this.data.canResume) return
-		void this.chunkStorage!.persist(this.data.totalSize, false)
+		void this.chunkStorage.persist(this.data.totalSize, false)
 			.catch(error => this.fail(error))
 	}
 
@@ -468,7 +468,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			let position = chunk.currentPosition
 			for (let i = 0; i < divisible.count; i++) {
 				position += spaceSize
-				chunk = new Chunk(chunk, this.chunkStorage!.writer(position))
+				chunk = new Chunk(chunk, this.chunkStorage.writer(position))
 				this.setChunkConnection(chunk)
 			}
 		}
@@ -485,7 +485,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		MultithreadedTask.startQueuedTasksTimer.startOnce()
 
 		// prepare to get file
-		await this.chunkStorage!.persist(this.data.totalSize, true)
+		await this.chunkStorage.persist(this.data.totalSize, true)
 
 		const saveAs = {
 			systemDefault: undefined, downloadFolder: false, alwaysAsk: true,
@@ -493,7 +493,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 		try {
 			await this.verifyChecksum()
-			const blobURL = URL.createObjectURL(await this.chunkStorage!.getFile())
+			const blobURL = URL.createObjectURL(await this.chunkStorage.getFile())
 			let downloadId: number
 			try {
 				try {
@@ -514,7 +514,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				...(this.data.totalSize === undefined ?
 					{ totalSize: this.currentSize } : {})
 			})
-			this.chunkStorage!.reset()
+			this.chunkStorage.reset()
 		} catch (error) {
 			if (!isAbortError(error)) this.fail(error)
 			this.persistChunks()
@@ -531,7 +531,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		for (let p = 0; p < this.currentSize; p += SLICE_SIZE) {
 			if (this.checksumSentry !== sentry) throw abortError()
 			hash.process(new Uint8Array(
-				await this.chunkStorage!.read(p, SLICE_SIZE)))
+				await this.chunkStorage.read(p, SLICE_SIZE)))
 		}
 		hash.finish()
 
@@ -559,7 +559,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			this.currentSize -= this.firstChunk.currentSize
 			this.firstChunk = undefined
 			this.lastChunk = undefined
-			this.chunkStorage!.reset()
+			this.chunkStorage.reset()
 			// no need to flush after reset
 			this.syncProgress({ reset: true, ...this.getProgress() })
 		} else {
@@ -602,7 +602,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		if (this.data.state === 'downloading')
 			this.update({ state: "paused" })
 		this.removeAllConnections()
-		if (this.chunkStorage) this.chunkStorage.delete()
+		if (this.chunkStorage as ChunkStorage | undefined)
+			this.chunkStorage.delete()
 		if (this.data.fileAccessId != undefined && S.cascadeBuiltinTask)
 			void removeBrowserDownload(this.data.fileAccessId)
 		super.remove()
