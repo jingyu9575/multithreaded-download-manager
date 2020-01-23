@@ -210,56 +210,26 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 			this.bufferPosition = this.startPosition
 		}
 
-		private bufferPosition: number
-		private readonly buffer = new Uint8Array(S.segmentSize)
-		private offset = 0
 		writtenSize = 0
+		private bufferPosition: number
+		private bufferData: Uint8Array[] = []
 
 		async write(data: Uint8Array) {
-			if (this.parent.deleted) return
-
-			const n = Math.min(data.length, this.buffer.length - this.offset)
-			this.buffer.set(n === data.length ? data : data.subarray(0, n),
-				this.offset)
-			if (this.offset + n !== this.buffer.length) {
-				assert(n === data.length)
-				this.offset += n
-				this.writtenSize += data.length
-				return
-			}
-
-			const { transaction, stores } =
-				this.parent.database.transaction('readwrite', ['data'])
-			stores.data.add(new Blob([this.buffer]),
-				[this.parent.id, this.bufferPosition])
-
-			const remainingData = data.subarray(n)
-			if (remainingData.length < this.buffer.length) {
-				await idbTransaction(transaction)
-				this.bufferPosition += this.buffer.length
-				this.buffer.set(remainingData)
-				this.offset = remainingData.length
-				this.writtenSize += data.length
-				return
-			}
-
-			stores.data.add(new Blob([remainingData]),
-				[this.parent.id, this.bufferPosition + this.buffer.length])
-			await idbTransaction(transaction)
-			this.bufferPosition += this.buffer.length + remainingData.length
-			this.offset = 0
+			if (!data.length) return
+			this.bufferData.push(data)
 			this.writtenSize += data.length
 		}
 
 		async flush() {
-			if (!this.offset) return
+			if (this.parent.deleted) return
+			if (!this.bufferData.length) return
+			const data = concatTypedArray(this.bufferData)!
 			const { transaction, stores } =
 				this.parent.database.transaction('readwrite', ['data'])
-			stores.data.add(new Blob([this.buffer.subarray(0, this.offset)]),
-				[this.parent.id, this.bufferPosition])
+			stores.data.add(new Blob([data]), [this.parent.id, this.bufferPosition])
 			await idbTransaction(transaction)
-			this.bufferPosition += this.offset
-			this.offset = 0
+			this.bufferPosition += data.length
+			this.bufferData = []
 		}
 	}
 
