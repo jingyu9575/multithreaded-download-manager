@@ -7,66 +7,75 @@ import { CriticalSection } from "../util/promise.js";
 import { assert, unreachable, abortError } from "../util/error.js";
 import { isWebExtOOPDisabled } from "./webext-oop.js";
 import { S } from "./settings.js";
+import { SimpleEventListener } from '../util/event.js';
 
-export interface ChunkStorage {
-	load(totalSize: number): Promise<ChunkStorage.Writer[]>
-	writer(startPosition: number): ChunkStorage.Writer
-	persist(totalSize: number | undefined, final: boolean): Promise<void>
-	getFile(): Promise<File> // must call persist(totalSize, true) first
-	reset(): void // truncate file; clear persistenceData; all writers are invalidated
-	delete(): void | Promise<void> // other methods can still be called
-	read(position: number, size: number): Promise<ArrayBuffer>
+type TypeOfChunkStorage = typeof ChunkStorage
+export interface ChunkStorageClass extends TypeOfChunkStorage { }
+
+export abstract class ChunkStorage {
+	constructor(readonly id: number) { }
+	abstract init(isLoaded: boolean): Promise<void>
+	abstract load(totalSize: number): Promise<ChunkStorageWriter[]>
+	abstract writer(startPosition: number): ChunkStorageWriter
+	abstract persist(totalSize: number | undefined, final: boolean): Promise<void>
+	abstract getFile(): Promise<File> // must call persist(totalSize, true) first
+	abstract reset(): void // all writers are invalidated
+	abstract delete(): void | Promise<void> // other methods can still be called
+	abstract read(position: number, size: number): Promise<ArrayBuffer>
+	readonly onError = new SimpleEventListener<[Error]>()
 }
 
-export namespace ChunkStorage {
-	export interface Class {
-		create(id: IDBValidKey, isLoaded: boolean): Promise<ChunkStorage>
+export class ChunkStorageWriter {
+	private promise = Promise.resolve()
+
+	constructor(
+		protected readonly parent: ChunkStorage | undefined,
+		readonly startPosition: number,
+		public writtenSize = 0,
+	) { }
+
+	private sync(fn: () => Promise<void>) {
+		const result = this.promise.then(fn)
+		this.promise = result.catch(error => {
+			this.promise = this.promise.then(() => { }, () => { })
+			if (this.parent) this.parent.onError.dispatch(error)
+		})
+		return result
 	}
 
-	export interface Writer {
-		readonly startPosition: number
-		readonly writtenSize: number
-		write(data: Uint8Array): Promise<void> // NOT thread safe; CANNOT reorder
-		flush(): Promise<void> // NOT thread safe
-	}
+	// CANNOT reorder
+	write(data: Uint8Array) { return this.sync(() => this.doWrite(data)) }
+	flush() { return this.sync(() => this.doFlush()) }
 
-	export class DummyWriter implements Writer {
-		constructor(
-			readonly startPosition: number,
-			readonly writtenSize = 0,
-		) { }
-		write(): never { unreachable() }
-		flush(): never { unreachable() }
-	}
+	// NOT thread safe
+	protected async doWrite(_data: Uint8Array) { unreachable() }
+	protected async doFlush() { }
 }
 
-export class MutableFileChunkStorage implements ChunkStorage {
+export class MutableFileChunkStorage extends ChunkStorage {
 	private static storage = SimpleStorage.create("files")
 	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
 	private static tempStorage = SimpleStorage.create(`files-temp-storage`)
 
-	private constructor(
-		private readonly mfileName: string,
-		private readonly file: SimpleMutableFile,
-	) { }
+	private get mfileName() { return `${this.id}` }// backward compatibility
+	file!: SimpleMutableFile
 
 	private readonly persistCriticalSection = new CriticalSection()
 	private persistSentry = {}
 
 	// Written at totalSize for shared files
 	// [ persistenceData.length - 1, (startPosition, currentSize)...  ]
-	private persistenceData = new Float64Array([0])
+	persistenceData = new Float64Array([0])
 
-	static async create(id: number, isLoaded: boolean) {
-		const mfileName = `${id}` // backward compatibility
-		const storage = await this.storage
+	async init(isLoaded: boolean) {
+		const storage = await MutableFileChunkStorage.storage
 		let mutableFile = isLoaded ?
-			(await storage.get(mfileName) as IDBMutableFile) : undefined
+			(await storage.get(this.mfileName) as IDBMutableFile) : undefined
 		if (!mutableFile) {
-			mutableFile = await storage.mutableFile(`chunk-storage-${mfileName}`)
-			await storage.set(mfileName, mutableFile)
+			mutableFile = await storage.mutableFile(`chunk-storage-${this.id}`)
+			await storage.set(this.mfileName, mutableFile)
 		}
-		return new this(mfileName, new SimpleMutableFile(mutableFile))
+		this.file = new SimpleMutableFile(mutableFile)
 	}
 
 	async load(totalSize: number) {
@@ -83,36 +92,10 @@ export class MutableFileChunkStorage implements ChunkStorage {
 			console.warn('MutableFileChunkStorage.load', this.mfileName, error)
 		}
 
-		const result: ChunkStorage.Writer[] = []
+		const result: ChunkStorageWriter[] = []
 		for (let i = 1; i < this.persistenceData.length; i += 2)
 			result.push(new MutableFileChunkStorage.Writer(this, i))
 		return result
-	}
-
-	static Writer = class implements ChunkStorage.Writer {
-		constructor(
-			private readonly parent: MutableFileChunkStorage,
-			persistenceIndex: number,
-		) {
-			this.startPosition = this.parent.persistenceData[persistenceIndex]
-			this.writtenSizeIndex = persistenceIndex + 1
-			this.writtenSize = this.parent.persistenceData[this.writtenSizeIndex]
-		}
-
-		readonly startPosition: number
-		private readonly writtenSizeIndex: number
-		writtenSize: number
-
-		async write(data: Uint8Array) {
-			if (!data.length) return
-			const { persistenceData } = this.parent
-			await this.parent.file.write(typedArrayToBuffer(data) as ArrayBuffer,
-				this.startPosition + this.writtenSize)
-			this.writtenSize += data.length
-			persistenceData[this.writtenSizeIndex] = this.writtenSize
-		}
-
-		async flush() { }
 	}
 
 	writer(startPosition: number) {
@@ -171,24 +154,44 @@ export class MutableFileChunkStorage implements ChunkStorage {
 	read(position: number, size: number) { return this.file.read(size, position) }
 }
 
+export namespace MutableFileChunkStorage {
+	export class Writer extends ChunkStorageWriter {
+		constructor(
+			protected readonly parent: MutableFileChunkStorage,
+			persistenceIndex: number,
+		) {
+			super(parent, parent.persistenceData[persistenceIndex],
+				parent.persistenceData[persistenceIndex + 1])
+			this.writtenSizeIndex = persistenceIndex + 1
+		}
+
+		private readonly writtenSizeIndex: number
+
+		protected async doWrite(data: Uint8Array) {
+			if (!data.length) return
+			const { persistenceData } = this.parent
+			await this.parent.file.write(typedArrayToBuffer(data) as ArrayBuffer,
+				this.startPosition + this.writtenSize)
+			this.writtenSize += data.length
+			persistenceData[this.writtenSizeIndex] = this.writtenSize
+		}
+	}
+}
+
 const SegmentsDatabaseStores = ['data', 'recovery'] as const
 type SegmentsDatabase = MultiStoreDatabase<typeof SegmentsDatabaseStores>
 
-export class SegmentedFileChunkStorage implements ChunkStorage {
+export class SegmentedFileChunkStorage extends ChunkStorage {
 	private static database = MultiStoreDatabase.create('segments', 1,
 		SegmentsDatabaseStores)
-
-	private constructor(
-		private readonly database: SegmentsDatabase,
-		private readonly id: number,
-	) { }
+	database!: SegmentsDatabase
 
 	flushSentry = {}
 
-	static async create(id: number, isLoaded: boolean) {
-		const database = await this.database
-		if (!isLoaded) await this.delete(database, id)
-		return new this(database, id)
+	async init(isLoaded: boolean) {
+		this.database = await SegmentedFileChunkStorage.database
+		if (!isLoaded)
+			await SegmentedFileChunkStorage.delete(this.database, this.id)
 	}
 
 	static delete(database: SegmentsDatabase, id: number) {
@@ -199,44 +202,11 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 		return idbTransaction(transaction)
 	}
 
-	load(totalSize: number): Promise<ChunkStorage.Writer[]> {
+	load(totalSize: number): Promise<ChunkStorageWriter[]> {
 		throw new Error("Method not implemented.");
 	}
 
-	static Writer = class implements ChunkStorage.Writer {
-		constructor(
-			private readonly parent: SegmentedFileChunkStorage,
-			readonly startPosition: number,
-		) {
-			this.bufferPosition = this.startPosition
-			this.flushSentry = this.parent.flushSentry
-		}
-
-		writtenSize = 0
-		private bufferPosition: number
-		private bufferData: Uint8Array[] = []
-		private readonly flushSentry: {}
-
-		async write(data: Uint8Array) {
-			if (!data.length) return
-			this.bufferData.push(data)
-			this.writtenSize += data.length
-		}
-
-		async flush() {
-			if (this.flushSentry !== this.parent.flushSentry) return
-			if (!this.bufferData.length) return
-			const data = concatTypedArray(this.bufferData)!
-			const { transaction, stores } =
-				this.parent.database.transaction('readwrite', ['data'])
-			stores.data.add(new Blob([data]), [this.parent.id, this.bufferPosition])
-			await idbTransaction(transaction)
-			this.bufferPosition += data.length
-			this.bufferData = []
-		}
-	}
-
-	writer(startPosition: number): ChunkStorage.Writer {
+	writer(startPosition: number) {
 		return new SegmentedFileChunkStorage.Writer(this, startPosition)
 	}
 
@@ -280,5 +250,40 @@ export class SegmentedFileChunkStorage implements ChunkStorage {
 
 	read(position: number, size: number): Promise<ArrayBuffer> {
 		throw new Error("Method not implemented.");
+	}
+}
+
+export namespace SegmentedFileChunkStorage {
+	export class Writer extends ChunkStorageWriter {
+		constructor(
+			protected readonly parent: SegmentedFileChunkStorage,
+			startPosition: number,
+		) {
+			super(parent, startPosition, 0)
+			this.bufferPosition = this.startPosition
+			this.flushSentry = this.parent.flushSentry
+		}
+
+		private bufferPosition: number
+		private bufferData: Uint8Array[] = []
+		private readonly flushSentry: {}
+
+		protected async doWrite(data: Uint8Array) {
+			if (!data.length) return
+			this.bufferData.push(data)
+			this.writtenSize += data.length
+		}
+
+		protected async doFlush() {
+			if (this.flushSentry !== this.parent.flushSentry) return
+			if (!this.bufferData.length) return
+			const data = concatTypedArray(this.bufferData)!
+			const { transaction, stores } =
+				this.parent.database.transaction('readwrite', ['data'])
+			stores.data.add(new Blob([data]), [this.parent.id, this.bufferPosition])
+			await idbTransaction(transaction)
+			this.bufferPosition += data.length
+			this.bufferData = []
+		}
 	}
 }
