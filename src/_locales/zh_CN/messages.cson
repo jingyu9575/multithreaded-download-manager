@@ -307,7 +307,7 @@ i_checksum:
 connectionAPI:
 	message: '连接 API：'
 i_api:
-	message: '连接 API：$1'
+	message: 'API：$1，$2'
 connectionAPIUnavailable:
 	message: '不支持所选的连接 API。'
 open:
@@ -400,3 +400,9 @@ segmentsIntervalGrowPerFiles:
 	message: '每隔文件数：'
 i_segmentsInterval:
 	message: '写入间隔：$1'
+storageAPI:
+	message: '存储 API：'
+storageAPIMutableFile:
+	message: '火狐旧版（将被删除）'
+storageAPISegmentedFile:
+	message: '分段文件'

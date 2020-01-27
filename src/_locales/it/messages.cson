@@ -307,7 +307,7 @@ i_checksum:
 connectionAPI:
 	message: 'Connection API:'
 i_api:
-	message: 'Connection API: $1'
+	message: 'API: $1, $2'
 connectionAPIUnavailable:
 	message: 'La connection API selezionata non è disponibile.'
 open:

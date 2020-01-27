@@ -258,6 +258,12 @@ append body
 						option(value='Streams') Streams
 						option(value='StreamFilter') StreamFilter
 				label.input-label
+					span(data-i18n='storageAPI')
+					select(data-key='storageAPI')
+						option(value='' data-i18n='default')
+						option(value='MutableFile' data-i18n='storageAPIMutableFile')
+						option(value='SegmentedFile' data-i18n='storageAPISegmentedFile')
+				label.input-label
 					span(data-i18n='cacheMode')
 					select(data-key='cacheMode')
 						option(value='' data-i18n='default')

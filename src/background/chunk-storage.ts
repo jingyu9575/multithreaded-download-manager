@@ -11,6 +11,15 @@ type TypeOfChunkStorage = typeof ChunkStorage
 export interface ChunkStorageClass extends TypeOfChunkStorage { }
 
 export abstract class ChunkStorage {
+	static readonly isAvailable: boolean
+
+	static get implementations() {
+		return {
+			MutableFile: MutableFileChunkStorage,
+			SegmentedFile: SegmentedFileChunkStorage,
+		}
+	}
+
 	constructor(readonly id: number) { }
 	abstract init(isLoaded: boolean): Promise<void>
 	abstract load(totalSize: number): Promise<ChunkStorageWriter[]>
@@ -52,6 +61,8 @@ export class ChunkStorageWriter {
 }
 
 export class MutableFileChunkStorage extends ChunkStorage {
+	static readonly isAvailable = 'IDBMutableFile' in window
+
 	private static storage = SimpleStorage.create("files")
 	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
 	private static tempStorage = SimpleStorage.create(`files-temp-storage`)
@@ -183,6 +194,8 @@ export namespace MutableFileChunkStorage {
 }
 
 export class SegmentedFileChunkStorage extends ChunkStorage {
+	static readonly isAvailable = true
+
 	private static storagePromise = SimpleStorage.create("segments")
 	storage!: SimpleStorage
 

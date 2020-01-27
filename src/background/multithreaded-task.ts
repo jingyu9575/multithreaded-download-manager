@@ -2,7 +2,7 @@ import {
 	DownloadState, MultithreadedTaskData, TaskProgressItems
 } from "../common/task-data.js";
 import {
-	ChunkStorage, MutableFileChunkStorage, SegmentedFileChunkStorage, ChunkStorageClass, ChunkStorageWriter
+	ChunkStorage, SegmentedFileChunkStorage, ChunkStorageClass, ChunkStorageWriter
 } from "./chunk-storage.js";
 import { Connection, ConnectionClass, StreamFilterConnection } from "./connection.js";
 import { Task } from "./task.js";
@@ -20,22 +20,21 @@ import { Sha1 } from "../lib/asmcrypto.js/hash/sha1/sha1.js";
 import { Sha256 } from "../lib/asmcrypto.js/hash/sha256/sha256.js";
 
 function getPreferredClass<
-	V extends { readonly isAvailable: boolean }, K extends string, Ps extends K
+	V extends { readonly isAvailable: boolean }, K extends string, P extends K
 >(
-	implementations: { [key in K]: V }, preferences: Ps[]) {
-	for (const key of preferences)
-		if (implementations[key].isAvailable)
-			return implementations[key]
+	implementations: { [key in K]: V }, preference: P) {
+	if (implementations[preference].isAvailable)
+		return implementations[preference]
 	return undefined
 }
 
 export class MultithreadedTask extends Task<MultithreadedTaskData> {
-	private readonly chunkStorageClass: ChunkStorageClass = SegmentedFileChunkStorage
+	private chunkStorageClass!: ChunkStorageClass
 	private readonly connectionClass: ConnectionClass =
 		MultithreadedTask.getPreferredConnectionClass() || StreamFilterConnection
 
 	static getPreferredConnectionClass() {
-		return getPreferredClass(Connection.implementations, [S.connectionAPI])
+		return getPreferredClass(Connection.implementations, S.connectionAPI)
 	}
 
 	// assert(firstChunk && lastChunk || !firstChunk && !lastChunk)
@@ -162,6 +161,15 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			if (this.data[key] === undefined)
 				Object.assign(this.data, { [key]: S[key] })
 
+		// new tasks without storageAPI will use setting or default
+		const defaultStorageAPI = 'MutableFile' // use it until removed by Firefox
+		if (!this.data.storageAPI) {
+			const dataRW: MultithreadedTaskData = this.data
+			dataRW.storageAPI = S.storageAPI || defaultStorageAPI
+		}
+		const preferredStorageClass = getPreferredClass(ChunkStorage.implementations,
+			this.data.storageAPI!)
+		this.chunkStorageClass = preferredStorageClass || SegmentedFileChunkStorage
 		this.chunkStorage = new this.chunkStorageClass(this.id)
 		this.chunkStorage.onError.listen(error => this.failStorage(error))
 		await this.chunkStorage.init(isLoaded)
@@ -213,7 +221,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 
 		this.logger.i(M('i_start', this.data.url))
-		this.logger.i(M('i_api', this.connectionClass.name))
+		this.logger.i(M('i_api', this.connectionClass.name,
+			this.chunkStorageClass.name))
 		this.currentMaxThreads = this.data.maxThreads!
 		this.currentWarnings = 0
 		this.startTime = performance.now()

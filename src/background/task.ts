@@ -78,6 +78,12 @@ export abstract class Task<Data extends TaskData = TaskData> {
 			if (data.totalSize) dataRW.canResume = true
 		}
 
+		if (data.type === 'MultithreadedTask') {
+			const dataMTRW = data as MultithreadedTaskData
+			if (loadFromId !== undefined && !dataMTRW.storageAPI) // loaded from v2
+				dataMTRW.storageAPI = 'MutableFile'
+		}
+
 		const constructor = this.typeMap.get(data.type)
 		if (!constructor) throw new AssertionError('invalid task type')
 

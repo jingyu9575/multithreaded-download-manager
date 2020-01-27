@@ -307,7 +307,7 @@ i_checksum:
 connectionAPI:
 	message: 'Connection API:'
 i_api:
-	message: 'Connection API: $1'
+	message: 'API: $1, $2'
 connectionAPIUnavailable:
 	message: 'The selected connection API is not available.'
 open:
@@ -400,3 +400,9 @@ segmentsIntervalGrowPerFiles:
 	message: 'On files written:'
 i_segmentsInterval:
 	message: 'Writing interval: $1'
+storageAPI:
+	message: 'Storage API:'
+storageAPIMutableFile:
+	message: 'Firefox legacy (to be removed)'
+storageAPISegmentedFile:
+	message: 'Segmented files'
