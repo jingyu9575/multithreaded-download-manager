@@ -36,7 +36,7 @@ export class BackgroundRemote {
 	}
 
 	async isConnectionAPIAvailable() {
-		return MultithreadedTask.getPreferredConnectionClass().isAvailable
+		return !!MultithreadedTask.getPreferredConnectionClass()
 	}
 
 	async getFallbackEncoding() { return document.characterSet }

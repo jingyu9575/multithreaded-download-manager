@@ -4,9 +4,7 @@ import {
 import {
 	ChunkStorage, MutableFileChunkStorage, SegmentedFileChunkStorage, ChunkStorageClass, ChunkStorageWriter
 } from "./chunk-storage.js";
-import {
-	Connection, ConnectionClass, StreamsConnection, StreamFilterConnection
-} from "./connection.js";
+import { Connection, ConnectionClass, StreamFilterConnection } from "./connection.js";
 import { Task } from "./task.js";
 import { assert, ReportedError, isAbortError, abortError } from "../util/error.js";
 import { setImmediate } from "../util/set-immediate.js"
@@ -21,19 +19,23 @@ import { SiteHandlerInvoker } from "./site-handler.js";
 import { Sha1 } from "../lib/asmcrypto.js/hash/sha1/sha1.js";
 import { Sha256 } from "../lib/asmcrypto.js/hash/sha256/sha256.js";
 
+function getPreferredClass<
+	V extends { readonly isAvailable: boolean }, K extends string, Ps extends K
+>(
+	implementations: { [key in K]: V }, preferences: Ps[]) {
+	for (const key of preferences)
+		if (implementations[key].isAvailable)
+			return implementations[key]
+	return undefined
+}
+
 export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	private readonly chunkStorageClass: ChunkStorageClass = SegmentedFileChunkStorage
-	private readonly connectionClass: ConnectionClass = (() => {
-		const result = MultithreadedTask.getPreferredConnectionClass()
-		return result.isAvailable ? result : StreamFilterConnection
-	})()
+	private readonly connectionClass: ConnectionClass =
+		MultithreadedTask.getPreferredConnectionClass() || StreamFilterConnection
 
 	static getPreferredConnectionClass() {
-		return {
-			'': StreamsConnection,
-			Streams: StreamsConnection,
-			StreamFilter: StreamFilterConnection,
-		}[S.connectionAPI]
+		return getPreferredClass(Connection.implementations, [S.connectionAPI])
 	}
 
 	// assert(firstChunk && lastChunk || !firstChunk && !lastChunk)
