@@ -388,3 +388,15 @@ autoImportExtension:
 	message: 'Automatically import from other extensions'
 autoImportExtensionDesc:
 	message: 'To add an extension here, initiate a download in that extension.'
+segmentsInterval:
+	message: 'Writing interval of segmented files'
+segmentsIntervalInit:
+	message: 'Initial:'
+segmentsIntervalMax:
+	message: 'Maximum:'
+segmentsIntervalGrowFactor:
+	message: 'Increase by factor:'
+segmentsIntervalGrowPerFiles:
+	message: 'On files written:'
+i_segmentsInterval:
+	message: 'Writing interval: $1'

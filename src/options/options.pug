@@ -211,6 +211,28 @@ append body
 							input(data-key='transferTimeout' type='number' min='1'
 									data-i18n-placeholder='unlimited')
 							span.input-unit s
+				hr
+				details(open)
+					summary
+						span(data-i18n='segmentsInterval')
+					.input-grid
+						label.input-label
+							span(data-i18n='segmentsIntervalInit')
+							span
+								input(data-key='segmentsIntervalInit' type='number' required min='1')
+								span.input-unit s
+						label.input-label
+							span(data-i18n='segmentsIntervalMax')
+							span
+								input(data-key='segmentsIntervalMax' type='number' required min='1')
+								span.input-unit s
+						label.input-label
+							span(data-i18n='segmentsIntervalGrowFactor')
+							input(data-key='segmentsIntervalGrowFactor' type='number' required
+								min='1' step='0.01')
+						label.input-label
+							span(data-i18n='segmentsIntervalGrowPerFiles')
+							input(data-key='segmentsIntervalGrowPerFiles' type='number' required min='1')
 			x-page
 				label.input-label
 					span(data-i18n='legacyFilenameEncoding')

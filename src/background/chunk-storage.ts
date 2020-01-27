@@ -2,7 +2,7 @@ import '../util/polyfills.js';
 import { SimpleStorage, SimpleMutableFile } from "../util/storage.js";
 import { typedArrayToBuffer, concatTypedArray } from "../util/util.js";
 import { CriticalSection } from "../util/promise.js";
-import { assert, unreachable, abortError } from "../util/error.js";
+import { assert, unreachable } from "../util/error.js";
 import { isWebExtOOPDisabled } from "./webext-oop.js";
 import { S } from "./settings.js";
 import { SimpleEventListener } from '../util/event.js';
@@ -21,7 +21,7 @@ export abstract class ChunkStorage {
 	abstract delete(): void | Promise<void> // other methods can still be called
 	abstract readSlices(totalSize: number): AsyncIterable<ArrayBuffer>
 	readonly onError = new SimpleEventListener<[Error]>()
-	readonly needFlush: boolean = false
+	abstract readonly flushInterval: number // seconds
 }
 
 export class ChunkStorageWriter {
@@ -56,6 +56,7 @@ export class MutableFileChunkStorage extends ChunkStorage {
 	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
 	private static tempStorage = SimpleStorage.create(`files-temp-storage`)
 
+	readonly flushInterval = Infinity
 	private get mfileName() { return `${this.id}` }// backward compatibility
 	file!: SimpleMutableFile
 
@@ -185,11 +186,23 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 	private static storagePromise = SimpleStorage.create("segments")
 	storage!: SimpleStorage
 
-	readonly needFlush: boolean = true
+	currentFileCount = 0
+	flushInterval = S.segmentsIntervalInit
+	nextUpdateFileCount = S.segmentsIntervalGrowPerFiles
+
 	flushSentry = {}
 
 	private get keyRange() { return IDBKeyRange.bound([this.id], [this.id, []]) }
 	private getEntries() { return this.storage.entries(this.keyRange, 'readonly') }
+
+	updateFlushInterval() {
+		this.flushInterval = Math.min(S.segmentsIntervalMax,
+			S.segmentsIntervalInit * S.segmentsIntervalGrowFactor **
+			Math.floor(this.currentFileCount / S.segmentsIntervalGrowPerFiles))
+		this.nextUpdateFileCount = this.currentFileCount
+			- (this.currentFileCount % S.segmentsIntervalGrowPerFiles)
+			+ S.segmentsIntervalGrowPerFiles
+	}
 
 	async init(isLoaded: boolean) {
 		this.storage = await SegmentedFileChunkStorage.storagePromise
@@ -200,6 +213,7 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 		const result: ChunkStorageWriter[] = []
 		let startPosition = 0
 		let bufferPosition = 0
+		this.currentFileCount = 0
 		for await (const cursor of this.getEntries()) {
 			const [, position] = cursor.primaryKey as [number, number]
 			if (position !== bufferPosition) {
@@ -209,9 +223,11 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 				startPosition = bufferPosition = position
 			}
 			bufferPosition += (cursor.value as Blob).size
+			this.currentFileCount++
 		}
 		result.push(new SegmentedFileChunkStorage.Writer(
 			this, startPosition, bufferPosition - startPosition))
+		this.updateFlushInterval()
 		return result
 	}
 
@@ -236,6 +252,8 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 
 	reset() {
 		this.flushSentry = {}
+		this.currentFileCount = 0
+		this.updateFlushInterval()
 		return this.storage.delete(this.keyRange)
 	}
 
@@ -270,6 +288,9 @@ export namespace SegmentedFileChunkStorage {
 				[this.parent.id, this.bufferPosition], new Blob([data]))
 			this.bufferPosition += data.length
 			this.bufferData = []
+			this.parent.currentFileCount++
+			if (this.parent.currentFileCount >= this.parent.nextUpdateFileCount)
+				this.parent.updateFlushInterval()
 		}
 	}
 }

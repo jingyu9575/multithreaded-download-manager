@@ -388,3 +388,15 @@ autoImportExtension:
 	message: '自动从其他扩展导入'
 autoImportExtensionDesc:
 	message: '若要添加一个扩展，请使用该扩展开始一项下载。'
+segmentsInterval:
+	message: '分段文件写入间隔'
+segmentsIntervalInit:
+	message: '初始：'
+segmentsIntervalMax:
+	message: '最大：'
+segmentsIntervalGrowFactor:
+	message: '增长倍数：'
+segmentsIntervalGrowPerFiles:
+	message: '每隔文件数：'
+i_segmentsInterval:
+	message: '写入间隔：$1'
