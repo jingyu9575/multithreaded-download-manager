@@ -1,17 +1,43 @@
 import { abortError, readOnlyError } from "./error.js";
 
-export class SimpleStorage {
+export function idbRequest<T>(r: IDBRequest<T>) {
 	// Bug 1193394 fixed in Firefox 60 (Promise invalidates IDBRequest)
+	return new Promise<T>((resolve, reject) => {
+		r.addEventListener('success', () => resolve(r.result))
+		r.addEventListener('error', () => reject(r.error))
+		r.addEventListener('abort', () => reject(abortError()))
+	})
+}
 
-	private database!: IDBDatabase
+export function idbTransaction(r: IDBTransaction) {
+	return new Promise<void>((resolve, reject) => {
+		r.addEventListener('complete', () => resolve())
+		r.addEventListener('error', () => reject(r.error))
+		r.addEventListener('abort', () => reject(abortError()))
+	})
+}
 
-	static request<T>(r: IDBRequest<T>) {
-		return new Promise<T>((resolve, reject) => {
-			r.addEventListener('success', () => resolve(r.result))
-			r.addEventListener('error', () => reject(r.error))
-			r.addEventListener('abort', () => reject(abortError()))
+export async function* idbCursorRequest<T extends IDBCursor>(
+	r: IDBRequest<T | null>
+) {
+	let resolve: () => void
+	let reject: (reason?: any) => void
+	r.addEventListener('error', () => reject(r.error))
+	r.addEventListener('abort', () => reject(abortError()))
+	r.addEventListener('success', () => resolve())
+	for (; ;) {
+		await new Promise<void>((newResolve, newReject) => {
+			resolve = newResolve; reject = newReject
 		})
+		const cursor = r.result
+		if (!cursor) break
+		yield cursor
+		cursor.continue()
 	}
+}
+
+export class SimpleStorage {
+	private database!: IDBDatabase
 
 	private constructor(private readonly objectStoreName: string) { }
 
@@ -29,7 +55,7 @@ export class SimpleStorage {
 				db.createObjectStore(objectStoreName)
 			await migrate()
 		}
-		that.database = await SimpleStorage.request(request) as IDBDatabase
+		that.database = await idbRequest(request) as IDBDatabase
 		that.currentObjectStore = undefined
 		return that
 	}
@@ -57,43 +83,47 @@ export class SimpleStorage {
 	}
 
 	get<T>(key: IDBValidKey) {
-		return SimpleStorage.request<T>(this.objectStore('readonly').get(key))
+		return idbRequest<T>(this.objectStore('readonly').get(key))
 	}
 
 	getAll(range: IDBKeyRange) {
-		return SimpleStorage.request(this.objectStore('readonly').getAll(range))
+		return idbRequest(this.objectStore('readonly').getAll(range))
 	}
 
 	keys() {
-		return SimpleStorage.request(this.objectStore('readonly').getAllKeys())
+		return idbRequest(this.objectStore('readonly').getAllKeys())
+	}
+
+	entries(range: IDBKeyRange, mode: 'readonly' | 'readwrite') {
+		return idbCursorRequest(this.objectStore(mode).openCursor(range))
 	}
 
 	set(key: IDBValidKey, value: unknown) {
-		return SimpleStorage.request(this.objectStore('readwrite').put(value, key))
+		return idbRequest(this.objectStore('readwrite').put(value, key))
 	}
 
 	async insert<T>(key: IDBValidKey, fn: () => T) {
 		const store = this.objectStore('readwrite')
-		const cursor = await SimpleStorage.request(
+		const cursor = await idbRequest(
 			store.openCursor(key)) as IDBCursorWithValue
 		if (cursor) return cursor.value as T
 		const value = fn()
-		await SimpleStorage.request(store.add(value, key))
+		await idbRequest(store.add(value, key))
 		return value
 	}
 
 	delete(key: IDBValidKey | IDBKeyRange) {
-		return SimpleStorage.request(this.objectStore('readwrite').delete(key))
+		return idbRequest(this.objectStore('readwrite').delete(key))
 	}
 
 	clear() {
-		return SimpleStorage.request(this.objectStore('readwrite').clear())
+		return idbRequest(this.objectStore('readwrite').clear())
 	}
 
 	close() { this.database.close() }
 
 	mutableFile(filename: string, type = 'application/octet-stream') {
-		return SimpleStorage.request(this.database.createMutableFile(filename, type))
+		return idbRequest(this.database.createMutableFile(filename, type))
 	}
 }
 
@@ -113,27 +143,27 @@ export class SimpleMutableFile {
 	write(data: string | ArrayBuffer, location: number) {
 		const handle = this.open()
 		handle.location = location
-		return SimpleStorage.request(handle.write(data))
+		return idbRequest(handle.write(data))
 	}
 
 	read(size: number, location: number) {
 		const handle = this.open()
 		handle.location = location
-		return SimpleStorage.request(handle.readAsArrayBuffer(size))
+		return idbRequest(handle.readAsArrayBuffer(size))
 	}
 
 	truncate(start?: number) {
 		const handle = this.open()
-		return SimpleStorage.request(handle.truncate(start))
+		return idbRequest(handle.truncate(start))
 	}
 
 	flush() {
 		const handle = this.open()
-		return SimpleStorage.request(handle.flush())
+		return idbRequest(handle.flush())
 	}
 
 	getFile() {
-		return SimpleStorage.request(this.mutableFile.getFile())
+		return idbRequest(this.mutableFile.getFile())
 	}
 
 	// Firefox 74 has removed IDBMutableFile.getFile (Bug 1607791)
@@ -142,7 +172,7 @@ export class SimpleMutableFile {
 	async getFileWithTempStorage(tempStorage: SimpleStorage, prefix: string) {
 		const SLICE_SIZE = 1024 * 1024 * 128
 		const handle = this.open()
-		const size = (await SimpleStorage.request(handle.getMetadata())).size
+		const size = (await idbRequest(handle.getMetadata())).size
 		const blobs: Blob[] = []
 		for (let p = 0; p < size; p += SLICE_SIZE) {
 			const key = [prefix, p]
@@ -155,5 +185,36 @@ export class SimpleMutableFile {
 
 	static cleanupTempStorage(tempStorage: SimpleStorage, prefix: string) {
 		return tempStorage.delete(IDBKeyRange.bound([prefix], [prefix, []]))
+	}
+}
+
+export class MultiStoreDatabase<S extends readonly string[]> {
+	private constructor(private readonly database: IDBDatabase) { }
+
+	static async create<S extends readonly string[]>(
+		name: string, version: number, objectStores: S
+	) {
+		const request = indexedDB.open(name, version)
+		request.onupgradeneeded = () => {
+			const db = request.result as IDBDatabase
+			for (const name of objectStores)
+				db.createObjectStore(name)
+		}
+		return new this<S>(await idbRequest<IDBDatabase>(request))
+	}
+
+	transaction(
+		mode: 'readonly' | 'readwrite' = 'readwrite',
+		objectStoreNames: S[number][] = this.database.objectStoreNames as any,
+	): {
+		transaction: IDBTransaction,
+		stores: { [name in S[number]]: IDBObjectStore },
+	} {
+		const transation = this.database.transaction(
+			this.database.objectStoreNames as any, mode)
+		const stores: any = {}
+		for (const name of objectStoreNames)
+			stores[name] = transation.objectStore(name)
+		return { transaction: transation, stores }
 	}
 }

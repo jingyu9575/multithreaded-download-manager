@@ -1,6 +1,6 @@
 import { CriticalSection } from "../util/promise.js";
 import { concatTypedArray } from "../util/util.js";
-import { abortError, ReportedError, isAbortError } from "../util/error.js";
+import { abortError, ReportedError } from "../util/error.js";
 import { parseContentDisposition } from "./content-disposition.js";
 import { M } from "../util/webext/i18n.js";
 import { cryptoRandomString } from "../common/common.js";
@@ -28,6 +28,14 @@ export type ConnectionInfo = {
 
 export abstract class Connection {
 	static readonly isAvailable: boolean
+
+	static get implementations() {
+		return {
+			'': StreamsConnection,
+			Streams: StreamsConnection,
+			StreamFilter: StreamFilterConnection,
+		}
+	}
 
 	private static readonly fatalErrors = new WeakSet<Error>()
 	private static toFatal(e: Error) { this.fatalErrors.add(e); return e }

@@ -14,6 +14,8 @@ export const NETWORK_OPTIONS_KEYS =
 export const logLevels = ['info', 'warning', 'error'] as const
 export type LogLevel = (typeof logLevels)[number]
 
+export type StorageAPIOption = 'MutableFile' | 'SegmentedFile'
+
 export class Settings extends mergeInitData(Object, { ...new NetworkOptions() }) {
 	version = 0
 
@@ -56,6 +58,10 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	dynamicMinChunkSize = false
 	connectionTimeout: number | '' = '' // s
 	transferTimeout: number | '' = '' // s
+	segmentsIntervalInit = 2 // s
+	segmentsIntervalMax = 60 // s
+	segmentsIntervalGrowFactor = 2.00
+	segmentsIntervalGrowPerFiles = 1000
 
 	legacyFilenameEncoding = ''
 	legacyFilenameDetectUTF8 = true
@@ -63,6 +69,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	legacyFilenameDetectNonStandardURLEncoded = false
 	useSiteHandlers = false
 	connectionAPI: '' | 'Streams' | 'StreamFilter' = ''
+	storageAPI: StorageAPIOption | '' = ''
 	cacheMode: '' | RequestCache = ''
 	monitorDownloadShowBuiltinActions = false
 	openWindowIncognito = false

@@ -307,7 +307,7 @@ i_checksum:
 connectionAPI:
 	message: 'Connection API:'
 i_api:
-	message: 'Connection API: $1'
+	message: 'API: $1, $2'
 connectionAPIUnavailable:
 	message: 'The selected connection API is not available.'
 open:
@@ -388,3 +388,23 @@ autoImportExtension:
 	message: 'Automatically import from other extensions'
 autoImportExtensionDesc:
 	message: 'To add an extension here, initiate a download in that extension.'
+segmentsInterval:
+	message: 'Writing interval of segmented files'
+segmentsIntervalInit:
+	message: 'Initial:'
+segmentsIntervalMax:
+	message: 'Maximum:'
+segmentsIntervalGrowFactor:
+	message: 'Increase by factor:'
+segmentsIntervalGrowPerFiles:
+	message: 'On files written:'
+i_segmentsInterval:
+	message: 'Writing interval: $1'
+storageAPI:
+	message: 'Storage API:'
+storageAPIMutableFile:
+	message: 'Firefox legacy (to be removed)'
+storageAPISegmentedFile:
+	message: 'Segmented files'
+e_APIUnsupported:
+	message: 'API unsupported'

@@ -307,7 +307,7 @@ i_checksum:
 connectionAPI:
 	message: 'API подключения:'
 i_api:
-	message: 'API подключения: $1'
+	message: 'API: $1, $2'
 connectionAPIUnavailable:
 	message: 'Выбранный API подключения недоступен.'
 open:

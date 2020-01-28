@@ -1,4 +1,4 @@
-import { NetworkOptions } from "./settings.js";
+import { NetworkOptions, StorageAPIOption } from "./settings.js";
 
 export type DownloadState = 'downloading' | 'saving' | 'paused' |
 	'completed' | 'failed' | 'queued'
@@ -77,7 +77,9 @@ export interface TaskSyncBootstrapItem {
 	progress: TaskProgress
 }
 
-export interface MultithreadedTaskData extends TaskData, NetworkOptions { }
+export interface MultithreadedTaskData extends TaskData, NetworkOptions {
+	storageAPI?: StorageAPIOption
+}
 
 export interface TaskActionDetail {
 	primary?: boolean

@@ -9,7 +9,7 @@ export class AssertionError extends ExtendableError {
 	constructor(message = 'assertion failed') { super(message) }
 }
 
-export function assert(condition: any, message?: string) {
+export function assert(condition: any, message?: string): asserts condition {
 	if (!condition) throw new AssertionError(message)
 }
 
