@@ -4,7 +4,7 @@
 		"@types/firefox-webext-browser": "^67.0.2"
 	},
 	"devDependencies": {
-		"cson": "^6.4.0",
+		"cson": "=6.4.0",
 		"pug-cli": "^1.0.0-alpha6",
 		"stylus": "^0.54.7",
 		"typescript": "^3.7.2"
