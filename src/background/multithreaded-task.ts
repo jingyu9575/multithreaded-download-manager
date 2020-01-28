@@ -1,9 +1,7 @@
 import {
 	DownloadState, MultithreadedTaskData, TaskProgressItems
 } from "../common/task-data.js";
-import {
-	ChunkStorage, SegmentedFileChunkStorage, ChunkStorageClass, ChunkStorageWriter
-} from "./chunk-storage.js";
+import { ChunkStorage, ChunkStorageClass, ChunkStorageWriter } from "./chunk-storage.js";
 import { Connection, ConnectionClass, StreamFilterConnection } from "./connection.js";
 import { Task } from "./task.js";
 import { assert, ReportedError, isAbortError, abortError } from "../util/error.js";
@@ -163,13 +161,20 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 
 		// new tasks without storageAPI will use setting or default
 		const defaultStorageAPI = 'MutableFile' // use it until removed by Firefox
-		if (!this.data.storageAPI) {
-			const dataRW: MultithreadedTaskData = this.data
+		const dataRW: MultithreadedTaskData = this.data
+		if (!this.data.storageAPI)
 			dataRW.storageAPI = S.storageAPI || defaultStorageAPI
-		}
-		const preferredStorageClass = getPreferredClass(ChunkStorage.implementations,
+		const fallbackStorageAPI = 'SegmentedFile'
+		let chunkStorageClass = getPreferredClass(ChunkStorage.implementations,
 			this.data.storageAPI!)
-		this.chunkStorageClass = preferredStorageClass || SegmentedFileChunkStorage
+		let initError: Error | undefined
+		if (!chunkStorageClass) {
+			initError = new ReportedError(M.e_APIUnsupported, this.data.storageAPI)
+			dataRW.storageAPI = fallbackStorageAPI
+			chunkStorageClass = ChunkStorage.implementations[fallbackStorageAPI]
+		}
+
+		this.chunkStorageClass = chunkStorageClass
 		this.chunkStorage = new this.chunkStorageClass(this.id)
 		this.chunkStorage.onError.listen(error => this.failStorage(error))
 		await this.chunkStorage.init(isLoaded)
@@ -194,13 +199,15 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 					new ChunkStorageWriter(undefined, this.data.totalSize))
 			}
 		}
+
 		if (DownloadState.isProgressing(this.data.state) &&
 			this.data.state !== 'queued') {
 			Object.assign(this.data, { state: 'paused' })
-			this.start()
+			if (!initError) this.start()
 		}
 
 		if (!isLoaded) this.update({}) // persist
+		if (initError) setImmediate(() => this.fail(initError!))
 	}
 
 	private * getChunks() {

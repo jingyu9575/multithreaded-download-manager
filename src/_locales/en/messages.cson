@@ -406,3 +406,5 @@ storageAPIMutableFile:
 	message: 'Firefox legacy (to be removed)'
 storageAPISegmentedFile:
 	message: 'Segmented files'
+e_APIUnsupported:
+	message: 'API unsupported'

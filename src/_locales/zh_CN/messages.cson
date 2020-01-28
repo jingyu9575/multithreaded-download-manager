@@ -406,3 +406,5 @@ storageAPIMutableFile:
 	message: '火狐旧版（将被删除）'
 storageAPISegmentedFile:
 	message: '分段文件'
+e_APIUnsupported:
+	message: 'API 不再支持'

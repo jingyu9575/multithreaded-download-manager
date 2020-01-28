@@ -235,11 +235,12 @@ export class SegmentedFileChunkStorage extends ChunkStorage {
 					this, startPosition, bufferPosition - startPosition))
 				startPosition = bufferPosition = position
 			}
-			bufferPosition += (cursor.value as Blob).size
+			bufferPosition += (cursor.value as Blob).size // assert(size > 0)
 			this.currentFileCount++
 		}
-		result.push(new SegmentedFileChunkStorage.Writer(
-			this, startPosition, bufferPosition - startPosition))
+		if (bufferPosition > startPosition) // <=> bufferPosition > 0
+			result.push(new SegmentedFileChunkStorage.Writer(
+				this, startPosition, bufferPosition - startPosition))
 		this.updateFlushInterval()
 		return result
 	}
@@ -297,6 +298,7 @@ export namespace SegmentedFileChunkStorage {
 			if (this.flushSentry !== this.parent.flushSentry) return
 			if (!this.bufferData.length) return
 			const data = concatTypedArray(this.bufferData)!
+			assert(data.length > 0)
 			await this.parent.storage.set(
 				[this.parent.id, this.bufferPosition], new Blob([data]))
 			this.bufferPosition += data.length
