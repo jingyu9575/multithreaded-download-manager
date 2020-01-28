@@ -187,34 +187,3 @@ export class SimpleMutableFile {
 		return tempStorage.delete(IDBKeyRange.bound([prefix], [prefix, []]))
 	}
 }
-
-export class MultiStoreDatabase<S extends readonly string[]> {
-	private constructor(private readonly database: IDBDatabase) { }
-
-	static async create<S extends readonly string[]>(
-		name: string, version: number, objectStores: S
-	) {
-		const request = indexedDB.open(name, version)
-		request.onupgradeneeded = () => {
-			const db = request.result as IDBDatabase
-			for (const name of objectStores)
-				db.createObjectStore(name)
-		}
-		return new this<S>(await idbRequest<IDBDatabase>(request))
-	}
-
-	transaction(
-		mode: 'readonly' | 'readwrite' = 'readwrite',
-		objectStoreNames: S[number][] = this.database.objectStoreNames as any,
-	): {
-		transaction: IDBTransaction,
-		stores: { [name in S[number]]: IDBObjectStore },
-	} {
-		const transation = this.database.transaction(
-			this.database.objectStoreNames as any, mode)
-		const stores: any = {}
-		for (const name of objectStoreNames)
-			stores[name] = transation.objectStore(name)
-		return { transaction: transation, stores }
-	}
-}
