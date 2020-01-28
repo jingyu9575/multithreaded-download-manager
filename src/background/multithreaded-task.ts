@@ -169,7 +169,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			this.data.storageAPI!)
 		let initError: Error | undefined
 		if (!chunkStorageClass) {
-			initError = new ReportedError(M.e_APIUnsupported, this.data.storageAPI)
+			if (this.data.state !== 'completed')
+				initError = new ReportedError(M.e_APIUnsupported, this.data.storageAPI)
 			dataRW.storageAPI = fallbackStorageAPI
 			chunkStorageClass = ChunkStorage.implementations[fallbackStorageAPI]
 		}
