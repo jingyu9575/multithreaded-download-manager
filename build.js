@@ -28,7 +28,7 @@ const EXTRA_BUILD = [
 	`pug -P -s -o ${DIST} ${SRC}`,
 ]
 const EXTRA_WATCH = [
-	`tsc -w ${LANG_ARG}`,
+	`tsc -w --sourceMap ${LANG_ARG}`,
 	`pug -w -P -s -o ${DIST} ${SRC}`,
 ]
 

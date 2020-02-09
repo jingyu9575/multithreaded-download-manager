@@ -1,0 +1,19 @@
+{
+	// https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug in Firefox",
+			"type": "firefox",
+			"request": "launch",
+			"reAttach": true,
+			"addonPath": "${workspaceFolder}/dist",
+			"pathMappings": [
+				{
+					"url": "moz-extension://src",
+					"path": "${workspaceFolder}/src"
+				}
+			]
+		}
+	]
+}
