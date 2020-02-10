@@ -151,9 +151,18 @@ tool-button(size)
 	& > button
 		tool-button(16px)
 		padding: 6px
+		position: relative
 
 		&[disabled]
 			color: #aaa
+
+		.context-menu-disabler
+			position: absolute
+			z-index: 1
+			top: 0
+			left: 0
+			bottom: 0
+			right: 0
 
 	:root:not(.enable-selection) &
 		.if-enable-selection, .selection-tool

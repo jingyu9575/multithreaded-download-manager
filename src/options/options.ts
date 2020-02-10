@@ -13,7 +13,8 @@ applyI18nAttr('placeholder')
 
 const iconColorDetails = document.getElementById('icon-color-details')!
 
-type InputCallback = (input: HTMLInputElement | HTMLSelectElement) => unknown
+type InputElements = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+type InputCallback = (input: InputElements) => unknown
 const inputCallbacks = new Map<keyof Settings, InputCallback>([
 	['iconColor', input => {
 		iconColorDetails.classList.toggle('visible', input.value === 'custom')
@@ -21,7 +22,7 @@ const inputCallbacks = new Map<keyof Settings, InputCallback>([
 ])
 
 for (const input of document.querySelectorAll(
-	'[data-key]') as NodeListOf<HTMLInputElement | HTMLSelectElement>) {
+	'[data-key]') as NodeListOf<InputElements>) {
 	const key = input.dataset.key!
 	remoteSettings.get(key as any).then(value => {
 		if (input.type === 'checkbox')
@@ -158,14 +159,24 @@ document.getElementById('open-auto-import')!.addEventListener('click', async () 
 		tryAddAutoImportExtItem(download)
 	autoImportContainer.hidden = false
 })
-autoImportContainer.addEventListener('click', event => {
-	if (event.target !== autoImportContainer) return
-	autoImportContainer.hidden = true
-})
-document.getElementById('close-auto-import')!.addEventListener('click', () => {
-	autoImportContainer.hidden = true
-})
+
+for (const modalContainer of document.querySelectorAll(
+	'.modal-container') as NodeListOf<HTMLElement>) {
+	modalContainer.addEventListener('click', event => {
+		if (event.target !== modalContainer) return
+		modalContainer.hidden = true
+	})
+	const modalClose = modalContainer.querySelector('.modal-close')
+	if (modalClose) modalClose.addEventListener('click', () => {
+		modalContainer.hidden = true
+	})
+}
 
 browser.downloads.onCreated.addListener(download => {
 	if (!autoImportContainer.hidden) tryAddAutoImportExtItem(download)
+})
+
+const filenameSearchContainer = document.getElementById('filename-search-container')!
+document.getElementById('open-filename-search')!.addEventListener('click', () => {
+	filenameSearchContainer.hidden = false
 })

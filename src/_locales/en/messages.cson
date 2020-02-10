@@ -408,3 +408,9 @@ storageAPISegmentedFile:
 	message: 'Segmented files'
 e_APIUnsupported:
 	message: 'API unsupported'
+configureFilenameSearch:
+	message: 'Configure filename search'
+filenameSearchItemsExample:
+	message: 'Name http://example.com/?filename=%s'
+searchWith:
+	message: 'Search with $1'

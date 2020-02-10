@@ -50,6 +50,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	windowSize = 'default' as 'default' | 'remember'
 	showAddPaused = false
 	shortenTabTitle = ''
+	filenameSearchItems = ''
 	addContextMenuToLink = true
 	addContextMenuToLinkType = 'downloadDirectly' as 'downloadDirectly' | 'askForOptions'
 	showOptionsInDedicatedTab = false

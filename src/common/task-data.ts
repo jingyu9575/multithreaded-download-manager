@@ -87,7 +87,7 @@ export interface TaskActionDetail {
 	filterStates?: DownloadState[]
 	filterCanResume?: boolean
 }
-type TaskActions = [keyof I18nMessages | undefined, TaskActionDetail][]
+type TaskActions = [keyof I18nMessages | /*separator*/number, TaskActionDetail][]
 
 export const taskActions: TaskActions = [
 	['start', { primary: true, filterStates: ['paused', 'failed'] }],
@@ -103,11 +103,11 @@ export const taskActions: TaskActions = [
 		primary: true, shift: 'openContainingFolder', filterStates: ['completed']
 	}],
 	['openContainingFolder', {}],
-	[undefined, {}],
+	[101, {}],
 	['copyLink', { shift: 'openReferrer' }],
 	['openReferrer', {}],
 	['viewLogs', {}],
-	[undefined, {}],
+	[102, {}],
 	['edit', {}],
 	['reset', {
 		filterStates: ['downloading', 'paused', 'completed', 'failed', 'queued']
@@ -117,3 +117,4 @@ export const taskActions: TaskActions = [
 ]
 
 export const taskActionPrefix = 'task-action-'
+export const filenameSearchPrefix = 'filename-search-'

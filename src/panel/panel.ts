@@ -36,8 +36,8 @@ const stateIcons = {
 	queued: '../icons/photon-icons.svg#history',
 }
 
-const taskActionsObject = Object.fromEntries(
-	taskActions.filter(([key]) => key) as [string, TaskActionDetail][])
+const taskActionsObject = Object.fromEntries(taskActions.filter(
+	([key]) => typeof key === 'string') as [string, TaskActionDetail][])
 
 class XTaskElement extends HTMLElement {
 	static readonly parent = document.getElementById('tasks')! as HTMLElement
@@ -87,7 +87,8 @@ class XTaskElement extends HTMLElement {
 		this.addEventListener('dblclick', ({ target, shiftKey }) => {
 			if (this.contains((target as Element).closest('button'))) return
 			for (const [key, detail] of taskActions) {
-				if (key && detail.primary && this.isActionShown(detail)) {
+				if (typeof key === 'string' &&
+					detail.primary && this.isActionShown(detail)) {
 					this.callAction(key, shiftKey)
 					return
 				}
@@ -389,6 +390,7 @@ export class TaskSyncRemote {
 	isAlive() { return true }
 	activateTab!: () => Promise<boolean>
 	activateWindow!: () => Promise<boolean>
+	reloadFilenameSearch() { return reloadFilenameSearch() }
 }
 registerRemoteHandler(new TaskSyncRemote)
 
@@ -463,33 +465,69 @@ void async function () {
 		document.getElementById('connection-api-unavailable')!.hidden = false
 }()
 
-document.addEventListener('contextmenu', event => {
-	const task = (event.target as HTMLElement).closest('.task') as XTaskElement | null
-	if (task) {
-		browser.menus.overrideContext({ showDefaults: false })
-		for (const [key, detail] of taskActions) {
-			if (!key) continue
-			const visible = task.isActionShown(detail)
-			if (visible === 'no-filter') continue
-			void browser.menus.update(taskActionPrefix + key, { visible })
+const searchFilenameButton = document.getElementById('search-filename')!
+let filenameSearchMenuItems:
+	import('../background/filename-search').FilenameSearchMenuItem[] = []
+async function reloadFilenameSearch() {
+	filenameSearchMenuItems = await backgroundRemote.filenameSearchMenuItems()
+	searchFilenameButton.hidden = !filenameSearchMenuItems.length
+	if (!searchFilenameButton.hidden)
+		searchFilenameButton.title = filenameSearchMenuItems[0].title
+}
+void reloadFilenameSearch()
+
+let contextMenuTarget: Element | undefined = undefined
+let contextMenuTask: XTaskElement | null = null
+let contextMenuSearch: Element | null
+const contextMenuEventProcessed = new WeakSet<Event>()
+
+document.body.addEventListener('contextmenu', event => {
+	browser.menus.overrideContext({ showDefaults: false })
+	contextMenuTarget = undefined
+	const target = event.target as Element
+	if (!target) return
+
+	contextMenuTask = target.closest('.task') as XTaskElement | null
+	if (contextMenuTask) contextMenuTarget = contextMenuTask
+	for (const [key, detail] of taskActions) {
+		let visible = false
+		if (contextMenuTask) {
+			if (typeof key === 'string') {
+				visible = !!contextMenuTask.isActionShown(detail)
+			} else visible = true
 		}
-		void browser.menus.refresh()
-	} else {
-		event.preventDefault()
+		void browser.menus.update(taskActionPrefix + key, { visible })
 	}
-}, { capture: true });
 
-browser.menus.onClicked.addListener(info => {
-	if (typeof info.menuItemId !== 'string' ||
-		!info.menuItemId.startsWith(taskActionPrefix) ||
-		info.targetElementId === undefined) return
-	let target = browser.menus.getTargetElement(info.targetElementId) as Element | null
+	contextMenuSearch = target.closest('#search-filename')
+	if (contextMenuSearch) contextMenuTarget = contextMenuSearch
+	for (const { id } of filenameSearchMenuItems) {
+		void browser.menus.update(id, { visible: !!contextMenuSearch })
+	}
+
+	void browser.menus.refresh()
+	if (!contextMenuTarget) event.preventDefault()
+	contextMenuEventProcessed.add(event)
+}, true)
+
+for (const node of document.querySelectorAll('.context-menu-disabler')) {
+	node.addEventListener('contextmenu', event => {
+		if (!contextMenuEventProcessed.has(event)) event.preventDefault()
+	})
+}
+
+browser.menus.onClicked.addListener(({ targetElementId, menuItemId }) => {
+	if (targetElementId === undefined) return
+	let target = browser.menus.getTargetElement(targetElementId)
 	if (!target || !(target instanceof Element)) return
-	if (target instanceof SVGElement && target.ownerSVGElement)
-		target = target.ownerSVGElement
-	const task = target.closest('.task') as XTaskElement | null
-	if (!task) return
+	const targetHTML = target instanceof SVGElement && target.ownerSVGElement ?
+		target.ownerSVGElement : target
+	if (!contextMenuTarget || !contextMenuTarget.contains(targetHTML)) return
 
-	const key = info.menuItemId.slice(taskActionPrefix.length)
-	if (task.isActionShown(taskActionsObject[key])) task.callAction(key, false)
+	if (typeof menuItemId !== 'string') return
+	if (menuItemId.startsWith(taskActionPrefix) && contextMenuTask) {
+		const key = menuItemId.slice(taskActionPrefix.length)
+		if (contextMenuTask.isActionShown(taskActionsObject[key]))
+			contextMenuTask.callAction(key, false)
+	}
 })

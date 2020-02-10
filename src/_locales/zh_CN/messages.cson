@@ -408,3 +408,9 @@ storageAPISegmentedFile:
 	message: '分段文件'
 e_APIUnsupported:
 	message: 'API 不再支持'
+configureFilenameSearch:
+	message: '配置文件名搜索'
+filenameSearchItemsExample:
+	message: '名称 http://example.com/?filename=%s'
+searchWith:
+	message: '用 $1 搜索'

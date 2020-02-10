@@ -6,6 +6,7 @@ import { S, localSettings } from "./settings.js";
 import { isValidProtocolURL, removeBrowserDownload } from "../common/common.js";
 import { Timer } from "../util/promise.js";
 import smallBeepOGV from '../sounds/small-beep.ogv.js'
+import { updateFilenameSearchItems } from "./filename-search.js";
 
 void async function () {
 	const iconColor = S.iconColor
@@ -74,16 +75,19 @@ function recreateContextMenus() {
 			onclick: () => openPanelIn('sidebar')
 		}),
 		...taskActions.map(([key]) => browser.menus.create({
-			id: key ? taskActionPrefix + key : undefined,
-			title: key ? M[key] : undefined,
+			id: taskActionPrefix + key,
+			title: typeof key === 'string' ? M[key] : undefined,
 			contexts: ['image', 'link', 'page', 'selection'],
 			documentUrlPatterns: [panelURL],
-			type: key ? 'normal' : 'separator',
-			icons: key ? { 16: `/icons/menu${suffix}/${key}.svg` } : undefined,
+			type: typeof key === 'string' ? 'normal' : 'separator',
+			icons: typeof key === 'string' ?
+				{ 16: `/icons/menu${suffix}/${key}.svg` } : undefined,
 		}))
 	]
 }
 localSettings.listen('contextMenuIconColor', recreateContextMenus)
+
+localSettings.listen('filenameSearchItems', updateFilenameSearchItems)
 
 browser.browserAction.onClicked.addListener(() => {
 	if (S.iconClickAction === 'default') return

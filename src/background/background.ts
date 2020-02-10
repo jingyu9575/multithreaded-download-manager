@@ -10,6 +10,7 @@ import { openPopupWindow, openOptions } from "./open-window.js";
 import { SimpleMutableFile } from "../util/storage.js";
 import { MultithreadedTask } from './multithreaded-task.js';
 import { getCustomCSS } from '../common/get-custom-css.js';
+import { filenameSearchMenuItems } from './filename-search.js';
 
 export class BackgroundRemote {
 	isWebExtOOPDisabled() { return isWebExtOOPDisabled }
@@ -59,5 +60,7 @@ export class BackgroundRemote {
 	playAllCompletedSound() { Task.playAllCompletedSound() }
 
 	getCustomCSS() { return getCustomCSS() }
+
+	async filenameSearchMenuItems() { return filenameSearchMenuItems }
 }
 registerRemoteHandler(new BackgroundRemote)

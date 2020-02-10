@@ -156,7 +156,9 @@ append body
 				label.input-label
 					span(data-i18n='shortenTabTitle')
 					input(data-key='shortenTabTitle' data-i18n-placeholder='extensionName')
-				hr
+				div
+					button#open-filename-search.dialog-button(type='button' 
+							data-i18n='configureFilenameSearch')
 				span.input-label
 					label.contents-label
 						input(type='checkbox' data-key='addContextMenuToLink')
@@ -301,17 +303,30 @@ append body
 				hr
 				a(target="_blank" href="/lib/LICENSE-3RD-PARTY.txt" data-i18n="license3rdParty")
 	
-	#auto-import-container(hidden)
-		#auto-import
-			#auto-import-header
-				button#close-auto-import.dialog-button(type='button')
+	#auto-import-container.modal-container(hidden)
+		.modal-dialog
+			.modal-header
+				button.modal-close.dialog-button(type='button')
 					svg.icon: use(href='../icons/photon-icons.svg#arrowhead-left')
 				b(data-i18n='autoImportExtension')
 			#auto-import-ext-list
-			#auto-import-ext-desc(data-i18n='autoImportExtensionDesc')
-			
+			.modal-footer-desc(data-i18n='autoImportExtensionDesc')
+	#filename-search-container.modal-container(hidden)
+		.modal-dialog
+			.modal-header
+				button.modal-close.dialog-button(type='button')
+					svg.icon: use(href='../icons/photon-icons.svg#arrowhead-left')
+				b(data-i18n='configureFilenameSearch')
+			textarea#filename-search-input(data-key='filenameSearchItems'
+				data-i18n-placeholder='filenameSearchItemsExample')
+			.modal-footer-desc(data-i18n='configureFilenameSearchDesc')
+		
 	template#auto-import-ext-item-template
 		label.input-label
+			input(type='checkbox')
+			span
+	template#filename-search-item-template
+		.filename-search-item
 			input(type='checkbox')
 			span
 	script(type='module' src='options.js')
