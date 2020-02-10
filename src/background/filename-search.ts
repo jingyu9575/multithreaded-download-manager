@@ -1,6 +1,7 @@
 import { filenameSearchPrefix } from "../common/task-data.js"
 import { M } from "../util/webext/i18n.js";
 import { remoteProxy } from "../util/webext/remote.js";
+import { taskSyncRemote, Task } from "./task.js";
 
 export interface FilenameSearchMenuItem {
 	id: string | number,
@@ -33,6 +34,20 @@ export function updateFilenameSearchItems(value = '') {
 			url: m[2],
 		})
 	}
-	void remoteProxy<import('../panel/panel').TaskSyncRemote>(
-		'TaskSyncRemote').reloadFilenameSearch()
+	void taskSyncRemote.reloadFilenameSearch()
+}
+
+export async function searchFilename(taskIds: number[], url: string) {
+	for (const id of taskIds) {
+		const task = Task.get(id)
+		if (!task) continue
+		void browser.tabs.create({
+			url: url.replace(/%s|%#[12]/g, s => {
+				if (s === '%s')
+					return encodeURIComponent(
+						task.data.filename || task.data.filenameTemplate)
+				return ''
+			})
+		})
+	}
 }

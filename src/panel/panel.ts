@@ -2,7 +2,7 @@ import { registerRemoteHandler } from "../util/webext/remote.js";
 import { applyI18n, applyI18nAttr, M } from "../util/webext/i18n.js";
 import {
 	DownloadState, TaskData, TaskProgress, TaskProgressItems, TaskSyncBootstrapItem,
-	taskActions, TaskActionDetail, taskActionPrefix, MultithreadedTaskData, TaskProgressItem
+	taskActions, TaskActionDetail, taskActionPrefix, MultithreadedTaskData, TaskProgressItem, filenameSearchPrefix
 } from "../common/task-data.js"
 import { importTemplate } from "../util/dom.js";
 import { formatSize, backgroundRemote, formatTimeSpan } from "../common/common.js";
@@ -476,6 +476,13 @@ async function reloadFilenameSearch() {
 }
 void reloadFilenameSearch()
 
+searchFilenameButton.addEventListener('click', () => {
+	if (!filenameSearchMenuItems.length) return
+	void backgroundRemote.searchFilename(
+		XTaskElement.getSelected().map(v => v.taskId),
+		filenameSearchMenuItems[0].url)
+})
+
 let contextMenuTarget: Element | undefined = undefined
 let contextMenuTask: XTaskElement | null = null
 let contextMenuSearch: Element | null
@@ -529,5 +536,9 @@ browser.menus.onClicked.addListener(({ targetElementId, menuItemId }) => {
 		const key = menuItemId.slice(taskActionPrefix.length)
 		if (contextMenuTask.isActionShown(taskActionsObject[key]))
 			contextMenuTask.callAction(key, false)
+	} else if (menuItemId.startsWith(filenameSearchPrefix) && contextMenuSearch) {
+		const item = filenameSearchMenuItems.find(v => v.id === menuItemId)
+		if (item) void backgroundRemote.searchFilename(
+			XTaskElement.getSelected().map(v => v.taskId), item.url)
 	}
 })
