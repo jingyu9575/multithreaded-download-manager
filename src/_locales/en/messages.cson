@@ -416,3 +416,5 @@ searchWith:
 	message: 'Search with $1'
 keepCompletedTasksContent:
 	message: 'Keep temporary storage of completed tasks'
+configureFilenameSearchDesc:
+	message: 'Format: Name http://example.com/?filename=%s\nUse %s in place of filename.\nIf the option "keep temporary storage of completed tasks" is enabled, %#1 and %#2 can be used to search SHA1 and SHA256 hashes.'
