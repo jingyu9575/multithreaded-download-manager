@@ -2,6 +2,7 @@ import { filenameSearchPrefix } from "../common/task-data.js"
 import { M } from "../util/webext/i18n.js";
 import { remoteProxy } from "../util/webext/remote.js";
 import { taskSyncRemote, Task } from "./task.js";
+import { abortError } from "../util/error.js";
 
 export interface FilenameSearchMenuItem {
 	id: string | number,
@@ -37,17 +38,30 @@ export function updateFilenameSearchItems(value = '') {
 	void taskSyncRemote.reloadFilenameSearch()
 }
 
-export async function searchFilename(taskIds: number[], url: string) {
+export async function searchFilename(taskIds: number[], urlTemplate: string) {
+	const urls: string[] = []
 	for (const id of taskIds) {
 		const task = Task.get(id)
 		if (!task) continue
-		void browser.tabs.create({
-			url: url.replace(/%s|%#[12]/g, s => {
-				if (s === '%s')
-					return encodeURIComponent(
-						task.data.filename || task.data.filenameTemplate)
-				return ''
+		const hashes = new Map<string, string>()
+		let promise = Promise.resolve()
+		urlTemplate.replace(/%#[12]/g, s => {
+			promise = promise.then(async () => {
+				if (task.data.state !== 'completed')
+					throw abortError()
+				if (hashes.has(s)) return
+				const length = s.endsWith('2') ? 64 : 40
+				hashes.set(s, await task.getChecksum(length, true))
 			})
+			return s
 		})
+		try { await promise } catch { continue }
+		urls.push(urlTemplate.replace(/%s|%#[12]/g, s => {
+			if (s === '%s')
+				return encodeURIComponent(task.data.filename || '')
+			else
+				return hashes.get(s) || ''
+		}))
 	}
+	for (const url of urls) void browser.tabs.create({ url })
 }

@@ -542,20 +542,24 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 		}
 	}
 
-	private async verifyChecksum() {
-		const { checksum } = this.data
-		if (!checksum) return
-
-		const hash = new (checksum.length === 64 ? Sha256 : Sha1)
+	async getChecksum(length: number, zeroToEmpty: boolean) {
+		const hash = new (length === 64 ? Sha256 : Sha1)
 		const sentry = this.checksumSentry = {}
+		let isZero = true
 		for await (const v of this.chunkStorage.readSlices(this.currentSize)) {
 			if (this.checksumSentry !== sentry) throw abortError()
 			hash.process(new Uint8Array(v))
+			if (v.byteLength) isZero = false
 		}
+		if (zeroToEmpty && isZero) return ''
 		hash.finish()
+		return [...hash.result!].map(v => v.toString(16).padStart(2, '0')).join('')
+	}
 
-		const result = [...hash.result!].map(
-			v => v.toString(16).padStart(2, '0')).join('')
+	private async verifyChecksum() {
+		const { checksum } = this.data
+		if (!checksum) return
+		const result = await this.getChecksum(checksum.length, false)
 		this.logger.i(M('i_checksum', result, checksum))
 		if (result.toLowerCase() !== checksum.toLowerCase())
 			throw new ReportedError(M.e_checksumError)

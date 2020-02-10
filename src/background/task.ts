@@ -104,6 +104,7 @@ export abstract class Task<Data extends TaskData = TaskData> {
 	abstract pause(): void
 	abstract reset(): void
 	protected abstract getProgress(chunks?: [] /* no detail */): TaskProgress
+	abstract getChecksum(length: number, zeroToEmpty: boolean): Promise<string>
 
 	protected update(data: Partial<Data>) {
 		Object.assign(this.data, data)
