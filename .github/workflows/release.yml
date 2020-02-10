@@ -1,0 +1,21 @@
+name: Build release
+on:
+  release:
+    types:
+      - created
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - run: npm install
+    - run: node build --xpi --7z
+    - uses: thucfb-lib-mirror/upload-to-release@1.0.0
+      with:
+        name: dist.unsigned.xpi
+        path: dist.unsigned.xpi
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        content-type: application/x-xpinstall
