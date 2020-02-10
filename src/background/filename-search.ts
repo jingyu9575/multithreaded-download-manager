@@ -23,7 +23,8 @@ export function updateFilenameSearchItems(value = '') {
 	for (const line of value.split(/\r|\n/)) {
 		const m = line.trim().match(/^("(?:""|[^"])*"|\S+)\s+(\S+)/)
 		if (!m) continue
-		const title = M('searchWith', m[1])
+		const title = M('searchWith', m[1].replace(/^"(.*)"$/,
+			(_, s: string) => s.replace('""', '"')))
 		filenameSearchMenuItems.push({
 			id: browser.menus.create({
 				id: `${filenameSearchPrefix}${i++}`,
