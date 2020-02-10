@@ -532,26 +532,24 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			this.update({
 				fileAccessId: downloadId, state: 'completed',
 				completedDate: new Date(),
+				contentAvailable: !!S.keepCompletedTasksContent,
 				...(this.data.totalSize === undefined ?
 					{ totalSize: this.currentSize } : {})
 			})
-			this.chunkStorage.reset()
+			if (!S.keepCompletedTasksContent) this.chunkStorage.reset()
 		} catch (error) {
 			if (!isAbortError(error)) this.fail(error)
 			this.persistChunks()
 		}
 	}
 
-	async getChecksum(length: number, zeroToEmpty: boolean) {
+	async getChecksum(length: number) {
 		const hash = new (length === 64 ? Sha256 : Sha1)
 		const sentry = this.checksumSentry = {}
-		let isZero = true
 		for await (const v of this.chunkStorage.readSlices(this.currentSize)) {
 			if (this.checksumSentry !== sentry) throw abortError()
 			hash.process(new Uint8Array(v))
-			if (v.byteLength) isZero = false
 		}
-		if (zeroToEmpty && isZero) return ''
 		hash.finish()
 		return [...hash.result!].map(v => v.toString(16).padStart(2, '0')).join('')
 	}
@@ -559,7 +557,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 	private async verifyChecksum() {
 		const { checksum } = this.data
 		if (!checksum) return
-		const result = await this.getChecksum(checksum.length, false)
+		const result = await this.getChecksum(checksum.length)
 		this.logger.i(M('i_checksum', result, checksum))
 		if (result.toLowerCase() !== checksum.toLowerCase())
 			throw new ReportedError(M.e_checksumError)

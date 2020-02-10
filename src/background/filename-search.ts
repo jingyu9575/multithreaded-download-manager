@@ -39,6 +39,8 @@ export function updateFilenameSearchItems(value = '') {
 }
 
 export async function searchFilename(taskIds: number[], urlTemplate: string) {
+	let message: undefined | 'content-unavailable'
+
 	const urls: string[] = []
 	for (const id of taskIds) {
 		const task = Task.get(id)
@@ -47,11 +49,13 @@ export async function searchFilename(taskIds: number[], urlTemplate: string) {
 		let promise = Promise.resolve()
 		urlTemplate.replace(/%#[12]/g, s => {
 			promise = promise.then(async () => {
-				if (task.data.state !== 'completed')
-					throw abortError()
+				if (!task.data.contentAvailable) {
+					if (!message) message = 'content-unavailable'
+					throw new Error()
+				}
 				if (hashes.has(s)) return
 				const length = s.endsWith('2') ? 64 : 40
-				hashes.set(s, await task.getChecksum(length, true))
+				hashes.set(s, await task.getChecksum(length))
 			})
 			return s
 		})
@@ -64,4 +68,5 @@ export async function searchFilename(taskIds: number[], urlTemplate: string) {
 		}))
 	}
 	for (const url of urls) void browser.tabs.create({ url })
+	return message
 }

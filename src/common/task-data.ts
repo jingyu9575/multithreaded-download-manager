@@ -55,6 +55,7 @@ export interface TaskData {
 	inum: number
 	text?: string
 	checksum?: string
+	contentAvailable?: boolean
 }
 
 export const TaskData = {

@@ -414,3 +414,5 @@ filenameSearchItemsExample:
 	message: 'Name http://example.com/?filename=%s'
 searchWith:
 	message: 'Search with $1'
+keepCompletedTasksContent:
+	message: 'Keep temporary storage of completed tasks'

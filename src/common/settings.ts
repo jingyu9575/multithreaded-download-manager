@@ -24,6 +24,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	removeCompletedTasksOnStart = false
 	removeFailedTasksOnStart = false
 	cascadeBuiltinTask = true
+	keepCompletedTasksContent = false
 	simultaneousTasks: number | '' = ''
 	monitorDownload = false
 	monitorDownloadType = 'askForOptions' as 'downloadDirectly' | 'askForOptions'

@@ -414,3 +414,5 @@ filenameSearchItemsExample:
 	message: '名称 http://example.com/?filename=%s'
 searchWith:
 	message: '用 $1 搜索'
+keepCompletedTasksContent:
+	message: '保留已完成任务的临时存储'
