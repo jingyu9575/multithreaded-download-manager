@@ -13,7 +13,10 @@
 					"url": "moz-extension://src",
 					"path": "${workspaceFolder}/src"
 				}
-			]
+			],
+			"preferences": {
+				"app.update.auto": "\" Disable user.js",
+			}
 		}
 	]
 }
