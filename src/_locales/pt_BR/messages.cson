@@ -1,0 +1,418 @@
+extensionName:
+	message: "Multithreaded Download Manager"
+extensionDescription:
+	message: "Gerenciador de Downloads que suporta Multiplos Segmentos."
+pause:
+	message: "Pausar"
+stop:
+	message: "Parar"
+start:
+	message: "Iniciar"
+openFileButton:
+	message: "Abrir Arquivo \nShift: Abrir pasta que o contem"
+edit:
+	message: "Editar"
+copyLinkButton:
+	message: "Copiar link do download \nShift: Abrir pagina referrer"
+deleted:
+	message: "Deletar"
+removeButton:
+	message: "Remover \nShift: Deletar Arquivo"
+preallocating:
+	message: "Pre Alocar"
+emptyTasks:
+	message: "Não há nenhuma tarefa de download."
+noStorageAccess:
+	message: "Armazenamento Interno inacessivel."
+createDownload:
+	message: "Criar uma tarefa de download"
+importDownload:
+	message: "Importar tarefas do Firefox"
+options:
+	message: "Opções"
+openInNewTab:
+	message: "Abrir em nova aba"
+openInNewWindow:
+	message: "Abrir em nova janela"
+editURL:
+	message: "Download:"
+editURLWarning:
+	message: "Atenção: Mudar a localização para um conteudo diferente pode corrompe-lo."
+editFilename:
+	message: "Nome do Arquivo:"
+editReferrer:
+	message: "Pagina Referring:"
+maxThreads:
+	message: "Segmentos:"
+minChunkSize:
+	message: "Chunk Minimo:"
+maxRetries:
+	message: "Maximo de Re-tentativas:"
+OK:
+	message: "OK"
+cancel:
+	message: "Cancelar"
+download:
+	message: "Download"
+continueInBrowser:
+	message: "Continuar no navegador"
+e_serverError:
+	message: "Erro no Servidor"
+rangesNotSupported:
+	message: "Servidor não suporta downloads com multiplos segmentos ($1)"
+e_networkError:
+	message: "Erro na Rede"
+e_unknownError:
+	message: "Erro Desconhecido"
+showCompleted:
+	message: "Mostrar itens de downloads completos"
+removeAfterImport:
+	message: "Remover itens originais ao importar"
+downloadWith:
+	message: "Download com $1"
+unsupportedURL:
+	message: "Endereço de download não suportado: $1"
+confirmPauseIsStop:
+	message: "Esse download não pode ser continuado. Abortar?"
+confirmDeleteFile:
+	message: "Deletar arquivo do download?"
+confirmRemove:
+	message: "Remove download não finalizado?"
+general:
+	message: "Geral"
+saveFileTo:
+	message: "Salvar arquivos em:"
+downloadFolder:
+	message: "Pasta de Download"
+alwaysAsk:
+	message: "Sempre Perguntar"
+skipFirstSavingAttempt:
+	message: "A primeira tentativa de salvar é problematica e deve ser evitada"
+workaroundBlankPopup:
+	message: "Resolver problema de janelas em branco"
+readMore:
+	message: "Ler Mais"
+interface:
+	message: "Interface"
+iconColor:
+	message: "Icone:"
+systemDefaultAfterRestart:
+	message: "Padrão do Sistema (Reiniciar para ter efeito)"
+dark:
+	message: "Escurecido"
+darker:
+	message: "Escuro"
+black:
+	message: "Preto"
+light:
+	message: "Clareado"
+lighter:
+	message: "Claro"
+white:
+	message: "Branco"
+altIcon1:
+	message: "1"
+altIcon2:
+	message: "2"
+altIcon3:
+	message: "3"
+altIcon4:
+	message: "4"
+showOnBadge:
+	message: "Mostrar no icone da extensão:"
+badgeTypeNone:
+	message: "Nada"
+badgeTypeNumber:
+	message: "Numero de tarefas em andamento"
+hideBadgeZero:
+	message: "Esconder numero do icone quando todas as tarefas estiverem completas"
+addContextMenuToLink:
+	message: "Adicionar menu de contexto nos links:"
+windowPosition:
+	message: "Posição da janela da extensão:"
+systemDefault:
+	message: "Padrão do Sistema"
+parentCenter:
+	message: "Centro da Janela"
+rememberLast:
+	message: "Relembrar a ultima posição"
+windowSize:
+	message: "Tamanho da janela da extensão:"
+newTaskAtTop:
+	message: "Mostrar novas tarefas em cima"
+removeCompletedTasksOnStart:
+	message: "Remover tarefas completas ao iniciar o navegador"
+showOptionsInDedicatedTab:
+	message: "Mostrar as opções em uma aba independente"
+monitorDownload:
+	message: "Monitorar download"
+monitorDownloadDesc:
+	message: "Automaticamente capturar downloads:"
+monitorDownloadMinSize:
+	message: "Desativar para arquivos menores que:"
+autoCloseBlankTab:
+	message: "Automaticamente fechar abas em branco quando fizer downloads"
+defaultNetworkOptions:
+	message: "Opções de Rede Padrão"
+legacyFilenameDetection:
+	message: "Detecção de nomes de arquivos para sites antigos"
+legacyFilenameDetectUTF8:
+	message: "Detectar UTF-8"
+legacyFilenameDetectURLEncoded:
+	message: "Detectar condificação de porcento (e.g. %20)"
+legacyFilenameDetectNonStandardURLEncoded:
+	message: "Detectar condificação de porcento despadronizada"
+license3rdParty:
+	message: "Informações de Direitos de Terceiros"
+customCSSButton:
+	message: "CSS Personalizado..."
+customCSSDesc:
+	message: "CSS Personalizado para paginas da extensão. Isso pode mudar completamente a interface, proceda com cuidado."
+save:
+	message: "Salvar"
+byteSymbol:
+	message: "B"
+useSiteHandlers:
+	message: "Ativar comportamentos especificos para websites"
+monitorLinksWithoutRange:
+	message: "Perguntar para links sem suporte para multiplos segmentos"
+linkWithoutRangeWarning:
+	message: "Esse download não suporta multiplos segmentos nem continuações."
+simultaneousTasks:
+	message: "Tarefas simultaneas de download:"
+unlimited:
+	message: "Ilimitado"
+editFileSize:
+	message: "Tamanho:"
+openInSidebar:
+	message: "Abrir na Barra Lateral"
+e_saveFileError:
+	message: "Falhou em Salvar"
+e_threadStopped:
+	message: "Parada Inesperada"
+legacyFilenameEncoding:
+	message: "Codificação de nomes de arquivos para sites antigos:"
+address:
+	message: "Endereço"
+enterAddress:
+	message: "Coloque aqui a lista de endereços.\nDescrições em massa suportada, e.g. [1:10:2]"
+selectAddressFromList:
+	message: "Selecionar endereço de download da lista."
+invalidAddress:
+	message: "Endereço de download invalido."
+copyAddress:
+	message: "Copiar endereço"
+filenamePlaceholder:
+	message: "Colocar nome do arquivo, da subpasta ou template de nome de aquivo"
+convert:
+	message: "Converter"
+link:
+	message: "Link"
+media:
+	message: "Midia"
+openFile:
+	message: "Abrir arquivo"
+openContainingFolder:
+	message: "Abrir pasta que o contem"
+copyLink:
+	message: "Copiar link do download"
+openReferrer:
+	message: "Abrir pagina referrer"
+remove:
+	message: "Remover"
+deleteFile:
+	message: "Deletar arquivo"
+actionTitleWithShift:
+	message: "$1\nShift: $2"
+text:
+	message: "Texto"
+pageInaccessibleToExtensions:
+	message: "Essa pagina é inacessível para extensões."
+pageHasBeenClosed:
+	message: "Essa pagina foi fechada."
+network:
+	message: "Rede"
+advanced:
+	message: "Avançado"
+thirdPartyIcons:
+	message: "Icones de Terceiros"
+customColor:
+	message: "Cores Personalizadas"
+default:
+	message: "Padrão"
+customCSS:
+	message: "CSS Personalizado"
+help:
+	message: "Ajuda"
+viewLogs:
+	message: "Ver logs"
+rawData:
+	message: "Dados Crus"
+i_load:
+	message: "Carregar tarefa $1 da seção anterior"
+i_create:
+	message: "Criar tarefa $1"
+i_start:
+	message: "Iniciar download $1"
+i_pause:
+	message: "Pausar tarefa"
+i_queue:
+	message: "Enfileirar tarefa"
+i_initialConnectionInfo:
+	message: "Conexão inicial estabelecida. Tamanho Total: $1; Suporte Multi-Segmentos: $2"
+yes:
+	message: "Sim"
+no:
+	message: "Não"
+i_initialConnectionAborted:
+	message: "Conexão inicial abortada"
+i_createConnection:
+	message: "Criar conexão em $1"
+i_connectionEnded:
+	message: "Conexão terminada"
+i_save:
+	message: "Salvar arquivo"
+i_completed:
+	message: "Download completo"
+logLevel:
+	message: "Nivel de Logging:"
+info:
+	message: "Informações"
+warning:
+	message: "Avisos"
+error:
+	message: "Erros"
+editDownload:
+	message: "Editar tarefa de download"
+networkOptions:
+	message: "Opções de Rede"
+downloadDirectly:
+	message: "Fazer download diretamente"
+askForOptions:
+	message: "Perguntar por opções"
+close:
+	message: "Fechar"
+playSoundOnAllCompleted:
+	message: "Tocar som quando todos os downloads terminarem"
+showNotificationOnAllCompleted:
+	message: "Notificar quando todos os downloads terminarem"
+allDownloadsCompleted:
+	message: "Todos os downloads terminaram."
+editChecksum:
+	message: "Checksum:"
+e_checksumError:
+	message: "Erro de Checksum"
+i_checksum:
+	message: "Checksum: $1 / $2"
+connectionAPI:
+	message: "API de conexão:"
+i_api:
+	message: "API: $1, $2"
+connectionAPIUnavailable:
+	message: "A API de conexão selecionada não esta disponivel."
+open:
+	message: "Abrir"
+monitorDownloadShowBuiltinActions:
+	message: "Mostrar ações rapidas na janela de novos downloads"
+configureOpen:
+	message: "Configurar \"Abrir\""
+configureSave:
+	message: "Configurar \"Salvar\""
+theme:
+	message: "Tema:"
+e_canceled:
+	message: "Cancelado"
+e_sizeError:
+	message: "Erro de tamanho"
+e_timeout:
+	message: "Tempo esgotado"
+connectionTimeout:
+	message: "Tempo esgotado de conexão:"
+transferTimeout:
+	message: "Tempo esgotado de transferencia:"
+cacheMode:
+	message: "Modo de Cache:"
+iconClickAction:
+	message: "Ação quando clicar no icone:"
+dynamicMinChunkSize:
+	message: "Tamanho minimo do chunk dinamico"
+contextMenuIconColor:
+	message: "Icone do menu de contexto:"
+i_reset:
+	message: "Resetar tarefa"
+reset:
+	message: "Resetar"
+confirmReset:
+	message: "Resetar esse download?"
+clearCompletedTasks:
+	message: "Limpar tarefas completadas"
+customCSSSnippets:
+	message: "Snippets"
+andAnotherNTasks:
+	message: "... e outras $1 tarefas"
+showTooltip:
+	message: "Mostrar status com o cursor no icone da extensão"
+addPaused:
+	message: "Adicionar pausado"
+showAddPaused:
+	message: "Mostrar \"Adicionar pausado\" quando criar tarefas"
+openWindowIncognito:
+	message: "Abrir janelas da extensão em Modo Privado"
+inhibitSleep:
+	message: "Não deixar o sistema dormir fazendo downloads"
+cascadeBuiltinTask:
+	message: "Quando remover uma tarefa, remover o item original"
+removeFailedTasksOnStart:
+	message: "Remover tarefas que falharam quando iniciar o navegador"
+clearFailedTasks:
+	message: "Limpar tarefas que falharam"
+dialogAlwaysOnTop:
+	message: "Manter janelas da extesão sempre acima das do navegador"
+panelWindowAlwaysOnTop:
+	message: "Manter janela principal da extesão sempre acima das do navegador"
+selectAll:
+	message: "Selecionar tudo"
+shortenTabTitle:
+	message: "Nome da aba da extensão:"
+monitorFileTypes:
+	message: "Perguntar por:"
+PDF:
+	message: "PDF"
+audio:
+	message: "Audio"
+video:
+	message: "Video"
+autoImportExtension:
+	message: "Automaticamente importar de outras extensões"
+autoImportExtensionDesc:
+	message: "Para adionar uma extensão aqui, inicie um download na extensão desejada."
+segmentsInterval:
+	message: "Tempo de escrita para arquivos segmentados"
+segmentsIntervalInit:
+	message: "Inicial:"
+segmentsIntervalMax:
+	message: "Maximo:"
+segmentsIntervalGrowFactor:
+	message: "Aumentar com fator:"
+segmentsIntervalGrowPerFiles:
+	message: "Escrito nos arquivos:"
+i_segmentsInterval:
+	message: "Tempo de escrita: $1"
+storageAPI:
+	message: "API de Armazenamento:"
+storageAPIMutableFile:
+	message: "Firefox antigo (vai ser removido)"
+storageAPISegmentedFile:
+	message: "Arquivos Segmentados"
+e_APIUnsupported:
+	message: "API não suportada"
+configureFilenameSearch:
+	message: "Configurar procura de arquivo"
+filenameSearchItemsExample:
+	message: "Nome http://exemplo.com/?filename=%s"
+searchWith:
+	message: "Procurar com $1"
+keepCompletedTasksContent:
+	message: "Manter arquivos temporarios das tarefas completas"
+configureFilenameSearchDesc:
+	message: "Formato: Nome http://exemplo.com/?filename=%s\nUse %s no lugar do nome do arquivo.\nSe a opção \"Manter arquivos temporarios das tarefas completas\" estiver ativada, %#1 e %#2 podem ser usados para hashs SHA1 e SHA256."
