@@ -384,3 +384,37 @@ audio:
 	message: 'Аудио'
 video:
 	message: 'Видео'
+autoImportExtension:
+	message: 'Автоматический импорт из других расширений'
+autoImportExtensionDesc:
+	message: 'Чтобы добавить расширение здесь, инициируйте загрузку в том расширении.'
+segmentsInterval:
+	message: 'Интервал записи сегментов файлов'
+segmentsIntervalInit:
+	message: 'Инициация:'
+segmentsIntervalMax:
+	message: 'Максимум:'
+segmentsIntervalGrowFactor:
+	message: 'Коэффициент увеличения:'
+segmentsIntervalGrowPerFiles:
+	message: 'Для записи файлов:'
+i_segmentsInterval:
+	message: 'Интервал записи: $1'
+storageAPI:
+	message: 'Storage API:'
+storageAPIMutableFile:
+	message: 'Firefox legacy (подлежит удалению)'
+storageAPISegmentedFile:
+	message: 'Сегментированные файлы'
+e_APIUnsupported:
+	message: 'API не поддерживается'
+configureFilenameSearch:
+	message: 'Настройка поиска по имени файла'
+filenameSearchItemsExample:
+	message: 'Имя http://example.com/?filename=%s'
+searchWith:
+	message: 'Поиск с помощью $1'
+keepCompletedTasksContent:
+	message: 'Временно сохранять в storage выполненные задачи'
+configureFilenameSearchDesc:
+	message: 'Формат: Name http://example.com/?filename=%s\nИспользуйте %s вместо имени файла.\nЕсли включен "Сохранять временно выполненные задачи", %#1 и %#2 может использоваться для поиска хэшей SHA1 и SHA256.'
