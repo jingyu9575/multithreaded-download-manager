@@ -42,6 +42,13 @@ append body
 			span(data-i18n='connectionAPIUnavailable')
 			a(href=`${repoRoot}wiki/Connection-API` 
 				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+		#firefox-75-warning.warning-bar.icon-text(hidden)
+			svg.icon: use(href='../icons/photon-icons.svg#warning')
+			span(data-i18n='importantChangesForFirefox75')
+			a(href=`${repoRoot}wiki/Important-changes-for-Firefox-75` 
+				data-i18n='readMore' target='_blank' rel="noopener noreferrer")
+			span &nbsp;
+			a#firefox-75-warning-dismiss(href='javascript:;' data-i18n='dismiss')
 
 	template#x-task-template
 		.task-row.summary-row

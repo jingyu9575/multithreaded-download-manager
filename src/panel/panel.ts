@@ -76,9 +76,10 @@ class XTaskElement extends HTMLElement {
 		XTaskElement.updateSelectionToolButtons()
 	})()
 
-	constructor(readonly taskId: number) { super() }
+	readonly taskId!: number
 
-	init(data: TaskData) {
+	init(taskId: number, data: TaskData) {
+		void ((this.taskId as number) = taskId)
 		this.classList.add('task')
 		this.appendChild(importTemplate('x-task-template'))
 		this.id = 'x-task-' + this.taskId
@@ -369,7 +370,7 @@ export class TaskSyncRemote {
 	create(id: number, data: TaskData, atTop: boolean) {
 		if (!this.initialized) return
 		XTaskElement.parent[atTop ? 'prepend' : 'append'](
-			new XTaskElement(id).init(data))
+			new XTaskElement().init(id, data))
 	}
 
 	update(id: number, data: Partial<TaskData>) {
@@ -387,7 +388,7 @@ export class TaskSyncRemote {
 		if (task) task.remove()
 	}
 
-	isAlive() { return true }
+	async isAlive() { return true }
 	activateTab!: () => Promise<boolean>
 	activateWindow!: () => Promise<boolean>
 	reloadFilenameSearch() { return reloadFilenameSearch() }
@@ -458,11 +459,19 @@ document.querySelector('#options')!.addEventListener('click', async () => {
 	if (!await browser.tabs.getCurrent()) window.close() // close browserAction popup
 })
 
+document.getElementById('firefox-75-warning-dismiss')!.addEventListener('click',
+	async () => {
+		await remoteSettings.set({ firefox75WarningDismissed: true })
+		document.getElementById('firefox-75-warning')!.hidden = true
+	})
+
 void async function () {
 	if (!await backgroundRemote.isStorageAvailable())
 		document.getElementById('no-storage-access')!.hidden = false
 	if (!await backgroundRemote.isConnectionAPIAvailable())
 		document.getElementById('connection-api-unavailable')!.hidden = false
+	if (!await remoteSettings.get('firefox75WarningDismissed'))
+		document.getElementById('firefox-75-warning')!.hidden = false
 }()
 
 const searchFilenameButton = document.getElementById('search-filename')!

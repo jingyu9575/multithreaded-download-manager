@@ -418,3 +418,7 @@ keepCompletedTasksContent:
 	message: '保留已完成任务的临时存储'
 configureFilenameSearchDesc:
 	message: '格式：名称 http://example.com/?filename=%s\n用 %s 替换文件名。\n如果启用了选项“保留已完成任务的临时存储”，可以使用 %#1、%#2 搜索 SHA1、SHA256 校验码。'
+importantChangesForFirefox75:
+	message: '针对火狐 75 的重要变化'
+dismiss:
+	message: '关闭'

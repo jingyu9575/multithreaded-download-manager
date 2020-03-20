@@ -160,7 +160,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				Object.assign(this.data, { [key]: S[key] })
 
 		// new tasks without storageAPI will use setting or default
-		const defaultStorageAPI = 'MutableFile' // use it until removed by Firefox
+		const defaultStorageAPI = 'SegmentedFile' // MutableFile is broken in Firefox 75
 		const dataRW: MultithreadedTaskData = this.data
 		if (!this.data.storageAPI)
 			dataRW.storageAPI = S.storageAPI || defaultStorageAPI

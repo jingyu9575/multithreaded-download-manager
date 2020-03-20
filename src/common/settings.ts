@@ -86,6 +86,7 @@ export class Settings extends mergeInitData(Object, { ...new NetworkOptions() })
 	filenameTemplate = DEFAULT_FILENAME_TEMPLATE
 	enableTaskSelection = true
 	autoImportExtList: { id: string, name: string }[] = []
+	firefox75WarningDismissed = false
 }
 
 export const remoteSettings = new RemoteSettings(new Settings)
