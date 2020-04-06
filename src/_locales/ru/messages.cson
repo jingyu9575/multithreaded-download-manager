@@ -418,3 +418,7 @@ keepCompletedTasksContent:
 	message: 'Временно сохранять в storage выполненные задачи'
 configureFilenameSearchDesc:
 	message: 'Формат: Name http://example.com/?filename=%s\nИспользуйте %s вместо имени файла.\nЕсли включен "Сохранять временно выполненные задачи", %#1 и %#2 может использоваться для поиска хэшей SHA1 и SHA256.'
+importantChangesForFirefox75:
+	message: 'Важные изменения для Firefox 75'
+dismiss:
+	message: 'Отклонить'
