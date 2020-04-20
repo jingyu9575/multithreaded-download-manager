@@ -7,6 +7,12 @@
 		"cson": "=6.4.0",
 		"pug-cli": "^1.0.0-alpha6",
 		"stylus": "^0.54.7",
-		"typescript": "^3.7.2"
+		"typescript": "^3.8.3"
+	},
+	"resolutions": {
+		"pug-cli/mkdirp": "^1.0.4",
+		"pug-cli/**/acorn": "^7.1.1",
+		"pug-cli/**/acorn-globals": "^6.0.0",
+		"stylus/mkdirp": "^1.0.4"
 	}
 }
