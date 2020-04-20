@@ -5,7 +5,7 @@ import {
 } from "../common/settings.js";
 
 export class TaskFormElement extends HTMLFormElement {
-	private submittedTaskState?: DownloadState
+	private addingPaused = 0
 
 	init() {
 		const networkOptions = this.querySelector(
@@ -20,11 +20,12 @@ export class TaskFormElement extends HTMLFormElement {
 		const addPausedButton = this.querySelector('.add-paused') as HTMLButtonElement
 		void movePlatformSubmitButton(addPausedButton, submitButton, submitButton)
 
-		for (const button of [submitButton, addPausedButton]) {
-			button.addEventListener('click', () => {
-				this.submittedTaskState = button.dataset.taskState as any
-			})
-		}
+		addPausedButton.addEventListener('click', () => {
+			try {
+				this.addingPaused++
+				submitButton.click()
+			} finally { this.addingPaused-- }
+		})
 
 		remoteSettings.get('showAddPaused').then(v => addPausedButton.hidden = !v)
 
@@ -46,7 +47,7 @@ export class TaskFormElement extends HTMLFormElement {
 				ft += '/'
 			formObj.filenameTemplate = ft
 
-			if (this.submittedTaskState) formObj.state = this.submittedTaskState
+			if (this.addingPaused) formObj.state = 'paused'
 
 			this.submitData(dataList, formObj)
 			this.doAfterSubmitting()
