@@ -9,13 +9,13 @@ Download manager extension for Firefox, with multithreading support.
 Install the dependencies:
 
 ```sh
-npm install --only=prod
+yarn --prod
 ```
 
 The globally installed build tools can be used, found by `$PATH`. It is also possible to install the packages locally:
 
 ```sh
-npm install --only=dev
+yarn
 ```
 
 Run the build script to generate the unpacked extension in `dist`:
