@@ -11,6 +11,7 @@
 	},
 	"resolutions": {
 		"pug-cli/mkdirp": "^1.0.4",
+		"pug-cli/**/with": "^6.0.0",
 		"pug-cli/**/acorn": "^7.1.1",
 		"pug-cli/**/acorn-globals": "^6.0.0",
 		"stylus/mkdirp": "^1.0.4"
