@@ -11,12 +11,14 @@ const LANG = (process.env.LANG || '').replace(/\..*/, '')
 	.replace(/[^-0-9a-zA-Z_]/g, '')
 const LANG_ARG = LANG ? ` --locale ${LANG} ` : ''
 
+const CSON_BIN_FIX = process.platform === 'win32' ? 'cson2json/../' : ''
+
 const BUILDERS = {
 	ts: {},
 	pug: {},
 	cson: {
 		to: 'json',
-		cmd: (s, d) => `cson2json ${s} > ${d}`,
+		cmd: (s, d) => `cson2json ${CSON_BIN_FIX}${s} > ${d}`,
 	},
 	styl: {
 		to: 'css',
