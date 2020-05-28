@@ -64,6 +64,7 @@ class FilenameTemplateResolver {
 				c => `-_'_()_  --()`[':*"?<>|;,+=[]'.indexOf(c)])
 		else
 			name = name.replace(/:/g, '-')
+		name = name.replace(/\s{2,}/g, " ")
 		const result: string[] = []
 		for (const component of name.split(/[\\/]/)) {
 			let s = component.trim()
