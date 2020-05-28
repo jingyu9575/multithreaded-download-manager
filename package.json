@@ -4,16 +4,9 @@
 		"@types/firefox-webext-browser": "^67.0.2"
 	},
 	"devDependencies": {
-		"cson": "=6.4.0",
+		"cson": "^7.5.0",
 		"pug-cli": "^1.0.0-alpha6",
 		"stylus": "^0.54.7",
-		"typescript": "^3.8.3"
-	},
-	"resolutions": {
-		"pug-cli/mkdirp": "^1.0.4",
-		"pug-cli/**/with": "^6.0.0",
-		"pug-cli/**/acorn": "^7.1.1",
-		"pug-cli/**/acorn-globals": "^6.0.0",
-		"stylus/mkdirp": "^1.0.4"
+		"typescript": "^3.9.3"
 	}
 }
