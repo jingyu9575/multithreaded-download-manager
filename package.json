@@ -7,6 +7,6 @@
 		"cson": "^7.5.0",
 		"pug-cli": "^1.0.0-alpha6",
 		"stylus": "^0.54.7",
-		"typescript": "^3.9.3"
+		"typescript": "~3.8.3"
 	}
 }
