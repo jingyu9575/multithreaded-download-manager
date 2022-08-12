@@ -32,7 +32,7 @@ export class BackgroundRemote {
 	async isStorageAvailable() {
 		try {
 			await Task.initialization
-			return SimpleMutableFile.isAvailable
+			return true
 		} catch { return false }
 	}
 
