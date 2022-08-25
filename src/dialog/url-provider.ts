@@ -354,7 +354,7 @@ abstract class ContentListURLProviderElement extends ListURLProviderElement {
 				this.preselectedDataSet.add(data)
 			}
 			return list
-		} catch (error) {
+		} catch (error: any) {
 			let message = ''
 			if (error && typeof error.message === 'string') {
 				if (/\bpermission\b/.test(error.message))

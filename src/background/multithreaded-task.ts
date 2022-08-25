@@ -73,8 +73,8 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 			connection.prepare()
 
 		// delay of prepare() is estimated to be 2 * setImmediate
-		await new Promise(setImmediate)
-		await new Promise(setImmediate)
+		await new Promise<void>(setImmediate)
+		await new Promise<void>(setImmediate)
 
 		if (this.data.state !== 'downloading') return
 		const now = performance.now()
@@ -520,7 +520,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 				try {
 					downloadId = (await browser.downloads.download(
 						{ url: blobURL, filename: this.data.filename, saveAs }))!
-				} catch (error) {
+				} catch (error: any) {
 					throw !error.message.match(/\bDownload canceled\b/) ? error :
 						new ReportedError(M.e_saveFileError, error.message)
 				}
@@ -537,7 +537,7 @@ export class MultithreadedTask extends Task<MultithreadedTaskData> {
 					{ totalSize: this.currentSize } : {})
 			})
 			if (!S.keepCompletedTasksContent) this.chunkStorage.reset()
-		} catch (error) {
+		} catch (error: any) {
 			if (!isAbortError(error)) this.fail(error)
 			this.persistChunks()
 		}

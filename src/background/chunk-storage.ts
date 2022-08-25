@@ -7,7 +7,7 @@ import { isWebExtOOPDisabled } from "./webext-oop.js";
 import { S } from "./settings.js";
 import { SimpleEventListener } from '../util/event.js';
 
-type TypeOfChunkStorage = typeof ChunkStorage
+type TypeOfChunkStorage = { new(id: number): ChunkStorage } & typeof ChunkStorage
 export interface ChunkStorageClass extends TypeOfChunkStorage { }
 
 export abstract class ChunkStorage {
