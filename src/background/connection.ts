@@ -5,7 +5,10 @@ import { parseContentDisposition } from "./content-disposition.js";
 import { M } from "../util/webext/i18n.js";
 import { cryptoRandomString } from "../common/common.js";
 
-type TypeOfConnection = typeof Connection
+type TypeOfConnection = {
+	new(request: Request, onFinish: () => void, options?:
+		{ expectedSize?: number, requestSubstituteFilename?: boolean }): Connection
+} & typeof Connection
 export interface ConnectionClass extends TypeOfConnection { }
 
 const connectionHeader = 'x-multithreaded-download-manager-' + cryptoRandomString()
@@ -64,7 +67,7 @@ export abstract class Connection {
 			let response
 			try {
 				response = await fetch(request, { signal: this.controller.signal })
-			} catch (error) {
+			} catch (error: any) {
 				if (error && error.name === 'TypeError' &&
 					('' + error.message).startsWith('NetworkError'))
 					throw new ReportedError(M.e_networkError, error)
