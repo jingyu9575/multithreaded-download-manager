@@ -1,69 +1,157 @@
+/* dark.styl */
 /* Contributed by Onurtag */
-/* https://gist.github.com/Onurtag/1ea462f330a8cc26d4b72d3023966f65 */
-/* General */
+
+/* [General] */
 body
-	background-color: #4A4A4F
-	color: #f3f3f3
+  background-color: #42414D
+  color: #f3f3f3
 
-input, select
-	background-color: #f7f7f7
+/* make the inputs look similar to official Firefox dark theme */
+input,
+select
+  background-color: #282730
+  border: 1px solid #2f2f2f
+  color: #D8D8D8
+  border-radius: 4px
 
-input[type='checkbox']
-	filter: brightness(95%)
+input[type="checkbox"]
+  filter: invert(100%) hue-rotate(-200deg) contrast(80%)
+
+input[type="number"]
+  padding-bottom: 2px
+  padding-right: 1px
 
 a
-	filter: invert(90%) hue-rotate(170deg)
+  filter: invert(90%) hue-rotate(180deg) brightness(110%)
 
-button
-	outline-color: #c0c0d5 !important
+textarea,
+.url-list th,
+.url-list-inner
+  background-color: #282730
+  color: #D8D8D8
 
-/* Options */
-x-tabs-nav, x-page, .modal-dialog
-	background-color: #4A4A4F
-	border-color: #4A4A4F
+textarea
+  border: none
+
+.url-list th,
+.url-list-outer,
+url-list-inner
+  border-color: #777 !important
+
+/* keyboard focus outlines (using focus-visible) */
+input:focus-visible,
+button:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+th:focus-visible,
+td:focus-visible,
+.url-list-inner:focus-visible,
+textarea:focus-visible
+  outline: 2px solid #009fff
+
+/* [Options Page] */
+x-tabs-nav,
+x-page,
+.modal-dialog
+  background-color: #42414D
+  border-color: #42414D
+
+x-tabs-nav
+  background-color: #34333D
+  outline: none
+  border-top: 1px solid transparent
 
 x-tab[active]
-	color: #f3f3f3
-	outline-color: #c0c0d5 !important
-	border-top-color: #0A84FF
-	background-color: #6A6A70
+  color: #f3f3f3
+  border-top-color: #a7d3ff
+  background-color: #42414D
 
 x-tab:hover
-	background-color: #71717b
+  border-top-color: #009fff
+  background-color: #3B3B47
 
-/* Popup */
-.state-icon > use
-	filter: drop-shadow(0.2px 0.2px 0.2px black) brightness(1.4) contrast(1.4)
+x-tab:focus-visible
+  outline: 1px solid #009fff
+  outline-offset: -1px
+
+x-tab[active]:hover
+  border-top-color: #009fff
+  background-color: #42414D
+
+x-tabs-nav:focus>x-tab[active]
+  outline: none
+  border-color: #009fff
+
+a.dialog-button[href="custom-css.html"]
+  background-color: #151515
+  color: #fff
+  border-radius: 5px
+
+/* [Popup] */
+.state-icon>use
+  filter: drop-shadow(0.2px 0.2px 0.2px black) brightness(1.4) contrast(1.4)
 
 .progress-canvas
-	background-color: #2a2a2a
-	filter: brightness(1.1) contrast(0.9)
-	border: 1px solid rgba(0, 0, 0, 0.1)
+  background-color: #211F2B
+  filter: brightness(1.1) contrast(0.85)
+  border: 1px solid rgba(0, 0, 0, 0.1)
+  border-radius: 3px
 
-/* Popup buttons */
-.summary-row > button > svg > use
-	filter: invert(90%)
+.error-bar
+  background-color: #b72740
 
-.summary-row > button:not([disabled]):hover
-	background-color: rgba(220, 220, 220, 0.2)
+.warning-bar
+  background-color: #807417
 
-#toolbar > button
-	background-color: #3b3b3f
-	margin-right: 1px
+.task
+  border-bottom: 1px solid #888888bb
 
-#toolbar > button:not([disabled]):hover
-	background-color: rgba(220, 220, 220, 0.2)
+/* popup buttons */
+.summary-row>button
+  padding: 4px
+  margin-left: 2px
+  border-radius: 3px
+  margin-bottom: 1px
 
-#toolbar > button > svg > use, #toolbar > button > img
-	filter: invert(100%) contrast(80%)
+#toolbar>button:not([disabled]):focus,
+.summary-row>button:not([disabled]):focus
+  outline: none
+
+#toolbar>button:not([disabled]):focus-visible,
+.summary-row>button:not([disabled]):focus-visible
+  outline: 1px solid #009fff
+
+.summary-row>button:not([disabled]):hover
+  background-color: rgba(220, 220, 220, 0.2)
 
 #toolbar
-	background-color: #3b3b3f
+  background-color: #363542
 
-/* Create a download task window */
-th, .url-list-inner, textarea
-	background-color: #f7f7f7 !important
-	color: #444 !important
+#toolbar>button
+  background-color: #363542
+  margin-right: 1px
+  border-radius: 4px
+
+#toolbar>button:not([disabled]):hover
+  background-color: rgba(220, 220, 220, 0.2)
+
+.summary-row>button>svg>use
+  filter: invert(90%)
+
+#toolbar>button>svg>use,
+#toolbar>button>img
+  filter: invert(100%) contrast(80%)
+
+/* make Remove and Delete File buttons red on hover */
+.summary-row>button.task-action[data-action="remove"]:hover,
+.summary-row>button.task-action[data-action="deleteFile"]:hover
+  background-color: #C44242
+  filter: brightness(106%)
+
+/* [Create a download task] window */
+.url-list-outer
+  border: none
 
 :root[data-path='panel/panel'] .task.selected
-	background-color: #4a5d8a
+  background-color: #4a5d8a
+
