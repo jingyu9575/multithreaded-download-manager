@@ -55,9 +55,9 @@ cancel:
 download:
 	message: 'Télécharger'
 continueInBrowser:
-	message: 'Continuee dans le navigateur'
+	message: 'Continuer dans le navigateur'
 e_serverError:
-	message: 'Erreure du serveur'
+	message: 'Erreur du serveur'
 rangesNotSupported:
 	message: 'Le serveur ne supporte pas les téléchargements multi-processus ($1)'
 e_networkError:
@@ -65,23 +65,23 @@ e_networkError:
 e_unknownError:
 	message: 'Erreur inconnue'
 showCompleted:
-	message: 'Afficher les téléchargés terminés'
+	message: 'Afficher les téléchargements terminés'
 removeAfterImport:
 	message: "Supprimer les éléments originaux après importation"
 downloadWith:
 	message: 'Télécharger avec $1'
 unsupportedURL:
-	message: 'Adresse de téléchargement non-supportée: $1'
+	message: 'Adresse de téléchargement non-supportée : $1'
 confirmPauseIsStop:
 	message: 'Ce téléchargement ne peut pas reprendre. Annuler ?'
 confirmDeleteFile:
-	message: 'Effacer le fichier téléchargé?'
+	message: 'Effacer le fichier téléchargé ?'
 confirmRemove:
-	message: 'Effacer le fichier actuellement non-terminé?'
+	message: 'Effacer le fichier actuellement non-terminé ?'
 general:
 	message: 'Général'
 saveFileTo:
-	message: 'Enregistrer les fichiers sous:'
+	message: 'Enregistrer les fichiers sous :'
 downloadFolder:
 	message: 'Un fichier de téléchargement'
 alwaysAsk:
@@ -95,13 +95,13 @@ readMore:
 interface:
 	message: 'Interface'
 iconColor:
-	message: 'Icône:'
+	message: 'Icône :'
 systemDefaultAfterRestart:
 	message: 'Icône Par défaut (Relancer pour appliquer la modification)'
 dark:
-	message: 'Noir'
+	message: 'Sombre'
 darker:
-	message: 'Plus fonçé'
+	message: 'Plus foncé'
 black:
 	message: 'Noir'
 light:
@@ -111,25 +111,25 @@ lighter:
 white:
 	message: 'Blanc'
 altIcon1:
-	message: 'Flêche à fond bleu marine'
+	message: 'Flèche à fond bleu marine'
 altIcon2:
 	message: "Flèche à fond noir entourée d'un rond vert"
 altIcon3:
-	message: 'Flèche à fond bleu fonçé'
+	message: 'Flèche à fond bleu foncé'
 altIcon4:
 	message: 'Flèche blanche à fond carré vert'
 showOnBadge:
-	message: "Afficher sur l'icône de l'extension:"
+	message: "Afficher sur l'icône de l'extension :"
 badgeTypeNone:
 	message: 'Aucun élément'
 badgeTypeNumber:
 	message: 'Nombre de téléchargements en cours'
 hideBadgeZero:
-	message: "Masquer le numéro sur l'icône après que toutes les tâches ait été complétées"
+	message: "Masquer le numéro sur l'icône après que toutes les tâches aient été complétées"
 addContextMenuToLink:
-	message: 'Ajouter un menu contextuel aux liens:'
+	message: 'Ajouter un menu contextuel aux liens :'
 windowPosition:
-	message: "Position de la fenêtre d'extension:"
+	message: "Position de la fenêtre d'extension :"
 systemDefault:
 	message: "Réglage par défaut de l'extension"
 parentCenter:
@@ -137,7 +137,7 @@ parentCenter:
 rememberLast:
 	message: 'Se rappeler de la dernière valeur'
 windowSize:
-	message: "Taille de la fenêtre de l'extension:"
+	message: "Taille de la fenêtre de l'extension :"
 newTaskAtTop:
 	message: 'Afficher les nouvelles tâches en haut'
 removeCompletedTasksOnStart:
@@ -147,9 +147,9 @@ showOptionsInDedicatedTab:
 monitorDownload:
 	message: 'Moniteur de téléchargements'
 monitorDownloadDesc:
-	message: 'Lancer automatiquement le téléchargement:'
+	message: 'Lancer automatiquement le téléchargement :'
 monitorDownloadMinSize:
-	message: 'Désactiver pour les fichiers plus petits que:'
+	message: 'Désactiver pour les fichiers plus petits que :'
 autoCloseBlankTab:
 	message: "Automatiquement fermer les téléchargements vides lors ce qu'ils sont téléchargés"
 defaultNetworkOptions:
@@ -169,7 +169,7 @@ customCSSButton:
 customCSSDesc:
 	message: "CSS personalisé pour les pages de l'extension. Celà peut complêtement changer l'interface, procéder sonc avec prudence."
 save:
-	message: 'Save'
+	message: 'Sauvegarder'
 byteSymbol:
 	message: 'o'
 useSiteHandlers:
@@ -179,8 +179,8 @@ monitorLinksWithoutRange:
 linkWithoutRangeWarning:
 	message: 'Ce téléchargement ne supporte pas le multi-processus ou la reprise de téléchargement.'
 simultaneousTasks:
-	message: 'Tâches de téléchargement simultané:'
+	message: 'Tâches de téléchargement simultané :'
 unlimited:
 	message: 'Illimité'
 editFileSize:
-	message: 'Taille:'
+	message: 'Taille :'
